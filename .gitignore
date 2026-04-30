@@ -1,0 +1,18 @@
+# Java build outputs
+*.class
+target/
+build/
+out/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# Local tooling / generated results
+.codex
+results/
+
+# OS files
+.DS_Store
+Thumbs.db
