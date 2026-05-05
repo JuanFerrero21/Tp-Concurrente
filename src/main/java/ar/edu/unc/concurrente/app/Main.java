@@ -7,20 +7,21 @@ import ar.edu.unc.concurrente.log.TransitionLogger;
 import ar.edu.unc.concurrente.monitor.Monitor;
 import ar.edu.unc.concurrente.monitor.MonitorInterface;
 import ar.edu.unc.concurrente.petri.PetriNet;
-import ar.edu.unc.concurrente.policy.PrioritySimplePolicy;
+import ar.edu.unc.concurrente.policy.RandomPolicy;
 import ar.edu.unc.concurrente.threads.WorkerThread;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         SimulationConfig config = SimulationConfig.defaultConfig();
         PetriNet petriNet = new PetriNet(config.getInitialMarking(), config.getIncidenceMatrix());
-        MonitorInterface monitor = new Monitor(petriNet, new PrioritySimplePolicy(0));
+        MonitorInterface monitor = new Monitor(petriNet, new RandomPolicy());
         TransitionLogger transitionLogger = new TransitionLogger(petriNet.getTransitionCount());
 
         System.out.println("Marcado inicial: " + config.getInitialMarking());
         System.out.println("Transiciones sensibilizadas: " + petriNet.getEnabledTransitions());
 
         WorkerThread[] workers = createWorkers(config, monitor, transitionLogger);
+
         for (WorkerThread worker : workers) {
             worker.start();
         }
@@ -48,12 +49,13 @@ public class Main {
     ) {
         int[][] workerTransitions = config.getWorkerTransitions();
         WorkerThread[] workers = new WorkerThread[config.getWorkerCount()];
+
         for (int i = 0; i < workers.length; i++) {
             workers[i] = new WorkerThread(
                     "Worker-" + (i + 1),
                     monitor,
                     workerTransitions[i],
-                    config.getCyclesPerWorker(),
+                    config.getCyclesForWorker(i),
                     transitionLogger
             );
         }

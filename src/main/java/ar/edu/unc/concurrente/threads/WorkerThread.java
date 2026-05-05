@@ -13,7 +13,13 @@ public class WorkerThread extends Thread {
         this(name, monitor, assignedTransitions, cycles, null);
     }
 
-    public WorkerThread(String name, MonitorInterface monitor, int[] assignedTransitions, int cycles, TransitionLogger transitionLogger) {
+    public WorkerThread(
+            String name,
+            MonitorInterface monitor,
+            int[] assignedTransitions,
+            int cycles,
+            TransitionLogger transitionLogger
+    ) {
         super(name);
         this.monitor = monitor;
         this.assignedTransitions = assignedTransitions;
@@ -26,13 +32,14 @@ public class WorkerThread extends Thread {
         for (int cycle = 0; cycle < cycles; cycle++) {
             for (int transition : assignedTransitions) {
                 boolean fired = monitor.fireTransition(transition);
+
                 if (transitionLogger != null) {
                     transitionLogger.record(transition, fired);
                 }
+
                 if (!fired) {
                     return;
                 }
-                System.out.println(getName() + " disparo T" + transition);
             }
         }
     }
