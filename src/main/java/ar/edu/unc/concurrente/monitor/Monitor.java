@@ -7,13 +7,12 @@ import ar.edu.unc.concurrente.policy.PrioritySimplePolicy;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Monitor implements MonitorInterface {
     private final PetriNet petriNet;
     private final Policy policy;
     private final SimulationState simulationState;
-    private final ReentrantLock lock;
+    private final Mutex mutex;
     private final TransitionQueues transitionQueues;
     private final boolean verbose;
     private Integer selectedTransition;
@@ -34,14 +33,14 @@ public class Monitor implements MonitorInterface {
         this.petriNet = petriNet;
         this.policy = policy;
         this.simulationState = simulationState;
-        this.lock = new ReentrantLock();
-        this.transitionQueues = new TransitionQueues(lock, petriNet.getTransitionCount());
+        this.mutex = new Mutex();
+        this.transitionQueues = new TransitionQueues(mutex, petriNet.getTransitionCount());
         this.verbose = verbose;
     }
 
     @Override
     public boolean fireTransition(int transition) {
-        lock.lock();
+        mutex.acquire();
         try {
             validateTransition(transition);
             if (isSimulationFinished() || !canFireBySimulationState(transition)) {
@@ -117,7 +116,7 @@ public class Monitor implements MonitorInterface {
 
             return false;
         } finally {
-            lock.unlock();
+            mutex.release();
         }
     }
 
