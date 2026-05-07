@@ -14,6 +14,8 @@ import ar.edu.unc.concurrente.policy.RandomPolicy;
 import ar.edu.unc.concurrente.threads.WorkerThread;
 import ar.edu.unc.concurrente.time.SensibilizadoConTiempo;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class Main {
@@ -30,12 +32,16 @@ public class Main {
      * - cantidad de invariantes completos que debe ejecutar el sistema.
      *
      * VERBOSE:
-     * - true para ver detalle de disparos y esperas.
+     * - true para ver detalle de disparos y esperas por consola.
      * - false para ejecucion normal.
+     *
+     * LOG_PATH:
+     * - archivo donde se registran las transiciones disparadas y los invariantes.
      */
     private static final String POLICY_NAME = "random";
-    private static final int TARGET_COMPLETED_INVARIANTS = 200;
-    private static final boolean VERBOSE = false;
+    private static final int TARGET_COMPLETED_INVARIANTS = 100;
+    private static final boolean VERBOSE = true;
+    private static final Path LOG_PATH = Paths.get("logs", "simulation.log");
 
     public static void main(String[] args) throws InterruptedException {
         long startMillis = System.currentTimeMillis();
@@ -58,15 +64,24 @@ public class Main {
                 config.getBetaMillis()
         );
 
+        TransitionLogger transitionLogger = new TransitionLogger(
+                petriNet.getTransitionCount(),
+                LOG_PATH,
+                POLICY_NAME,
+                config.getTargetCompletedInvariants(),
+                config.getTemporalTransitions(),
+                config.getAlfaMillis(),
+                config.getBetaMillis()
+        );
+
         MonitorInterface monitor = new Monitor(
                 petriNet,
                 policy,
                 simulationState,
                 sensibilizadoConTiempo,
-                VERBOSE
+                VERBOSE,
+                transitionLogger
         );
-
-        TransitionLogger transitionLogger = new TransitionLogger(petriNet.getTransitionCount());
 
         System.out.println("Politica: " + POLICY_NAME);
         System.out.println("Marcado inicial: " + config.getInitialMarking());
@@ -98,6 +113,15 @@ public class Main {
                 invariantChecker.keepsTokenTotal(config.getInitialMarking(), petriNet.getMarking())
         );
 
+        transitionLogger.writeSummary(
+                simulationState.getCompletedInvariants(),
+                simulationState.getCompletedByMode(),
+                result.isInvariantOk(),
+                elapsedMillis
+        );
+
+        transitionLogger.close();
+
         System.out.println("Resumen: " + result);
         System.out.println("Invariantes completos: "
                 + simulationState.getCompletedInvariants()
@@ -110,6 +134,7 @@ public class Main {
                 + Arrays.toString(simulationState.getCompletedByMode()));
 
         System.out.println("Tiempo total de ejecucion: " + elapsedMillis + " ms");
+        System.out.println("Log generado en: " + LOG_PATH);
     }
 
     private static WorkerThread[] createWorkers(

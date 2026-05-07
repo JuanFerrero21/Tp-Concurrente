@@ -1,6 +1,7 @@
 package ar.edu.unc.concurrente.monitor;
 
 import ar.edu.unc.concurrente.analysis.SimulationState;
+import ar.edu.unc.concurrente.log.TransitionLogger;
 import ar.edu.unc.concurrente.petri.PetriNet;
 import ar.edu.unc.concurrente.policy.Policy;
 import ar.edu.unc.concurrente.policy.PrioritySimplePolicy;
@@ -17,22 +18,23 @@ public class Monitor implements MonitorInterface {
     private final TransitionQueues transitionQueues;
     private final SensibilizadoConTiempo sensibilizadoConTiempo;
     private final boolean verbose;
+    private final TransitionLogger transitionLogger;
     private Integer selectedTransition;
 
     public Monitor(PetriNet petriNet) {
-        this(petriNet, new PrioritySimplePolicy(), null, null, false);
+        this(petriNet, new PrioritySimplePolicy(), null, null, false, null);
     }
 
     public Monitor(PetriNet petriNet, Policy policy) {
-        this(petriNet, policy, null, null, false);
+        this(petriNet, policy, null, null, false, null);
     }
 
     public Monitor(PetriNet petriNet, Policy policy, SimulationState simulationState) {
-        this(petriNet, policy, simulationState, null, false);
+        this(petriNet, policy, simulationState, null, false, null);
     }
 
     public Monitor(PetriNet petriNet, Policy policy, SimulationState simulationState, boolean verbose) {
-        this(petriNet, policy, simulationState, null, verbose);
+        this(petriNet, policy, simulationState, null, verbose, null);
     }
 
     public Monitor(
@@ -42,6 +44,17 @@ public class Monitor implements MonitorInterface {
             SensibilizadoConTiempo sensibilizadoConTiempo,
             boolean verbose
     ) {
+        this(petriNet, policy, simulationState, sensibilizadoConTiempo, verbose, null);
+    }
+
+    public Monitor(
+            PetriNet petriNet,
+            Policy policy,
+            SimulationState simulationState,
+            SensibilizadoConTiempo sensibilizadoConTiempo,
+            boolean verbose,
+            TransitionLogger transitionLogger
+    ) {
         this.petriNet = petriNet;
         this.policy = policy;
         this.simulationState = simulationState;
@@ -49,6 +62,7 @@ public class Monitor implements MonitorInterface {
         this.transitionQueues = new TransitionQueues(mutex, petriNet.getTransitionCount());
         this.sensibilizadoConTiempo = sensibilizadoConTiempo;
         this.verbose = verbose;
+        this.transitionLogger = transitionLogger;
 
         actualizarSensibilizadasTemporales();
     }
@@ -116,6 +130,15 @@ public class Monitor implements MonitorInterface {
 
             if (simulationState != null) {
                 simulationState.recordFiredTransition(transition);
+            }
+
+            /*
+             * Se registra en archivo solo cuando el disparo fue real.
+             * Está dentro del monitor, por lo tanto el orden del log respeta
+             * el orden real de disparo protegido por el mutex.
+             */
+            if (transitionLogger != null) {
+                transitionLogger.recordFiredEvent(transition);
             }
 
             log(Thread.currentThread().getName()
