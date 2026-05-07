@@ -29,30 +29,30 @@ public class PrioritySimplePolicy implements Policy {
             throw new IllegalArgumentException("No hay transiciones habilitadas para elegir");
         }
 
-        Set<Integer> candidates = getCandidates(enabledTransitions);
-        if (simpleModeTransition != null && candidates.contains(simpleModeTransition)) {
+        /*
+         * Politica priorizada:
+         * si la transicion del modo simple esta disponible como candidata,
+         * se la elige siempre.
+         */
+        if (simpleModeTransition != null && enabledTransitions.contains(simpleModeTransition)) {
             return simpleModeTransition;
         }
 
-        return candidates.iterator().next();
-    }
-
-    private Set<Integer> getCandidates(Set<Integer> enabledTransitions) {
-        if (conflictTransitions.isEmpty()) {
-            return enabledTransitions;
-        }
-
-        Set<Integer> nonConflictCandidates = new LinkedHashSet<>();
-        Set<Integer> conflictCandidates = new LinkedHashSet<>();
+        /*
+         * Si no esta disponible el modo simple, se priorizan transiciones
+         * que no pertenezcan al conflicto, por ejemplo T0 o T11.
+         */
         for (int transition : enabledTransitions) {
-            if (conflictTransitions.contains(transition)) {
-                conflictCandidates.add(transition);
-            } else {
-                nonConflictCandidates.add(transition);
+            if (!conflictTransitions.contains(transition)) {
+                return transition;
             }
         }
 
-        return nonConflictCandidates.isEmpty() ? conflictCandidates : nonConflictCandidates;
+        /*
+         * Si solo quedan transiciones de conflicto y no esta el modo simple,
+         * se toma la primera disponible.
+         */
+        return enabledTransitions.iterator().next();
     }
 
     private static Set<Integer> toSet(int[] transitions) {

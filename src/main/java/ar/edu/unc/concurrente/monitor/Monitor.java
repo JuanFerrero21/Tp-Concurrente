@@ -4,6 +4,7 @@ import ar.edu.unc.concurrente.analysis.SimulationState;
 import ar.edu.unc.concurrente.petri.PetriNet;
 import ar.edu.unc.concurrente.policy.Policy;
 import ar.edu.unc.concurrente.policy.PrioritySimplePolicy;
+import ar.edu.unc.concurrente.time.SensibilizadoConTiempo;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -14,35 +15,51 @@ public class Monitor implements MonitorInterface {
     private final SimulationState simulationState;
     private final Mutex mutex;
     private final TransitionQueues transitionQueues;
+    private final SensibilizadoConTiempo sensibilizadoConTiempo;
     private final boolean verbose;
     private Integer selectedTransition;
 
     public Monitor(PetriNet petriNet) {
-        this(petriNet, new PrioritySimplePolicy(), null, false);
+        this(petriNet, new PrioritySimplePolicy(), null, null, false);
     }
 
     public Monitor(PetriNet petriNet, Policy policy) {
-        this(petriNet, policy, null, false);
+        this(petriNet, policy, null, null, false);
     }
 
     public Monitor(PetriNet petriNet, Policy policy, SimulationState simulationState) {
-        this(petriNet, policy, simulationState, false);
+        this(petriNet, policy, simulationState, null, false);
     }
 
     public Monitor(PetriNet petriNet, Policy policy, SimulationState simulationState, boolean verbose) {
+        this(petriNet, policy, simulationState, null, verbose);
+    }
+
+    public Monitor(
+            PetriNet petriNet,
+            Policy policy,
+            SimulationState simulationState,
+            SensibilizadoConTiempo sensibilizadoConTiempo,
+            boolean verbose
+    ) {
         this.petriNet = petriNet;
         this.policy = policy;
         this.simulationState = simulationState;
         this.mutex = new Mutex();
         this.transitionQueues = new TransitionQueues(mutex, petriNet.getTransitionCount());
+        this.sensibilizadoConTiempo = sensibilizadoConTiempo;
         this.verbose = verbose;
+
+        actualizarSensibilizadasTemporales();
     }
 
     @Override
     public boolean fireTransition(int transition) {
         mutex.acquire();
+
         try {
             validateTransition(transition);
+
             if (isSimulationFinished() || !canFireBySimulationState(transition)) {
                 return false;
             }
@@ -58,7 +75,9 @@ public class Monitor implements MonitorInterface {
                     return false;
                 }
 
+                actualizarSensibilizadasTemporales();
                 updateSelectedTransitionIfNeeded();
+
                 if (selectedTransition != null && selectedTransition == transition) {
                     break;
                 }
@@ -66,9 +85,14 @@ public class Monitor implements MonitorInterface {
                 if (!petriNet.isEnabled(transition)) {
                     log(Thread.currentThread().getName()
                             + " NO puede T" + transition
-                            + " porque no esta sensibilizada. Habilitadas con hilos esperando: "
+                            + " porque no esta sensibilizada por tokens. Habilitadas con hilos esperando: "
                             + getEnabledWaitingTransitions()
                             + ". Espera.");
+
+                    signalSelectedTransition();
+                    transitionQueues.await(transition);
+                } else if (!puedeDispararPorTiempo(transition)) {
+                    esperarPorVentanaTemporal(transition);
                 } else {
                     log(Thread.currentThread().getName()
                             + " espera para T" + transition
@@ -76,10 +100,10 @@ public class Monitor implements MonitorInterface {
                             + ". Habilitadas con hilos esperando: "
                             + getEnabledWaitingTransitions()
                             + ". Espera.");
-                }
 
-                signalSelectedTransition();
-                transitionQueues.await(transition);
+                    signalSelectedTransition();
+                    transitionQueues.await(transition);
+                }
 
                 log(Thread.currentThread().getName()
                         + " se despierta y reintenta T" + transition);
@@ -88,6 +112,8 @@ public class Monitor implements MonitorInterface {
             transitionQueues.stopWaiting(transition);
 
             petriNet.fire(transition);
+            actualizarSensibilizadasTemporales();
+
             if (simulationState != null) {
                 simulationState.recordFiredTransition(transition);
             }
@@ -97,6 +123,7 @@ public class Monitor implements MonitorInterface {
                     + ". Marcado: " + petriNet.getMarking());
 
             selectedTransition = null;
+
             if (isSimulationFinished()) {
                 transitionQueues.signalAll();
             } else {
@@ -120,6 +147,43 @@ public class Monitor implements MonitorInterface {
         }
     }
 
+    private void esperarPorVentanaTemporal(int transition) throws InterruptedException {
+        if (sensibilizadoConTiempo == null || !sensibilizadoConTiempo.esTemporal(transition)) {
+            signalSelectedTransition();
+            transitionQueues.await(transition);
+            return;
+        }
+
+        if (sensibilizadoConTiempo.estaAntesDeLaVentana(transition)) {
+            long millisHastaAlfa = sensibilizadoConTiempo.milisegundosHastaAlfa(transition);
+
+            log(Thread.currentThread().getName()
+                    + " espera T" + transition
+                    + " porque todavia no llego a alfa. Falta "
+                    + millisHastaAlfa
+                    + " ms. Estado temporal: "
+                    + sensibilizadoConTiempo.describirEstado(transition));
+
+            signalSelectedTransition();
+            transitionQueues.awaitMillis(transition, millisHastaAlfa);
+            return;
+        }
+
+        if (sensibilizadoConTiempo.estaVencida(transition)) {
+            log(Thread.currentThread().getName()
+                    + " espera T" + transition
+                    + " porque se paso beta en esta ventana. Debe esperar a que la transicion deje de estar sensibilizada y vuelva a sensibilizarse. Estado temporal: "
+                    + sensibilizadoConTiempo.describirEstado(transition));
+
+            signalSelectedTransition();
+            transitionQueues.await(transition);
+            return;
+        }
+
+        signalSelectedTransition();
+        transitionQueues.await(transition);
+    }
+
     private void validateTransition(int transition) {
         if (transition < 0 || transition >= transitionQueues.getTransitionCount()) {
             throw new IllegalArgumentException("Transicion fuera de rango: " + transition);
@@ -141,6 +205,7 @@ public class Monitor implements MonitorInterface {
 
     private void signalSelectedTransition() {
         updateSelectedTransitionIfNeeded();
+
         if (selectedTransition != null) {
             transitionQueues.signal(selectedTransition);
         }
@@ -150,13 +215,31 @@ public class Monitor implements MonitorInterface {
         Set<Integer> enabledWaitingTransitions = new LinkedHashSet<>();
         Set<Integer> enabledTransitions = petriNet.getEnabledTransitions();
 
+        actualizarSensibilizadasTemporales(enabledTransitions);
+
         for (int transition : enabledTransitions) {
-            if (transitionQueues.hasWaitingThread(transition) && canFireBySimulationState(transition)) {
+            if (transitionQueues.hasWaitingThread(transition)
+                    && canFireBySimulationState(transition)
+                    && puedeDispararPorTiempo(transition)) {
                 enabledWaitingTransitions.add(transition);
             }
         }
 
         return enabledWaitingTransitions;
+    }
+
+    private boolean puedeDispararPorTiempo(int transition) {
+        return sensibilizadoConTiempo == null || sensibilizadoConTiempo.puedeDispararAhora(transition);
+    }
+
+    private void actualizarSensibilizadasTemporales() {
+        actualizarSensibilizadasTemporales(petriNet.getEnabledTransitions());
+    }
+
+    private void actualizarSensibilizadasTemporales(Set<Integer> enabledTransitions) {
+        if (sensibilizadoConTiempo != null) {
+            sensibilizadoConTiempo.actualizarSensibilizadas(enabledTransitions);
+        }
     }
 
     private String formatSelectedTransition(Integer selectedTransition) {

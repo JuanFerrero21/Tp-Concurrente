@@ -1,5 +1,6 @@
 package ar.edu.unc.concurrente.monitor;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 
 public class TransitionQueues {
@@ -33,6 +34,14 @@ public class TransitionQueues {
 
     public void await(int transition) throws InterruptedException {
         conditionsByTransition[transition].await();
+    }
+
+    public void awaitMillis(int transition, long millis) throws InterruptedException {
+        if (millis <= 0) {
+            return;
+        }
+
+        conditionsByTransition[transition].await(millis, TimeUnit.MILLISECONDS);
     }
 
     public void signal(int transition) {

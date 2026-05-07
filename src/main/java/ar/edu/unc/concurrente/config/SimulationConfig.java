@@ -13,6 +13,9 @@ public class SimulationConfig {
     private final int completionTransition;
     private final int[] conflictTransitions;
     private final int simpleModeTransition;
+    private final boolean[] temporalTransitions;
+    private final long[] alfaMillis;
+    private final long[] betaMillis;
 
     public SimulationConfig(
             Marking initialMarking,
@@ -22,13 +25,23 @@ public class SimulationConfig {
             int inputTransition,
             int completionTransition,
             int[] conflictTransitions,
-            int simpleModeTransition
+            int simpleModeTransition,
+            boolean[] temporalTransitions,
+            long[] alfaMillis,
+            long[] betaMillis
     ) {
         if (workerTransitions.length == 0) {
             throw new IllegalArgumentException("Debe existir al menos un worker");
         }
+
         if (targetCompletedInvariants <= 0) {
             throw new IllegalArgumentException("La cantidad objetivo de invariantes debe ser positiva");
+        }
+
+        if (temporalTransitions.length != incidenceMatrix[0].length
+                || alfaMillis.length != incidenceMatrix[0].length
+                || betaMillis.length != incidenceMatrix[0].length) {
+            throw new IllegalArgumentException("La configuracion temporal debe tener una entrada por transicion");
         }
 
         this.initialMarking = initialMarking.copy();
@@ -39,6 +52,9 @@ public class SimulationConfig {
         this.completionTransition = completionTransition;
         this.conflictTransitions = Arrays.copyOf(conflictTransitions, conflictTransitions.length);
         this.simpleModeTransition = simpleModeTransition;
+        this.temporalTransitions = Arrays.copyOf(temporalTransitions, temporalTransitions.length);
+        this.alfaMillis = Arrays.copyOf(alfaMillis, alfaMillis.length);
+        this.betaMillis = Arrays.copyOf(betaMillis, betaMillis.length);
     }
 
     public static SimulationConfig defaultConfig() {
@@ -92,6 +108,18 @@ public class SimulationConfig {
         int[] conflictTransitions = {2, 5, 7};
         int simpleModeTransition = 5;
 
+        boolean[] temporalTransitions = new boolean[12];
+        long[] alfaMillis = new long[12];
+        long[] betaMillis = new long[12];
+
+        configurarTransicionTemporal(temporalTransitions, alfaMillis, betaMillis, 1, 60, 600);
+        configurarTransicionTemporal(temporalTransitions, alfaMillis, betaMillis, 3, 90, 900);
+        configurarTransicionTemporal(temporalTransitions, alfaMillis, betaMillis, 4, 90, 900);
+        configurarTransicionTemporal(temporalTransitions, alfaMillis, betaMillis, 6, 100, 1000);
+        configurarTransicionTemporal(temporalTransitions, alfaMillis, betaMillis, 8, 90, 900);
+        configurarTransicionTemporal(temporalTransitions, alfaMillis, betaMillis, 9, 90, 900);
+        configurarTransicionTemporal(temporalTransitions, alfaMillis, betaMillis, 10, 90, 900);
+
         return new SimulationConfig(
                 initialMarking,
                 incidenceMatrix,
@@ -100,8 +128,24 @@ public class SimulationConfig {
                 inputTransition,
                 completionTransition,
                 conflictTransitions,
-                simpleModeTransition
+                simpleModeTransition,
+                temporalTransitions,
+                alfaMillis,
+                betaMillis
         );
+    }
+
+    private static void configurarTransicionTemporal(
+            boolean[] temporalTransitions,
+            long[] alfaMillis,
+            long[] betaMillis,
+            int transition,
+            long alfa,
+            long beta
+    ) {
+        temporalTransitions[transition] = true;
+        alfaMillis[transition] = alfa;
+        betaMillis[transition] = beta;
     }
 
     public Marking getInitialMarking() {
@@ -140,8 +184,21 @@ public class SimulationConfig {
         return simpleModeTransition;
     }
 
+    public boolean[] getTemporalTransitions() {
+        return Arrays.copyOf(temporalTransitions, temporalTransitions.length);
+    }
+
+    public long[] getAlfaMillis() {
+        return Arrays.copyOf(alfaMillis, alfaMillis.length);
+    }
+
+    public long[] getBetaMillis() {
+        return Arrays.copyOf(betaMillis, betaMillis.length);
+    }
+
     private static int[][] copyMatrix(int[][] matrix) {
         int[][] copy = new int[matrix.length][];
+
         for (int i = 0; i < matrix.length; i++) {
             copy[i] = Arrays.copyOf(matrix[i], matrix[i].length);
         }
