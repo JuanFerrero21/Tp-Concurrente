@@ -39,8 +39,8 @@ public class Main {
      * - archivo donde se registran las transiciones disparadas y los invariantes.
      */
     private static final String POLICY_NAME = "random";
-    private static final int TARGET_COMPLETED_INVARIANTS = 100;
-    private static final boolean VERBOSE = true;
+    private static final int TARGET_COMPLETED_INVARIANTS = 200;
+    private static final boolean VERBOSE = false;
     private static final Path LOG_PATH = Paths.get("logs", "simulation.log");
 
     public static void main(String[] args) throws InterruptedException {
@@ -74,13 +74,16 @@ public class Main {
                 config.getBetaMillis()
         );
 
+        InvariantChecker invariantChecker = new InvariantChecker(config.getInitialMarking());
+
         MonitorInterface monitor = new Monitor(
                 petriNet,
                 policy,
                 simulationState,
                 sensibilizadoConTiempo,
                 VERBOSE,
-                transitionLogger
+                transitionLogger,
+                invariantChecker
         );
 
         System.out.println("Politica: " + POLICY_NAME);
@@ -103,14 +106,14 @@ public class Main {
 
         long elapsedMillis = System.currentTimeMillis() - startMillis;
 
-        InvariantChecker invariantChecker = new InvariantChecker();
+        boolean placeInvariantsOk = invariantChecker.arePlaceInvariantsSatisfied(petriNet.getMarking());
 
         SimulationResult result = new SimulationResult(
                 petriNet.getMarking(),
                 transitionLogger.getTotalAttempts(),
                 transitionLogger.getTotalFired(),
                 transitionLogger.getFiredByTransition(),
-                invariantChecker.keepsTokenTotal(config.getInitialMarking(), petriNet.getMarking())
+                placeInvariantsOk
         );
 
         transitionLogger.writeSummary(
@@ -123,6 +126,8 @@ public class Main {
         transitionLogger.close();
 
         System.out.println("Resumen: " + result);
+        System.out.println("Reporte de invariantes de plaza:");
+        System.out.print(invariantChecker.buildReport(petriNet.getMarking()));
         System.out.println("Invariantes completos: "
                 + simulationState.getCompletedInvariants()
                 + "/"

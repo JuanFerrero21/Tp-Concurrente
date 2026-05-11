@@ -1,5 +1,6 @@
 package ar.edu.unc.concurrente.monitor;
 
+import ar.edu.unc.concurrente.analysis.InvariantChecker;
 import ar.edu.unc.concurrente.analysis.SimulationState;
 import ar.edu.unc.concurrente.log.TransitionLogger;
 import ar.edu.unc.concurrente.petri.PetriNet;
@@ -19,22 +20,23 @@ public class Monitor implements MonitorInterface {
     private final SensibilizadoConTiempo sensibilizadoConTiempo;
     private final boolean verbose;
     private final TransitionLogger transitionLogger;
+    private final InvariantChecker invariantChecker;
     private Integer selectedTransition;
 
     public Monitor(PetriNet petriNet) {
-        this(petriNet, new PrioritySimplePolicy(), null, null, false, null);
+        this(petriNet, new PrioritySimplePolicy(), null, null, false, null, null);
     }
 
     public Monitor(PetriNet petriNet, Policy policy) {
-        this(petriNet, policy, null, null, false, null);
+        this(petriNet, policy, null, null, false, null, null);
     }
 
     public Monitor(PetriNet petriNet, Policy policy, SimulationState simulationState) {
-        this(petriNet, policy, simulationState, null, false, null);
+        this(petriNet, policy, simulationState, null, false, null, null);
     }
 
     public Monitor(PetriNet petriNet, Policy policy, SimulationState simulationState, boolean verbose) {
-        this(petriNet, policy, simulationState, null, verbose, null);
+        this(petriNet, policy, simulationState, null, verbose, null, null);
     }
 
     public Monitor(
@@ -44,7 +46,7 @@ public class Monitor implements MonitorInterface {
             SensibilizadoConTiempo sensibilizadoConTiempo,
             boolean verbose
     ) {
-        this(petriNet, policy, simulationState, sensibilizadoConTiempo, verbose, null);
+        this(petriNet, policy, simulationState, sensibilizadoConTiempo, verbose, null, null);
     }
 
     public Monitor(
@@ -55,6 +57,18 @@ public class Monitor implements MonitorInterface {
             boolean verbose,
             TransitionLogger transitionLogger
     ) {
+        this(petriNet, policy, simulationState, sensibilizadoConTiempo, verbose, transitionLogger, null);
+    }
+
+    public Monitor(
+            PetriNet petriNet,
+            Policy policy,
+            SimulationState simulationState,
+            SensibilizadoConTiempo sensibilizadoConTiempo,
+            boolean verbose,
+            TransitionLogger transitionLogger,
+            InvariantChecker invariantChecker
+    ) {
         this.petriNet = petriNet;
         this.policy = policy;
         this.simulationState = simulationState;
@@ -63,6 +77,7 @@ public class Monitor implements MonitorInterface {
         this.sensibilizadoConTiempo = sensibilizadoConTiempo;
         this.verbose = verbose;
         this.transitionLogger = transitionLogger;
+        this.invariantChecker = invariantChecker;
 
         actualizarSensibilizadasTemporales();
     }
@@ -125,7 +140,14 @@ public class Monitor implements MonitorInterface {
 
             transitionQueues.stopWaiting(transition);
 
-            petriNet.fire(transition);
+            boolean fired = petriNet.fire(transition);
+
+            if (!fired) {
+                throw new IllegalStateException("La transicion T" + transition + " fue seleccionada pero no pudo dispararse");
+            }
+
+            verifyPlaceInvariantsAfterFire();
+
             actualizarSensibilizadasTemporales();
 
             if (simulationState != null) {
@@ -167,6 +189,12 @@ public class Monitor implements MonitorInterface {
             return false;
         } finally {
             mutex.release();
+        }
+    }
+
+    private void verifyPlaceInvariantsAfterFire() {
+        if (invariantChecker != null) {
+            invariantChecker.verifyPlaceInvariantsOrThrow(petriNet.getMarking());
         }
     }
 
