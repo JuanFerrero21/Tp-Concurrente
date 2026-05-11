@@ -2,6 +2,7 @@ package ar.edu.unc.concurrente.app;
 
 import ar.edu.unc.concurrente.analysis.InvariantChecker;
 import ar.edu.unc.concurrente.analysis.SimulationResult;
+import ar.edu.unc.concurrente.analysis.RegexTransitionInvariantAnalyzer;
 import ar.edu.unc.concurrente.analysis.SimulationState;
 import ar.edu.unc.concurrente.config.SimulationConfig;
 import ar.edu.unc.concurrente.log.TransitionLogger;
@@ -38,7 +39,7 @@ public class Main {
      * LOG_PATH:
      * - archivo donde se registran las transiciones disparadas y los invariantes.
      */
-    private static final String POLICY_NAME = "random";
+    private static final String POLICY_NAME = "priority";
     private static final int TARGET_COMPLETED_INVARIANTS = 200;
     private static final boolean VERBOSE = false;
     private static final Path LOG_PATH = Paths.get("logs", "simulation.log");
@@ -125,9 +126,17 @@ public class Main {
 
         transitionLogger.close();
 
+        RegexTransitionInvariantAnalyzer regexAnalyzer = new RegexTransitionInvariantAnalyzer();
+        RegexTransitionInvariantAnalyzer.RegexAnalysisResult regexResult = regexAnalyzer.analyze(LOG_PATH);
+
+        if (!regexResult.isRegexOk()) {
+        throw new IllegalStateException("El analisis regex de invariantes de transicion fallo");
+        }
+
         System.out.println("Resumen: " + result);
         System.out.println("Reporte de invariantes de plaza:");
         System.out.print(invariantChecker.buildReport(petriNet.getMarking()));
+        System.out.print(regexResult.buildReport());
         System.out.println("Invariantes completos: "
                 + simulationState.getCompletedInvariants()
                 + "/"

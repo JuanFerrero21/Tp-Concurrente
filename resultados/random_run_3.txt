@@ -5,23 +5,23 @@ Objetivo de invariantes completos: 200
 Transiciones temporales: [false, true, false, true, true, false, true, false, true, true, true, false]
 Alfa ms: [0, 60, 0, 90, 90, 0, 100, 0, 90, 90, 90, 0]
 Beta ms: [0, 600, 0, 900, 900, 0, 1000, 0, 900, 900, 900, 0]
-Resumen: SimulationResult{finalMarking=[200, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0], totalAttempts=1195, totalFired=1189, firedByTransition=[200, 200, 67, 67, 67, 72, 72, 61, 61, 61, 61, 200], invariantOk=true}
+Resumen: SimulationResult{finalMarking=[200, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0], totalAttempts=1204, totalFired=1198, firedByTransition=[200, 200, 66, 66, 66, 68, 68, 66, 66, 66, 66, 200], invariantOk=true}
 Reporte de invariantes de plaza:
 CONSERVACION_DATOS: esperado=200, obtenido=200, ok=true
 BUS_BUFFER: esperado=1, obtenido=1, ok=true
 UNIDAD_PROCESAMIENTO: esperado=1, obtenido=1, ok=true
 Analisis regex de invariantes de transicion:
 Tokens analizados: 200
-Medium: 67
-Simple: 72
-High: 61
+Medium: 66
+Simple: 68
+High: 66
 Invalidos: 0
 Incompletos: 0
 Summary OK: true
-Tiempo segun SUMMARY: 36205 ms
+Tiempo segun SUMMARY: 37005 ms
 Regex OK: true
 Invariantes completos: 200/200
 Invariantes iniciados: 200
-Procesados por modo [medio, simple, alto]: [67, 72, 61]
-Tiempo total de ejecucion: 36205 ms
+Procesados por modo [medio, simple, alto]: [66, 68, 66]
+Tiempo total de ejecucion: 37005 ms
 Log generado en: logs/simulation.log
