@@ -1,4 +1,4 @@
-package ar.edu.unc.concurrente.time;
+package ar.edu.unc.concurrente.tiempo;
 
 import java.util.Arrays;
 import java.util.Set;

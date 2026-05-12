@@ -1,1210 +1,1328 @@
-RUN policy=priority target=200
-TEMPORAL transitions=[false, true, false, true, true, false, true, false, true, true, true, false]
+EJECUCION politica=prioridad objetivo=200
+TEMPORAL transiciones=[false, true, false, true, true, false, true, false, true, true, true, false]
 ALFA millis=[0, 60, 0, 90, 90, 0, 100, 0, 90, 90, 90, 0]
 BETA millis=[0, 600, 0, 900, 900, 0, 1000, 0, 900, 900, 900, 0]
-FORMAT tokenId=<id> fired=T<transition>
-FORMAT tokenId=<id> INVARIANT mode=<mode> path=<path> completed=true
+FORMATO idToken=<id> disparada=T<transicion>
+FORMATO idToken=<id> INVARIANTE modo=<modo> camino=<camino> completo=true
 
-tokenId=1 fired=T0
-tokenId=1 fired=T1
-tokenId=1 fired=T5
-tokenId=2 fired=T0
-tokenId=2 fired=T1
-tokenId=3 fired=T0
-tokenId=1 fired=T6
-tokenId=1 fired=T11
-tokenId=1 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=2 fired=T5
-tokenId=3 fired=T1
-tokenId=4 fired=T0
-tokenId=4 fired=T1
-tokenId=5 fired=T0
-tokenId=2 fired=T6
-tokenId=2 fired=T11
-tokenId=2 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=3 fired=T5
-tokenId=5 fired=T1
-tokenId=6 fired=T0
-tokenId=6 fired=T1
-tokenId=7 fired=T0
-tokenId=3 fired=T6
-tokenId=3 fired=T11
-tokenId=3 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=4 fired=T5
-tokenId=7 fired=T1
-tokenId=8 fired=T0
-tokenId=4 fired=T6
-tokenId=4 fired=T11
-tokenId=4 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=5 fired=T5
-tokenId=8 fired=T1
-tokenId=9 fired=T0
-tokenId=9 fired=T1
-tokenId=10 fired=T0
-tokenId=5 fired=T6
-tokenId=5 fired=T11
-tokenId=5 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=6 fired=T5
-tokenId=10 fired=T1
-tokenId=11 fired=T0
-tokenId=11 fired=T1
-tokenId=12 fired=T0
-tokenId=6 fired=T6
-tokenId=6 fired=T11
-tokenId=6 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=7 fired=T5
-tokenId=12 fired=T1
-tokenId=13 fired=T0
-tokenId=7 fired=T6
-tokenId=7 fired=T11
-tokenId=7 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=8 fired=T5
-tokenId=13 fired=T1
-tokenId=14 fired=T0
-tokenId=14 fired=T1
-tokenId=15 fired=T0
-tokenId=8 fired=T6
-tokenId=8 fired=T11
-tokenId=8 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=9 fired=T5
-tokenId=15 fired=T1
-tokenId=16 fired=T0
-tokenId=16 fired=T1
-tokenId=17 fired=T0
-tokenId=9 fired=T6
-tokenId=9 fired=T11
-tokenId=9 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=10 fired=T5
-tokenId=17 fired=T1
-tokenId=18 fired=T0
-tokenId=10 fired=T6
-tokenId=10 fired=T11
-tokenId=10 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=11 fired=T5
-tokenId=18 fired=T1
-tokenId=19 fired=T0
-tokenId=19 fired=T1
-tokenId=20 fired=T0
-tokenId=11 fired=T6
-tokenId=11 fired=T11
-tokenId=11 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=12 fired=T5
-tokenId=20 fired=T1
-tokenId=21 fired=T0
-tokenId=21 fired=T1
-tokenId=22 fired=T0
-tokenId=12 fired=T6
-tokenId=12 fired=T11
-tokenId=12 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=13 fired=T5
-tokenId=22 fired=T1
-tokenId=23 fired=T0
-tokenId=13 fired=T6
-tokenId=13 fired=T11
-tokenId=13 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=14 fired=T5
-tokenId=23 fired=T1
-tokenId=24 fired=T0
-tokenId=24 fired=T1
-tokenId=25 fired=T0
-tokenId=14 fired=T6
-tokenId=14 fired=T11
-tokenId=14 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=15 fired=T5
-tokenId=25 fired=T1
-tokenId=26 fired=T0
-tokenId=26 fired=T1
-tokenId=27 fired=T0
-tokenId=15 fired=T6
-tokenId=15 fired=T11
-tokenId=15 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=16 fired=T5
-tokenId=27 fired=T1
-tokenId=28 fired=T0
-tokenId=16 fired=T6
-tokenId=16 fired=T11
-tokenId=16 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=17 fired=T5
-tokenId=28 fired=T1
-tokenId=29 fired=T0
-tokenId=29 fired=T1
-tokenId=30 fired=T0
-tokenId=17 fired=T6
-tokenId=17 fired=T11
-tokenId=17 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=18 fired=T5
-tokenId=30 fired=T1
-tokenId=31 fired=T0
-tokenId=31 fired=T1
-tokenId=32 fired=T0
-tokenId=18 fired=T6
-tokenId=18 fired=T11
-tokenId=18 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=19 fired=T5
-tokenId=32 fired=T1
-tokenId=33 fired=T0
-tokenId=19 fired=T6
-tokenId=33 fired=T1
-tokenId=20 fired=T5
-tokenId=34 fired=T0
-tokenId=19 fired=T11
-tokenId=19 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=34 fired=T1
-tokenId=35 fired=T0
-tokenId=20 fired=T6
-tokenId=20 fired=T11
-tokenId=20 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=21 fired=T5
-tokenId=35 fired=T1
-tokenId=36 fired=T0
-tokenId=36 fired=T1
-tokenId=37 fired=T0
-tokenId=21 fired=T6
-tokenId=21 fired=T11
-tokenId=21 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=22 fired=T5
-tokenId=37 fired=T1
-tokenId=38 fired=T0
-tokenId=38 fired=T1
-tokenId=22 fired=T6
-tokenId=39 fired=T0
-tokenId=23 fired=T5
-tokenId=22 fired=T11
-tokenId=22 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=39 fired=T1
-tokenId=40 fired=T0
-tokenId=23 fired=T6
-tokenId=23 fired=T11
-tokenId=23 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=24 fired=T5
-tokenId=40 fired=T1
-tokenId=41 fired=T0
-tokenId=41 fired=T1
-tokenId=42 fired=T0
-tokenId=24 fired=T6
-tokenId=24 fired=T11
-tokenId=24 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=25 fired=T5
-tokenId=42 fired=T1
-tokenId=43 fired=T0
-tokenId=43 fired=T1
-tokenId=25 fired=T6
-tokenId=44 fired=T0
-tokenId=26 fired=T5
-tokenId=25 fired=T11
-tokenId=25 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=44 fired=T1
-tokenId=45 fired=T0
-tokenId=26 fired=T6
-tokenId=26 fired=T11
-tokenId=26 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=27 fired=T5
-tokenId=45 fired=T1
-tokenId=46 fired=T0
-tokenId=46 fired=T1
-tokenId=47 fired=T0
-tokenId=27 fired=T6
-tokenId=27 fired=T11
-tokenId=27 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=28 fired=T5
-tokenId=47 fired=T1
-tokenId=48 fired=T0
-tokenId=48 fired=T1
-tokenId=28 fired=T6
-tokenId=49 fired=T0
-tokenId=29 fired=T5
-tokenId=28 fired=T11
-tokenId=28 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=49 fired=T1
-tokenId=50 fired=T0
-tokenId=29 fired=T6
-tokenId=29 fired=T11
-tokenId=29 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=30 fired=T5
-tokenId=50 fired=T1
-tokenId=51 fired=T0
-tokenId=51 fired=T1
-tokenId=52 fired=T0
-tokenId=30 fired=T6
-tokenId=30 fired=T11
-tokenId=30 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=31 fired=T5
-tokenId=52 fired=T1
-tokenId=53 fired=T0
-tokenId=53 fired=T1
-tokenId=31 fired=T6
-tokenId=54 fired=T0
-tokenId=32 fired=T5
-tokenId=31 fired=T11
-tokenId=31 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=54 fired=T1
-tokenId=55 fired=T0
-tokenId=32 fired=T6
-tokenId=32 fired=T11
-tokenId=32 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=33 fired=T5
-tokenId=55 fired=T1
-tokenId=56 fired=T0
-tokenId=56 fired=T1
-tokenId=57 fired=T0
-tokenId=33 fired=T6
-tokenId=33 fired=T11
-tokenId=33 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=34 fired=T5
-tokenId=57 fired=T1
-tokenId=58 fired=T0
-tokenId=58 fired=T1
-tokenId=34 fired=T6
-tokenId=59 fired=T0
-tokenId=35 fired=T5
-tokenId=34 fired=T11
-tokenId=34 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=59 fired=T1
-tokenId=60 fired=T0
-tokenId=35 fired=T6
-tokenId=35 fired=T11
-tokenId=35 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=36 fired=T5
-tokenId=60 fired=T1
-tokenId=61 fired=T0
-tokenId=61 fired=T1
-tokenId=62 fired=T0
-tokenId=36 fired=T6
-tokenId=36 fired=T11
-tokenId=36 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=37 fired=T5
-tokenId=62 fired=T1
-tokenId=63 fired=T0
-tokenId=63 fired=T1
-tokenId=37 fired=T6
-tokenId=64 fired=T0
-tokenId=38 fired=T5
-tokenId=37 fired=T11
-tokenId=37 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=64 fired=T1
-tokenId=65 fired=T0
-tokenId=38 fired=T6
-tokenId=38 fired=T11
-tokenId=38 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=39 fired=T5
-tokenId=65 fired=T1
-tokenId=66 fired=T0
-tokenId=66 fired=T1
-tokenId=67 fired=T0
-tokenId=39 fired=T6
-tokenId=39 fired=T11
-tokenId=39 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=40 fired=T5
-tokenId=67 fired=T1
-tokenId=68 fired=T0
-tokenId=68 fired=T1
-tokenId=40 fired=T6
-tokenId=69 fired=T0
-tokenId=41 fired=T5
-tokenId=40 fired=T11
-tokenId=40 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=69 fired=T1
-tokenId=70 fired=T0
-tokenId=41 fired=T6
-tokenId=41 fired=T11
-tokenId=41 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=42 fired=T5
-tokenId=70 fired=T1
-tokenId=71 fired=T0
-tokenId=71 fired=T1
-tokenId=72 fired=T0
-tokenId=42 fired=T6
-tokenId=42 fired=T11
-tokenId=42 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=43 fired=T5
-tokenId=72 fired=T1
-tokenId=73 fired=T0
-tokenId=73 fired=T1
-tokenId=43 fired=T6
-tokenId=74 fired=T0
-tokenId=44 fired=T5
-tokenId=43 fired=T11
-tokenId=43 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=74 fired=T1
-tokenId=75 fired=T0
-tokenId=44 fired=T6
-tokenId=44 fired=T11
-tokenId=44 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=45 fired=T5
-tokenId=75 fired=T1
-tokenId=76 fired=T0
-tokenId=76 fired=T1
-tokenId=77 fired=T0
-tokenId=45 fired=T6
-tokenId=45 fired=T11
-tokenId=45 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=46 fired=T5
-tokenId=77 fired=T1
-tokenId=78 fired=T0
-tokenId=78 fired=T1
-tokenId=46 fired=T6
-tokenId=79 fired=T0
-tokenId=47 fired=T5
-tokenId=46 fired=T11
-tokenId=46 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=79 fired=T1
-tokenId=80 fired=T0
-tokenId=47 fired=T6
-tokenId=47 fired=T11
-tokenId=47 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=48 fired=T5
-tokenId=80 fired=T1
-tokenId=81 fired=T0
-tokenId=81 fired=T1
-tokenId=82 fired=T0
-tokenId=48 fired=T6
-tokenId=48 fired=T11
-tokenId=48 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=49 fired=T5
-tokenId=82 fired=T1
-tokenId=83 fired=T0
-tokenId=83 fired=T1
-tokenId=49 fired=T6
-tokenId=84 fired=T0
-tokenId=50 fired=T5
-tokenId=49 fired=T11
-tokenId=49 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=84 fired=T1
-tokenId=85 fired=T0
-tokenId=50 fired=T6
-tokenId=50 fired=T11
-tokenId=50 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=51 fired=T5
-tokenId=85 fired=T1
-tokenId=86 fired=T0
-tokenId=86 fired=T1
-tokenId=87 fired=T0
-tokenId=51 fired=T6
-tokenId=51 fired=T11
-tokenId=51 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=52 fired=T5
-tokenId=87 fired=T1
-tokenId=88 fired=T0
-tokenId=88 fired=T1
-tokenId=89 fired=T0
-tokenId=52 fired=T6
-tokenId=52 fired=T11
-tokenId=52 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=53 fired=T5
-tokenId=89 fired=T1
-tokenId=90 fired=T0
-tokenId=53 fired=T6
-tokenId=53 fired=T11
-tokenId=53 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=54 fired=T5
-tokenId=90 fired=T1
-tokenId=91 fired=T0
-tokenId=91 fired=T1
-tokenId=92 fired=T0
-tokenId=54 fired=T6
-tokenId=54 fired=T11
-tokenId=54 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=55 fired=T5
-tokenId=92 fired=T1
-tokenId=93 fired=T0
-tokenId=93 fired=T1
-tokenId=94 fired=T0
-tokenId=55 fired=T6
-tokenId=55 fired=T11
-tokenId=55 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=56 fired=T5
-tokenId=94 fired=T1
-tokenId=95 fired=T0
-tokenId=56 fired=T6
-tokenId=56 fired=T11
-tokenId=56 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=57 fired=T5
-tokenId=95 fired=T1
-tokenId=96 fired=T0
-tokenId=96 fired=T1
-tokenId=97 fired=T0
-tokenId=57 fired=T6
-tokenId=57 fired=T11
-tokenId=57 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=58 fired=T5
-tokenId=97 fired=T1
-tokenId=98 fired=T0
-tokenId=98 fired=T1
-tokenId=99 fired=T0
-tokenId=58 fired=T6
-tokenId=58 fired=T11
-tokenId=58 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=59 fired=T5
-tokenId=99 fired=T1
-tokenId=100 fired=T0
-tokenId=59 fired=T6
-tokenId=59 fired=T11
-tokenId=59 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=60 fired=T5
-tokenId=100 fired=T1
-tokenId=101 fired=T0
-tokenId=101 fired=T1
-tokenId=102 fired=T0
-tokenId=60 fired=T6
-tokenId=60 fired=T11
-tokenId=60 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=61 fired=T5
-tokenId=102 fired=T1
-tokenId=103 fired=T0
-tokenId=103 fired=T1
-tokenId=104 fired=T0
-tokenId=61 fired=T6
-tokenId=61 fired=T11
-tokenId=61 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=62 fired=T5
-tokenId=104 fired=T1
-tokenId=105 fired=T0
-tokenId=62 fired=T6
-tokenId=62 fired=T11
-tokenId=62 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=63 fired=T5
-tokenId=105 fired=T1
-tokenId=106 fired=T0
-tokenId=106 fired=T1
-tokenId=107 fired=T0
-tokenId=63 fired=T6
-tokenId=63 fired=T11
-tokenId=63 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=64 fired=T5
-tokenId=107 fired=T1
-tokenId=108 fired=T0
-tokenId=108 fired=T1
-tokenId=109 fired=T0
-tokenId=64 fired=T6
-tokenId=64 fired=T11
-tokenId=64 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=65 fired=T5
-tokenId=109 fired=T1
-tokenId=110 fired=T0
-tokenId=65 fired=T6
-tokenId=65 fired=T11
-tokenId=65 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=66 fired=T5
-tokenId=110 fired=T1
-tokenId=111 fired=T0
-tokenId=111 fired=T1
-tokenId=112 fired=T0
-tokenId=66 fired=T6
-tokenId=66 fired=T11
-tokenId=66 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=67 fired=T5
-tokenId=112 fired=T1
-tokenId=113 fired=T0
-tokenId=113 fired=T1
-tokenId=114 fired=T0
-tokenId=67 fired=T6
-tokenId=67 fired=T11
-tokenId=67 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=68 fired=T5
-tokenId=114 fired=T1
-tokenId=115 fired=T0
-tokenId=68 fired=T6
-tokenId=68 fired=T11
-tokenId=68 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=69 fired=T5
-tokenId=115 fired=T1
-tokenId=116 fired=T0
-tokenId=116 fired=T1
-tokenId=117 fired=T0
-tokenId=69 fired=T6
-tokenId=69 fired=T11
-tokenId=69 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=70 fired=T5
-tokenId=117 fired=T1
-tokenId=118 fired=T0
-tokenId=118 fired=T1
-tokenId=119 fired=T0
-tokenId=70 fired=T6
-tokenId=70 fired=T11
-tokenId=70 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=71 fired=T5
-tokenId=119 fired=T1
-tokenId=120 fired=T0
-tokenId=71 fired=T6
-tokenId=71 fired=T11
-tokenId=71 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=72 fired=T5
-tokenId=120 fired=T1
-tokenId=121 fired=T0
-tokenId=121 fired=T1
-tokenId=122 fired=T0
-tokenId=72 fired=T6
-tokenId=72 fired=T11
-tokenId=72 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=73 fired=T5
-tokenId=122 fired=T1
-tokenId=123 fired=T0
-tokenId=123 fired=T1
-tokenId=124 fired=T0
-tokenId=73 fired=T6
-tokenId=73 fired=T11
-tokenId=73 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=74 fired=T5
-tokenId=124 fired=T1
-tokenId=125 fired=T0
-tokenId=74 fired=T6
-tokenId=74 fired=T11
-tokenId=74 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=75 fired=T5
-tokenId=125 fired=T1
-tokenId=126 fired=T0
-tokenId=126 fired=T1
-tokenId=127 fired=T0
-tokenId=75 fired=T6
-tokenId=75 fired=T11
-tokenId=75 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=76 fired=T5
-tokenId=127 fired=T1
-tokenId=128 fired=T0
-tokenId=128 fired=T1
-tokenId=129 fired=T0
-tokenId=76 fired=T6
-tokenId=76 fired=T11
-tokenId=76 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=77 fired=T5
-tokenId=129 fired=T1
-tokenId=130 fired=T0
-tokenId=77 fired=T6
-tokenId=77 fired=T11
-tokenId=77 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=78 fired=T5
-tokenId=130 fired=T1
-tokenId=131 fired=T0
-tokenId=131 fired=T1
-tokenId=132 fired=T0
-tokenId=78 fired=T6
-tokenId=78 fired=T11
-tokenId=78 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=79 fired=T5
-tokenId=132 fired=T1
-tokenId=133 fired=T0
-tokenId=133 fired=T1
-tokenId=134 fired=T0
-tokenId=79 fired=T6
-tokenId=79 fired=T11
-tokenId=79 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=80 fired=T5
-tokenId=134 fired=T1
-tokenId=135 fired=T0
-tokenId=80 fired=T6
-tokenId=80 fired=T11
-tokenId=80 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=81 fired=T5
-tokenId=135 fired=T1
-tokenId=136 fired=T0
-tokenId=136 fired=T1
-tokenId=137 fired=T0
-tokenId=81 fired=T6
-tokenId=81 fired=T11
-tokenId=81 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=82 fired=T5
-tokenId=137 fired=T1
-tokenId=138 fired=T0
-tokenId=138 fired=T1
-tokenId=139 fired=T0
-tokenId=82 fired=T6
-tokenId=82 fired=T11
-tokenId=82 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=83 fired=T5
-tokenId=139 fired=T1
-tokenId=140 fired=T0
-tokenId=83 fired=T6
-tokenId=83 fired=T11
-tokenId=83 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=84 fired=T5
-tokenId=140 fired=T1
-tokenId=141 fired=T0
-tokenId=141 fired=T1
-tokenId=142 fired=T0
-tokenId=84 fired=T6
-tokenId=84 fired=T11
-tokenId=84 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=85 fired=T5
-tokenId=142 fired=T1
-tokenId=143 fired=T0
-tokenId=143 fired=T1
-tokenId=144 fired=T0
-tokenId=85 fired=T6
-tokenId=85 fired=T11
-tokenId=85 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=86 fired=T5
-tokenId=144 fired=T1
-tokenId=145 fired=T0
-tokenId=145 fired=T1
-tokenId=86 fired=T6
-tokenId=146 fired=T0
-tokenId=87 fired=T5
-tokenId=86 fired=T11
-tokenId=86 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=146 fired=T1
-tokenId=147 fired=T0
-tokenId=87 fired=T6
-tokenId=87 fired=T11
-tokenId=87 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=88 fired=T5
-tokenId=147 fired=T1
-tokenId=148 fired=T0
-tokenId=148 fired=T1
-tokenId=149 fired=T0
-tokenId=88 fired=T6
-tokenId=88 fired=T11
-tokenId=88 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=89 fired=T5
-tokenId=149 fired=T1
-tokenId=150 fired=T0
-tokenId=150 fired=T1
-tokenId=89 fired=T6
-tokenId=151 fired=T0
-tokenId=90 fired=T5
-tokenId=89 fired=T11
-tokenId=89 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=151 fired=T1
-tokenId=152 fired=T0
-tokenId=90 fired=T6
-tokenId=90 fired=T11
-tokenId=90 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=91 fired=T5
-tokenId=152 fired=T1
-tokenId=153 fired=T0
-tokenId=153 fired=T1
-tokenId=154 fired=T0
-tokenId=91 fired=T6
-tokenId=91 fired=T11
-tokenId=91 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=92 fired=T5
-tokenId=154 fired=T1
-tokenId=155 fired=T0
-tokenId=155 fired=T1
-tokenId=156 fired=T0
-tokenId=92 fired=T6
-tokenId=92 fired=T11
-tokenId=92 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=93 fired=T5
-tokenId=156 fired=T1
-tokenId=157 fired=T0
-tokenId=93 fired=T6
-tokenId=93 fired=T11
-tokenId=93 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=94 fired=T5
-tokenId=157 fired=T1
-tokenId=158 fired=T0
-tokenId=158 fired=T1
-tokenId=159 fired=T0
-tokenId=94 fired=T6
-tokenId=94 fired=T11
-tokenId=94 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=95 fired=T5
-tokenId=159 fired=T1
-tokenId=160 fired=T0
-tokenId=160 fired=T1
-tokenId=161 fired=T0
-tokenId=95 fired=T6
-tokenId=95 fired=T11
-tokenId=95 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=96 fired=T5
-tokenId=161 fired=T1
-tokenId=162 fired=T0
-tokenId=96 fired=T6
-tokenId=96 fired=T11
-tokenId=96 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=97 fired=T5
-tokenId=162 fired=T1
-tokenId=163 fired=T0
-tokenId=163 fired=T1
-tokenId=164 fired=T0
-tokenId=97 fired=T6
-tokenId=97 fired=T11
-tokenId=97 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=98 fired=T5
-tokenId=164 fired=T1
-tokenId=165 fired=T0
-tokenId=165 fired=T1
-tokenId=98 fired=T6
-tokenId=166 fired=T0
-tokenId=99 fired=T5
-tokenId=98 fired=T11
-tokenId=98 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=166 fired=T1
-tokenId=167 fired=T0
-tokenId=99 fired=T6
-tokenId=99 fired=T11
-tokenId=99 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=100 fired=T5
-tokenId=167 fired=T1
-tokenId=168 fired=T0
-tokenId=168 fired=T1
-tokenId=169 fired=T0
-tokenId=100 fired=T6
-tokenId=100 fired=T11
-tokenId=100 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=101 fired=T5
-tokenId=169 fired=T1
-tokenId=170 fired=T0
-tokenId=101 fired=T6
-tokenId=101 fired=T11
-tokenId=101 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=102 fired=T5
-tokenId=170 fired=T1
-tokenId=171 fired=T0
-tokenId=171 fired=T1
-tokenId=172 fired=T0
-tokenId=102 fired=T6
-tokenId=102 fired=T11
-tokenId=102 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=103 fired=T5
-tokenId=172 fired=T1
-tokenId=173 fired=T0
-tokenId=173 fired=T1
-tokenId=174 fired=T0
-tokenId=103 fired=T6
-tokenId=103 fired=T11
-tokenId=103 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=104 fired=T5
-tokenId=174 fired=T1
-tokenId=175 fired=T0
-tokenId=175 fired=T1
-tokenId=104 fired=T6
-tokenId=176 fired=T0
-tokenId=105 fired=T5
-tokenId=104 fired=T11
-tokenId=104 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=176 fired=T1
-tokenId=177 fired=T0
-tokenId=105 fired=T6
-tokenId=105 fired=T11
-tokenId=105 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=106 fired=T5
-tokenId=177 fired=T1
-tokenId=178 fired=T0
-tokenId=178 fired=T1
-tokenId=179 fired=T0
-tokenId=106 fired=T6
-tokenId=106 fired=T11
-tokenId=106 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=107 fired=T5
-tokenId=179 fired=T1
-tokenId=180 fired=T0
-tokenId=107 fired=T6
-tokenId=107 fired=T11
-tokenId=107 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=108 fired=T5
-tokenId=180 fired=T1
-tokenId=181 fired=T0
-tokenId=181 fired=T1
-tokenId=182 fired=T0
-tokenId=108 fired=T6
-tokenId=108 fired=T11
-tokenId=108 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=109 fired=T5
-tokenId=182 fired=T1
-tokenId=183 fired=T0
-tokenId=183 fired=T1
-tokenId=184 fired=T0
-tokenId=109 fired=T6
-tokenId=109 fired=T11
-tokenId=109 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=110 fired=T5
-tokenId=184 fired=T1
-tokenId=185 fired=T0
-tokenId=110 fired=T6
-tokenId=110 fired=T11
-tokenId=110 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=111 fired=T5
-tokenId=185 fired=T1
-tokenId=186 fired=T0
-tokenId=186 fired=T1
-tokenId=187 fired=T0
-tokenId=111 fired=T6
-tokenId=111 fired=T11
-tokenId=111 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=112 fired=T5
-tokenId=187 fired=T1
-tokenId=188 fired=T0
-tokenId=188 fired=T1
-tokenId=189 fired=T0
-tokenId=112 fired=T6
-tokenId=112 fired=T11
-tokenId=112 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=113 fired=T5
-tokenId=189 fired=T1
-tokenId=190 fired=T0
-tokenId=190 fired=T1
-tokenId=113 fired=T6
-tokenId=191 fired=T0
-tokenId=114 fired=T5
-tokenId=113 fired=T11
-tokenId=113 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=191 fired=T1
-tokenId=192 fired=T0
-tokenId=114 fired=T6
-tokenId=114 fired=T11
-tokenId=114 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=115 fired=T5
-tokenId=192 fired=T1
-tokenId=193 fired=T0
-tokenId=193 fired=T1
-tokenId=194 fired=T0
-tokenId=115 fired=T6
-tokenId=115 fired=T11
-tokenId=115 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=116 fired=T5
-tokenId=194 fired=T1
-tokenId=195 fired=T0
-tokenId=195 fired=T1
-tokenId=116 fired=T6
-tokenId=196 fired=T0
-tokenId=117 fired=T5
-tokenId=116 fired=T11
-tokenId=116 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=196 fired=T1
-tokenId=197 fired=T0
-tokenId=117 fired=T6
-tokenId=117 fired=T11
-tokenId=117 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=118 fired=T5
-tokenId=197 fired=T1
-tokenId=198 fired=T0
-tokenId=198 fired=T1
-tokenId=199 fired=T0
-tokenId=118 fired=T6
-tokenId=118 fired=T11
-tokenId=118 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=119 fired=T5
-tokenId=199 fired=T1
-tokenId=200 fired=T0
-tokenId=200 fired=T1
-tokenId=119 fired=T6
-tokenId=119 fired=T11
-tokenId=119 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=120 fired=T5
-tokenId=120 fired=T6
-tokenId=120 fired=T11
-tokenId=120 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=121 fired=T5
-tokenId=121 fired=T6
-tokenId=121 fired=T11
-tokenId=121 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=122 fired=T5
-tokenId=122 fired=T6
-tokenId=122 fired=T11
-tokenId=122 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=123 fired=T5
-tokenId=123 fired=T6
-tokenId=123 fired=T11
-tokenId=123 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=124 fired=T5
-tokenId=124 fired=T6
-tokenId=124 fired=T11
-tokenId=124 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=125 fired=T5
-tokenId=125 fired=T6
-tokenId=125 fired=T11
-tokenId=125 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=126 fired=T5
-tokenId=126 fired=T6
-tokenId=126 fired=T11
-tokenId=126 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=127 fired=T5
-tokenId=127 fired=T6
-tokenId=127 fired=T11
-tokenId=127 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=128 fired=T5
-tokenId=128 fired=T6
-tokenId=128 fired=T11
-tokenId=128 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=129 fired=T5
-tokenId=129 fired=T6
-tokenId=129 fired=T11
-tokenId=129 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=130 fired=T5
-tokenId=130 fired=T6
-tokenId=130 fired=T11
-tokenId=130 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=131 fired=T5
-tokenId=131 fired=T6
-tokenId=131 fired=T11
-tokenId=131 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=132 fired=T5
-tokenId=132 fired=T6
-tokenId=132 fired=T11
-tokenId=132 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=133 fired=T5
-tokenId=133 fired=T6
-tokenId=133 fired=T11
-tokenId=133 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=134 fired=T5
-tokenId=134 fired=T6
-tokenId=134 fired=T11
-tokenId=134 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=135 fired=T5
-tokenId=135 fired=T6
-tokenId=135 fired=T11
-tokenId=135 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=136 fired=T5
-tokenId=136 fired=T6
-tokenId=136 fired=T11
-tokenId=136 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=137 fired=T5
-tokenId=137 fired=T6
-tokenId=137 fired=T11
-tokenId=137 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=138 fired=T5
-tokenId=138 fired=T6
-tokenId=138 fired=T11
-tokenId=138 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=139 fired=T5
-tokenId=139 fired=T6
-tokenId=139 fired=T11
-tokenId=139 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=140 fired=T5
-tokenId=140 fired=T6
-tokenId=140 fired=T11
-tokenId=140 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=141 fired=T5
-tokenId=141 fired=T6
-tokenId=141 fired=T11
-tokenId=141 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=142 fired=T5
-tokenId=142 fired=T6
-tokenId=142 fired=T11
-tokenId=142 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=143 fired=T5
-tokenId=143 fired=T6
-tokenId=143 fired=T11
-tokenId=143 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=144 fired=T5
-tokenId=144 fired=T6
-tokenId=144 fired=T11
-tokenId=144 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=145 fired=T5
-tokenId=145 fired=T6
-tokenId=145 fired=T11
-tokenId=145 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=146 fired=T5
-tokenId=146 fired=T6
-tokenId=146 fired=T11
-tokenId=146 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=147 fired=T5
-tokenId=147 fired=T6
-tokenId=147 fired=T11
-tokenId=147 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=148 fired=T5
-tokenId=148 fired=T6
-tokenId=148 fired=T11
-tokenId=148 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=149 fired=T5
-tokenId=149 fired=T6
-tokenId=149 fired=T11
-tokenId=149 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=150 fired=T2
-tokenId=150 fired=T3
-tokenId=150 fired=T4
-tokenId=151 fired=T5
-tokenId=150 fired=T11
-tokenId=150 INVARIANT mode=MEDIUM path=T0,T1,T2,T3,T4,T11 completed=true
-tokenId=151 fired=T6
-tokenId=151 fired=T11
-tokenId=151 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=152 fired=T5
-tokenId=152 fired=T6
-tokenId=152 fired=T11
-tokenId=152 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=153 fired=T5
-tokenId=153 fired=T6
-tokenId=153 fired=T11
-tokenId=153 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=154 fired=T5
-tokenId=154 fired=T6
-tokenId=154 fired=T11
-tokenId=154 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=155 fired=T5
-tokenId=155 fired=T6
-tokenId=155 fired=T11
-tokenId=155 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=156 fired=T5
-tokenId=156 fired=T6
-tokenId=156 fired=T11
-tokenId=156 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=157 fired=T5
-tokenId=157 fired=T6
-tokenId=157 fired=T11
-tokenId=157 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=158 fired=T5
-tokenId=158 fired=T6
-tokenId=158 fired=T11
-tokenId=158 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=159 fired=T5
-tokenId=159 fired=T6
-tokenId=159 fired=T11
-tokenId=159 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=160 fired=T5
-tokenId=160 fired=T6
-tokenId=160 fired=T11
-tokenId=160 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=161 fired=T5
-tokenId=161 fired=T6
-tokenId=161 fired=T11
-tokenId=161 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=162 fired=T5
-tokenId=162 fired=T6
-tokenId=162 fired=T11
-tokenId=162 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=163 fired=T5
-tokenId=163 fired=T6
-tokenId=163 fired=T11
-tokenId=163 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=164 fired=T5
-tokenId=164 fired=T6
-tokenId=164 fired=T11
-tokenId=164 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=165 fired=T5
-tokenId=165 fired=T6
-tokenId=165 fired=T11
-tokenId=165 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=166 fired=T5
-tokenId=166 fired=T6
-tokenId=166 fired=T11
-tokenId=166 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=167 fired=T5
-tokenId=167 fired=T6
-tokenId=167 fired=T11
-tokenId=167 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=168 fired=T5
-tokenId=168 fired=T6
-tokenId=168 fired=T11
-tokenId=168 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=169 fired=T5
-tokenId=169 fired=T6
-tokenId=169 fired=T11
-tokenId=169 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=170 fired=T5
-tokenId=170 fired=T6
-tokenId=170 fired=T11
-tokenId=170 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=171 fired=T5
-tokenId=171 fired=T6
-tokenId=171 fired=T11
-tokenId=171 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=172 fired=T5
-tokenId=172 fired=T6
-tokenId=172 fired=T11
-tokenId=172 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=173 fired=T5
-tokenId=173 fired=T6
-tokenId=173 fired=T11
-tokenId=173 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=174 fired=T5
-tokenId=174 fired=T6
-tokenId=174 fired=T11
-tokenId=174 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=175 fired=T5
-tokenId=175 fired=T6
-tokenId=175 fired=T11
-tokenId=175 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=176 fired=T5
-tokenId=176 fired=T6
-tokenId=176 fired=T11
-tokenId=176 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=177 fired=T5
-tokenId=177 fired=T6
-tokenId=177 fired=T11
-tokenId=177 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=178 fired=T5
-tokenId=178 fired=T6
-tokenId=178 fired=T11
-tokenId=178 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=179 fired=T5
-tokenId=179 fired=T6
-tokenId=179 fired=T11
-tokenId=179 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=180 fired=T5
-tokenId=180 fired=T6
-tokenId=180 fired=T11
-tokenId=180 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=181 fired=T5
-tokenId=181 fired=T6
-tokenId=181 fired=T11
-tokenId=181 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=182 fired=T5
-tokenId=182 fired=T6
-tokenId=182 fired=T11
-tokenId=182 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=183 fired=T5
-tokenId=183 fired=T6
-tokenId=183 fired=T11
-tokenId=183 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=184 fired=T5
-tokenId=184 fired=T6
-tokenId=184 fired=T11
-tokenId=184 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=185 fired=T5
-tokenId=185 fired=T6
-tokenId=185 fired=T11
-tokenId=185 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=186 fired=T5
-tokenId=186 fired=T6
-tokenId=186 fired=T11
-tokenId=186 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=187 fired=T5
-tokenId=187 fired=T6
-tokenId=187 fired=T11
-tokenId=187 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=188 fired=T5
-tokenId=188 fired=T6
-tokenId=188 fired=T11
-tokenId=188 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=189 fired=T5
-tokenId=189 fired=T6
-tokenId=189 fired=T11
-tokenId=189 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=190 fired=T5
-tokenId=190 fired=T6
-tokenId=190 fired=T11
-tokenId=190 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=191 fired=T5
-tokenId=191 fired=T6
-tokenId=191 fired=T11
-tokenId=191 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=192 fired=T5
-tokenId=192 fired=T6
-tokenId=192 fired=T11
-tokenId=192 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=193 fired=T5
-tokenId=193 fired=T6
-tokenId=193 fired=T11
-tokenId=193 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=194 fired=T5
-tokenId=194 fired=T6
-tokenId=194 fired=T11
-tokenId=194 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=195 fired=T5
-tokenId=195 fired=T6
-tokenId=195 fired=T11
-tokenId=195 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=196 fired=T5
-tokenId=196 fired=T6
-tokenId=196 fired=T11
-tokenId=196 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=197 fired=T5
-tokenId=197 fired=T6
-tokenId=197 fired=T11
-tokenId=197 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=198 fired=T5
-tokenId=198 fired=T6
-tokenId=198 fired=T11
-tokenId=198 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=199 fired=T5
-tokenId=199 fired=T6
-tokenId=199 fired=T11
-tokenId=199 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
-tokenId=200 fired=T5
-tokenId=200 fired=T6
-tokenId=200 fired=T11
-tokenId=200 INVARIANT mode=SIMPLE path=T0,T1,T5,T6,T11 completed=true
+idToken=1 disparada=T0
+idToken=1 disparada=T1
+idToken=1 disparada=T5
+idToken=2 disparada=T0
+idToken=2 disparada=T1
+idToken=3 disparada=T0
+idToken=1 disparada=T6
+idToken=2 disparada=T7
+idToken=1 disparada=T11
+idToken=1 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=3 disparada=T1
+idToken=4 disparada=T0
+idToken=4 disparada=T1
+idToken=5 disparada=T0
+idToken=2 disparada=T8
+idToken=5 disparada=T1
+idToken=6 disparada=T0
+idToken=2 disparada=T9
+idToken=6 disparada=T1
+idToken=7 disparada=T0
+idToken=7 disparada=T1
+idToken=8 disparada=T0
+idToken=2 disparada=T10
+idToken=3 disparada=T5
+idToken=2 disparada=T11
+idToken=2 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=8 disparada=T1
+idToken=9 disparada=T0
+idToken=3 disparada=T6
+idToken=3 disparada=T11
+idToken=3 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=4 disparada=T5
+idToken=9 disparada=T1
+idToken=10 disparada=T0
+idToken=10 disparada=T1
+idToken=11 disparada=T0
+idToken=4 disparada=T6
+idToken=5 disparada=T7
+idToken=4 disparada=T11
+idToken=4 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=11 disparada=T1
+idToken=12 disparada=T0
+idToken=5 disparada=T8
+idToken=12 disparada=T1
+idToken=13 disparada=T0
+idToken=13 disparada=T1
+idToken=14 disparada=T0
+idToken=5 disparada=T9
+idToken=14 disparada=T1
+idToken=15 disparada=T0
+idToken=5 disparada=T10
+idToken=6 disparada=T5
+idToken=5 disparada=T11
+idToken=5 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=15 disparada=T1
+idToken=16 disparada=T0
+idToken=16 disparada=T1
+idToken=17 disparada=T0
+idToken=6 disparada=T6
+idToken=6 disparada=T11
+idToken=6 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=7 disparada=T5
+idToken=17 disparada=T1
+idToken=18 disparada=T0
+idToken=18 disparada=T1
+idToken=19 disparada=T0
+idToken=7 disparada=T6
+idToken=7 disparada=T11
+idToken=7 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=8 disparada=T5
+idToken=19 disparada=T1
+idToken=20 disparada=T0
+idToken=8 disparada=T6
+idToken=9 disparada=T7
+idToken=8 disparada=T11
+idToken=8 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=20 disparada=T1
+idToken=21 disparada=T0
+idToken=21 disparada=T1
+idToken=22 disparada=T0
+idToken=9 disparada=T8
+idToken=22 disparada=T1
+idToken=23 disparada=T0
+idToken=9 disparada=T9
+idToken=23 disparada=T1
+idToken=24 disparada=T0
+idToken=24 disparada=T1
+idToken=25 disparada=T0
+idToken=9 disparada=T10
+idToken=10 disparada=T5
+idToken=9 disparada=T11
+idToken=9 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=25 disparada=T1
+idToken=26 disparada=T0
+idToken=26 disparada=T1
+idToken=27 disparada=T0
+idToken=10 disparada=T6
+idToken=11 disparada=T2
+idToken=10 disparada=T11
+idToken=10 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=27 disparada=T1
+idToken=28 disparada=T0
+idToken=11 disparada=T3
+idToken=28 disparada=T1
+idToken=29 disparada=T0
+idToken=29 disparada=T1
+idToken=30 disparada=T0
+idToken=11 disparada=T4
+idToken=12 disparada=T5
+idToken=11 disparada=T11
+idToken=11 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=30 disparada=T1
+idToken=31 disparada=T0
+idToken=12 disparada=T6
+idToken=12 disparada=T11
+idToken=12 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=13 disparada=T5
+idToken=31 disparada=T1
+idToken=32 disparada=T0
+idToken=32 disparada=T1
+idToken=33 disparada=T0
+idToken=13 disparada=T6
+idToken=14 disparada=T2
+idToken=13 disparada=T11
+idToken=13 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=33 disparada=T1
+idToken=34 disparada=T0
+idToken=14 disparada=T3
+idToken=34 disparada=T1
+idToken=35 disparada=T0
+idToken=35 disparada=T1
+idToken=36 disparada=T0
+idToken=14 disparada=T4
+idToken=15 disparada=T5
+idToken=14 disparada=T11
+idToken=14 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=36 disparada=T1
+idToken=37 disparada=T0
+idToken=37 disparada=T1
+idToken=38 disparada=T0
+idToken=15 disparada=T6
+idToken=16 disparada=T2
+idToken=15 disparada=T11
+idToken=15 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=38 disparada=T1
+idToken=39 disparada=T0
+idToken=16 disparada=T3
+idToken=39 disparada=T1
+idToken=40 disparada=T0
+idToken=40 disparada=T1
+idToken=16 disparada=T4
+idToken=17 disparada=T5
+idToken=41 disparada=T0
+idToken=16 disparada=T11
+idToken=16 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=41 disparada=T1
+idToken=42 disparada=T0
+idToken=17 disparada=T6
+idToken=18 disparada=T2
+idToken=17 disparada=T11
+idToken=17 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=42 disparada=T1
+idToken=43 disparada=T0
+idToken=43 disparada=T1
+idToken=44 disparada=T0
+idToken=18 disparada=T3
+idToken=44 disparada=T1
+idToken=45 disparada=T0
+idToken=18 disparada=T4
+idToken=19 disparada=T5
+idToken=18 disparada=T11
+idToken=18 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=45 disparada=T1
+idToken=46 disparada=T0
+idToken=46 disparada=T1
+idToken=47 disparada=T0
+idToken=19 disparada=T6
+idToken=20 disparada=T7
+idToken=19 disparada=T11
+idToken=19 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=47 disparada=T1
+idToken=48 disparada=T0
+idToken=20 disparada=T8
+idToken=48 disparada=T1
+idToken=49 disparada=T0
+idToken=49 disparada=T1
+idToken=50 disparada=T0
+idToken=20 disparada=T9
+idToken=50 disparada=T1
+idToken=51 disparada=T0
+idToken=20 disparada=T10
+idToken=21 disparada=T5
+idToken=20 disparada=T11
+idToken=20 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=51 disparada=T1
+idToken=52 disparada=T0
+idToken=52 disparada=T1
+idToken=53 disparada=T0
+idToken=21 disparada=T6
+idToken=22 disparada=T2
+idToken=21 disparada=T11
+idToken=21 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=53 disparada=T1
+idToken=54 disparada=T0
+idToken=22 disparada=T3
+idToken=54 disparada=T1
+idToken=55 disparada=T0
+idToken=55 disparada=T1
+idToken=56 disparada=T0
+idToken=22 disparada=T4
+idToken=23 disparada=T5
+idToken=22 disparada=T11
+idToken=22 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=56 disparada=T1
+idToken=57 disparada=T0
+idToken=57 disparada=T1
+idToken=58 disparada=T0
+idToken=23 disparada=T6
+idToken=24 disparada=T2
+idToken=23 disparada=T11
+idToken=23 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=58 disparada=T1
+idToken=59 disparada=T0
+idToken=24 disparada=T3
+idToken=59 disparada=T1
+idToken=60 disparada=T0
+idToken=60 disparada=T1
+idToken=61 disparada=T0
+idToken=24 disparada=T4
+idToken=25 disparada=T5
+idToken=24 disparada=T11
+idToken=24 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=61 disparada=T1
+idToken=62 disparada=T0
+idToken=25 disparada=T6
+idToken=26 disparada=T7
+idToken=25 disparada=T11
+idToken=25 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=62 disparada=T1
+idToken=63 disparada=T0
+idToken=63 disparada=T1
+idToken=64 disparada=T0
+idToken=26 disparada=T8
+idToken=64 disparada=T1
+idToken=65 disparada=T0
+idToken=26 disparada=T9
+idToken=65 disparada=T1
+idToken=66 disparada=T0
+idToken=66 disparada=T1
+idToken=67 disparada=T0
+idToken=26 disparada=T10
+idToken=27 disparada=T5
+idToken=26 disparada=T11
+idToken=26 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=67 disparada=T1
+idToken=68 disparada=T0
+idToken=27 disparada=T6
+idToken=28 disparada=T2
+idToken=27 disparada=T11
+idToken=27 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=68 disparada=T1
+idToken=69 disparada=T0
+idToken=69 disparada=T1
+idToken=70 disparada=T0
+idToken=28 disparada=T3
+idToken=70 disparada=T1
+idToken=71 disparada=T0
+idToken=28 disparada=T4
+idToken=29 disparada=T5
+idToken=28 disparada=T11
+idToken=28 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=71 disparada=T1
+idToken=72 disparada=T0
+idToken=72 disparada=T1
+idToken=73 disparada=T0
+idToken=29 disparada=T6
+idToken=30 disparada=T7
+idToken=29 disparada=T11
+idToken=29 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=73 disparada=T1
+idToken=74 disparada=T0
+idToken=30 disparada=T8
+idToken=74 disparada=T1
+idToken=75 disparada=T0
+idToken=75 disparada=T1
+idToken=76 disparada=T0
+idToken=30 disparada=T9
+idToken=76 disparada=T1
+idToken=77 disparada=T0
+idToken=30 disparada=T10
+idToken=31 disparada=T5
+idToken=30 disparada=T11
+idToken=30 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=77 disparada=T1
+idToken=78 disparada=T0
+idToken=78 disparada=T1
+idToken=79 disparada=T0
+idToken=31 disparada=T6
+idToken=32 disparada=T2
+idToken=31 disparada=T11
+idToken=31 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=79 disparada=T1
+idToken=80 disparada=T0
+idToken=32 disparada=T3
+idToken=80 disparada=T1
+idToken=81 disparada=T0
+idToken=81 disparada=T1
+idToken=82 disparada=T0
+idToken=32 disparada=T4
+idToken=33 disparada=T5
+idToken=32 disparada=T11
+idToken=32 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=82 disparada=T1
+idToken=83 disparada=T0
+idToken=83 disparada=T1
+idToken=84 disparada=T0
+idToken=33 disparada=T6
+idToken=34 disparada=T7
+idToken=33 disparada=T11
+idToken=33 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=84 disparada=T1
+idToken=85 disparada=T0
+idToken=34 disparada=T8
+idToken=85 disparada=T1
+idToken=86 disparada=T0
+idToken=86 disparada=T1
+idToken=87 disparada=T0
+idToken=34 disparada=T9
+idToken=87 disparada=T1
+idToken=88 disparada=T0
+idToken=34 disparada=T10
+idToken=35 disparada=T5
+idToken=34 disparada=T11
+idToken=34 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=88 disparada=T1
+idToken=89 disparada=T0
+idToken=89 disparada=T1
+idToken=90 disparada=T0
+idToken=35 disparada=T6
+idToken=36 disparada=T7
+idToken=35 disparada=T11
+idToken=35 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=90 disparada=T1
+idToken=91 disparada=T0
+idToken=36 disparada=T8
+idToken=91 disparada=T1
+idToken=92 disparada=T0
+idToken=92 disparada=T1
+idToken=93 disparada=T0
+idToken=36 disparada=T9
+idToken=93 disparada=T1
+idToken=94 disparada=T0
+idToken=36 disparada=T10
+idToken=37 disparada=T5
+idToken=36 disparada=T11
+idToken=36 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=94 disparada=T1
+idToken=95 disparada=T0
+idToken=95 disparada=T1
+idToken=96 disparada=T0
+idToken=37 disparada=T6
+idToken=38 disparada=T2
+idToken=37 disparada=T11
+idToken=37 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=96 disparada=T1
+idToken=97 disparada=T0
+idToken=38 disparada=T3
+idToken=97 disparada=T1
+idToken=98 disparada=T0
+idToken=98 disparada=T1
+idToken=99 disparada=T0
+idToken=38 disparada=T4
+idToken=39 disparada=T5
+idToken=38 disparada=T11
+idToken=38 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=99 disparada=T1
+idToken=100 disparada=T0
+idToken=100 disparada=T1
+idToken=101 disparada=T0
+idToken=39 disparada=T6
+idToken=40 disparada=T2
+idToken=39 disparada=T11
+idToken=39 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=101 disparada=T1
+idToken=102 disparada=T0
+idToken=40 disparada=T3
+idToken=102 disparada=T1
+idToken=103 disparada=T0
+idToken=103 disparada=T1
+idToken=40 disparada=T4
+idToken=41 disparada=T5
+idToken=40 disparada=T11
+idToken=40 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=104 disparada=T0
+idToken=104 disparada=T1
+idToken=105 disparada=T0
+idToken=41 disparada=T6
+idToken=42 disparada=T2
+idToken=41 disparada=T11
+idToken=41 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=105 disparada=T1
+idToken=106 disparada=T0
+idToken=106 disparada=T1
+idToken=107 disparada=T0
+idToken=42 disparada=T3
+idToken=107 disparada=T1
+idToken=108 disparada=T0
+idToken=42 disparada=T4
+idToken=43 disparada=T5
+idToken=42 disparada=T11
+idToken=42 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=108 disparada=T1
+idToken=109 disparada=T0
+idToken=109 disparada=T1
+idToken=110 disparada=T0
+idToken=43 disparada=T6
+idToken=44 disparada=T2
+idToken=43 disparada=T11
+idToken=43 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=110 disparada=T1
+idToken=111 disparada=T0
+idToken=44 disparada=T3
+idToken=111 disparada=T1
+idToken=112 disparada=T0
+idToken=112 disparada=T1
+idToken=113 disparada=T0
+idToken=44 disparada=T4
+idToken=45 disparada=T5
+idToken=44 disparada=T11
+idToken=44 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=113 disparada=T1
+idToken=114 disparada=T0
+idToken=45 disparada=T6
+idToken=45 disparada=T11
+idToken=45 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=46 disparada=T5
+idToken=114 disparada=T1
+idToken=115 disparada=T0
+idToken=115 disparada=T1
+idToken=116 disparada=T0
+idToken=46 disparada=T6
+idToken=47 disparada=T7
+idToken=46 disparada=T11
+idToken=46 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=116 disparada=T1
+idToken=117 disparada=T0
+idToken=117 disparada=T1
+idToken=118 disparada=T0
+idToken=47 disparada=T8
+idToken=118 disparada=T1
+idToken=119 disparada=T0
+idToken=47 disparada=T9
+idToken=119 disparada=T1
+idToken=120 disparada=T0
+idToken=120 disparada=T1
+idToken=121 disparada=T0
+idToken=47 disparada=T10
+idToken=48 disparada=T5
+idToken=47 disparada=T11
+idToken=47 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=121 disparada=T1
+idToken=122 disparada=T0
+idToken=48 disparada=T6
+idToken=49 disparada=T2
+idToken=48 disparada=T11
+idToken=48 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=122 disparada=T1
+idToken=123 disparada=T0
+idToken=123 disparada=T1
+idToken=124 disparada=T0
+idToken=49 disparada=T3
+idToken=124 disparada=T1
+idToken=125 disparada=T0
+idToken=49 disparada=T4
+idToken=50 disparada=T5
+idToken=49 disparada=T11
+idToken=49 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=125 disparada=T1
+idToken=126 disparada=T0
+idToken=126 disparada=T1
+idToken=127 disparada=T0
+idToken=50 disparada=T6
+idToken=51 disparada=T2
+idToken=50 disparada=T11
+idToken=50 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=127 disparada=T1
+idToken=128 disparada=T0
+idToken=51 disparada=T3
+idToken=128 disparada=T1
+idToken=129 disparada=T0
+idToken=129 disparada=T1
+idToken=130 disparada=T0
+idToken=51 disparada=T4
+idToken=52 disparada=T5
+idToken=51 disparada=T11
+idToken=51 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=130 disparada=T1
+idToken=131 disparada=T0
+idToken=131 disparada=T1
+idToken=132 disparada=T0
+idToken=52 disparada=T6
+idToken=53 disparada=T2
+idToken=52 disparada=T11
+idToken=52 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=132 disparada=T1
+idToken=133 disparada=T0
+idToken=53 disparada=T3
+idToken=133 disparada=T1
+idToken=134 disparada=T0
+idToken=134 disparada=T1
+idToken=135 disparada=T0
+idToken=53 disparada=T4
+idToken=54 disparada=T5
+idToken=53 disparada=T11
+idToken=53 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=135 disparada=T1
+idToken=136 disparada=T0
+idToken=54 disparada=T6
+idToken=55 disparada=T7
+idToken=54 disparada=T11
+idToken=54 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=136 disparada=T1
+idToken=137 disparada=T0
+idToken=137 disparada=T1
+idToken=138 disparada=T0
+idToken=55 disparada=T8
+idToken=138 disparada=T1
+idToken=139 disparada=T0
+idToken=55 disparada=T9
+idToken=139 disparada=T1
+idToken=140 disparada=T0
+idToken=140 disparada=T1
+idToken=141 disparada=T0
+idToken=55 disparada=T10
+idToken=56 disparada=T5
+idToken=55 disparada=T11
+idToken=55 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=141 disparada=T1
+idToken=142 disparada=T0
+idToken=56 disparada=T6
+idToken=57 disparada=T7
+idToken=56 disparada=T11
+idToken=56 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=142 disparada=T1
+idToken=143 disparada=T0
+idToken=143 disparada=T1
+idToken=144 disparada=T0
+idToken=57 disparada=T8
+idToken=144 disparada=T1
+idToken=145 disparada=T0
+idToken=57 disparada=T9
+idToken=145 disparada=T1
+idToken=146 disparada=T0
+idToken=146 disparada=T1
+idToken=147 disparada=T0
+idToken=57 disparada=T10
+idToken=58 disparada=T5
+idToken=57 disparada=T11
+idToken=57 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=147 disparada=T1
+idToken=148 disparada=T0
+idToken=58 disparada=T6
+idToken=58 disparada=T11
+idToken=58 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=59 disparada=T5
+idToken=148 disparada=T1
+idToken=149 disparada=T0
+idToken=149 disparada=T1
+idToken=150 disparada=T0
+idToken=59 disparada=T6
+idToken=60 disparada=T2
+idToken=59 disparada=T11
+idToken=59 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=150 disparada=T1
+idToken=151 disparada=T0
+idToken=151 disparada=T1
+idToken=152 disparada=T0
+idToken=60 disparada=T3
+idToken=152 disparada=T1
+idToken=153 disparada=T0
+idToken=60 disparada=T4
+idToken=61 disparada=T5
+idToken=60 disparada=T11
+idToken=60 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=153 disparada=T1
+idToken=154 disparada=T0
+idToken=154 disparada=T1
+idToken=155 disparada=T0
+idToken=61 disparada=T6
+idToken=61 disparada=T11
+idToken=61 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=62 disparada=T5
+idToken=155 disparada=T1
+idToken=156 disparada=T0
+idToken=62 disparada=T6
+idToken=63 disparada=T7
+idToken=62 disparada=T11
+idToken=62 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=156 disparada=T1
+idToken=157 disparada=T0
+idToken=157 disparada=T1
+idToken=158 disparada=T0
+idToken=63 disparada=T8
+idToken=158 disparada=T1
+idToken=159 disparada=T0
+idToken=63 disparada=T9
+idToken=159 disparada=T1
+idToken=160 disparada=T0
+idToken=160 disparada=T1
+idToken=161 disparada=T0
+idToken=63 disparada=T10
+idToken=64 disparada=T5
+idToken=63 disparada=T11
+idToken=63 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=161 disparada=T1
+idToken=162 disparada=T0
+idToken=162 disparada=T1
+idToken=163 disparada=T0
+idToken=64 disparada=T6
+idToken=64 disparada=T11
+idToken=64 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=65 disparada=T5
+idToken=163 disparada=T1
+idToken=164 disparada=T0
+idToken=65 disparada=T6
+idToken=65 disparada=T11
+idToken=65 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=66 disparada=T5
+idToken=164 disparada=T1
+idToken=165 disparada=T0
+idToken=165 disparada=T1
+idToken=166 disparada=T0
+idToken=66 disparada=T6
+idToken=67 disparada=T7
+idToken=66 disparada=T11
+idToken=66 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=166 disparada=T1
+idToken=167 disparada=T0
+idToken=67 disparada=T8
+idToken=167 disparada=T1
+idToken=168 disparada=T0
+idToken=168 disparada=T1
+idToken=169 disparada=T0
+idToken=67 disparada=T9
+idToken=169 disparada=T1
+idToken=170 disparada=T0
+idToken=67 disparada=T10
+idToken=68 disparada=T5
+idToken=67 disparada=T11
+idToken=67 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=170 disparada=T1
+idToken=171 disparada=T0
+idToken=171 disparada=T1
+idToken=172 disparada=T0
+idToken=68 disparada=T6
+idToken=69 disparada=T7
+idToken=68 disparada=T11
+idToken=68 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=172 disparada=T1
+idToken=173 disparada=T0
+idToken=173 disparada=T1
+idToken=174 disparada=T0
+idToken=69 disparada=T8
+idToken=174 disparada=T1
+idToken=175 disparada=T0
+idToken=69 disparada=T9
+idToken=175 disparada=T1
+idToken=176 disparada=T0
+idToken=176 disparada=T1
+idToken=177 disparada=T0
+idToken=69 disparada=T10
+idToken=70 disparada=T5
+idToken=69 disparada=T11
+idToken=69 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=177 disparada=T1
+idToken=178 disparada=T0
+idToken=70 disparada=T6
+idToken=71 disparada=T2
+idToken=70 disparada=T11
+idToken=70 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=178 disparada=T1
+idToken=179 disparada=T0
+idToken=179 disparada=T1
+idToken=180 disparada=T0
+idToken=71 disparada=T3
+idToken=180 disparada=T1
+idToken=181 disparada=T0
+idToken=71 disparada=T4
+idToken=72 disparada=T5
+idToken=71 disparada=T11
+idToken=71 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=181 disparada=T1
+idToken=182 disparada=T0
+idToken=182 disparada=T1
+idToken=183 disparada=T0
+idToken=72 disparada=T6
+idToken=73 disparada=T2
+idToken=72 disparada=T11
+idToken=72 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=183 disparada=T1
+idToken=184 disparada=T0
+idToken=73 disparada=T3
+idToken=184 disparada=T1
+idToken=185 disparada=T0
+idToken=185 disparada=T1
+idToken=186 disparada=T0
+idToken=73 disparada=T4
+idToken=74 disparada=T5
+idToken=73 disparada=T11
+idToken=73 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=186 disparada=T1
+idToken=187 disparada=T0
+idToken=74 disparada=T6
+idToken=75 disparada=T2
+idToken=187 disparada=T1
+idToken=74 disparada=T11
+idToken=74 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=188 disparada=T0
+idToken=188 disparada=T1
+idToken=189 disparada=T0
+idToken=75 disparada=T3
+idToken=189 disparada=T1
+idToken=190 disparada=T0
+idToken=75 disparada=T4
+idToken=76 disparada=T5
+idToken=75 disparada=T11
+idToken=75 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=190 disparada=T1
+idToken=191 disparada=T0
+idToken=191 disparada=T1
+idToken=192 disparada=T0
+idToken=76 disparada=T6
+idToken=76 disparada=T11
+idToken=76 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=77 disparada=T5
+idToken=192 disparada=T1
+idToken=193 disparada=T0
+idToken=193 disparada=T1
+idToken=194 disparada=T0
+idToken=77 disparada=T6
+idToken=78 disparada=T2
+idToken=77 disparada=T11
+idToken=77 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=194 disparada=T1
+idToken=195 disparada=T0
+idToken=78 disparada=T3
+idToken=195 disparada=T1
+idToken=196 disparada=T0
+idToken=196 disparada=T1
+idToken=197 disparada=T0
+idToken=78 disparada=T4
+idToken=79 disparada=T5
+idToken=78 disparada=T11
+idToken=78 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=197 disparada=T1
+idToken=198 disparada=T0
+idToken=79 disparada=T6
+idToken=80 disparada=T7
+idToken=79 disparada=T11
+idToken=79 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=198 disparada=T1
+idToken=199 disparada=T0
+idToken=199 disparada=T1
+idToken=200 disparada=T0
+idToken=80 disparada=T8
+idToken=200 disparada=T1
+idToken=80 disparada=T9
+idToken=80 disparada=T10
+idToken=81 disparada=T5
+idToken=80 disparada=T11
+idToken=80 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=81 disparada=T6
+idToken=82 disparada=T7
+idToken=81 disparada=T11
+idToken=81 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=82 disparada=T8
+idToken=82 disparada=T9
+idToken=82 disparada=T10
+idToken=83 disparada=T5
+idToken=82 disparada=T11
+idToken=82 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=83 disparada=T6
+idToken=83 disparada=T11
+idToken=83 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=84 disparada=T5
+idToken=84 disparada=T6
+idToken=85 disparada=T2
+idToken=84 disparada=T11
+idToken=84 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=85 disparada=T3
+idToken=85 disparada=T4
+idToken=86 disparada=T5
+idToken=85 disparada=T11
+idToken=85 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=86 disparada=T6
+idToken=87 disparada=T7
+idToken=86 disparada=T11
+idToken=86 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=87 disparada=T8
+idToken=87 disparada=T9
+idToken=87 disparada=T10
+idToken=88 disparada=T5
+idToken=87 disparada=T11
+idToken=87 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=88 disparada=T6
+idToken=88 disparada=T11
+idToken=88 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=89 disparada=T5
+idToken=89 disparada=T6
+idToken=90 disparada=T2
+idToken=89 disparada=T11
+idToken=89 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=90 disparada=T3
+idToken=90 disparada=T4
+idToken=91 disparada=T5
+idToken=90 disparada=T11
+idToken=90 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=91 disparada=T6
+idToken=92 disparada=T2
+idToken=91 disparada=T11
+idToken=91 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=92 disparada=T3
+idToken=92 disparada=T4
+idToken=93 disparada=T5
+idToken=92 disparada=T11
+idToken=92 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=93 disparada=T6
+idToken=94 disparada=T2
+idToken=93 disparada=T11
+idToken=93 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=94 disparada=T3
+idToken=94 disparada=T4
+idToken=95 disparada=T5
+idToken=94 disparada=T11
+idToken=94 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=95 disparada=T6
+idToken=96 disparada=T7
+idToken=95 disparada=T11
+idToken=95 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=96 disparada=T8
+idToken=96 disparada=T9
+idToken=96 disparada=T10
+idToken=97 disparada=T5
+idToken=96 disparada=T11
+idToken=96 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=97 disparada=T6
+idToken=97 disparada=T11
+idToken=97 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=98 disparada=T5
+idToken=98 disparada=T6
+idToken=98 disparada=T11
+idToken=98 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=99 disparada=T5
+idToken=99 disparada=T6
+idToken=99 disparada=T11
+idToken=99 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=100 disparada=T5
+idToken=100 disparada=T6
+idToken=100 disparada=T11
+idToken=100 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=101 disparada=T5
+idToken=101 disparada=T6
+idToken=101 disparada=T11
+idToken=101 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=102 disparada=T5
+idToken=102 disparada=T6
+idToken=103 disparada=T7
+idToken=102 disparada=T11
+idToken=102 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=103 disparada=T8
+idToken=103 disparada=T9
+idToken=103 disparada=T10
+idToken=104 disparada=T5
+idToken=103 disparada=T11
+idToken=103 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=104 disparada=T6
+idToken=105 disparada=T7
+idToken=104 disparada=T11
+idToken=104 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=105 disparada=T8
+idToken=105 disparada=T9
+idToken=105 disparada=T10
+idToken=106 disparada=T5
+idToken=105 disparada=T11
+idToken=105 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=106 disparada=T6
+idToken=107 disparada=T7
+idToken=106 disparada=T11
+idToken=106 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=107 disparada=T8
+idToken=107 disparada=T9
+idToken=107 disparada=T10
+idToken=108 disparada=T5
+idToken=107 disparada=T11
+idToken=107 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=108 disparada=T6
+idToken=108 disparada=T11
+idToken=108 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=109 disparada=T5
+idToken=109 disparada=T6
+idToken=109 disparada=T11
+idToken=109 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=110 disparada=T5
+idToken=110 disparada=T6
+idToken=110 disparada=T11
+idToken=110 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=111 disparada=T5
+idToken=111 disparada=T6
+idToken=111 disparada=T11
+idToken=111 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=112 disparada=T5
+idToken=112 disparada=T6
+idToken=113 disparada=T2
+idToken=112 disparada=T11
+idToken=112 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=113 disparada=T3
+idToken=113 disparada=T4
+idToken=114 disparada=T5
+idToken=113 disparada=T11
+idToken=113 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=114 disparada=T6
+idToken=115 disparada=T2
+idToken=114 disparada=T11
+idToken=114 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=115 disparada=T3
+idToken=115 disparada=T4
+idToken=116 disparada=T5
+idToken=115 disparada=T11
+idToken=115 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=116 disparada=T6
+idToken=117 disparada=T7
+idToken=116 disparada=T11
+idToken=116 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=117 disparada=T8
+idToken=117 disparada=T9
+idToken=117 disparada=T10
+idToken=118 disparada=T5
+idToken=117 disparada=T11
+idToken=117 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=118 disparada=T6
+idToken=118 disparada=T11
+idToken=118 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=119 disparada=T5
+idToken=119 disparada=T6
+idToken=120 disparada=T7
+idToken=119 disparada=T11
+idToken=119 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=120 disparada=T8
+idToken=120 disparada=T9
+idToken=120 disparada=T10
+idToken=121 disparada=T5
+idToken=120 disparada=T11
+idToken=120 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=121 disparada=T6
+idToken=122 disparada=T2
+idToken=121 disparada=T11
+idToken=121 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=122 disparada=T3
+idToken=122 disparada=T4
+idToken=123 disparada=T5
+idToken=122 disparada=T11
+idToken=122 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=123 disparada=T6
+idToken=123 disparada=T11
+idToken=123 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=124 disparada=T5
+idToken=124 disparada=T6
+idToken=125 disparada=T7
+idToken=124 disparada=T11
+idToken=124 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=125 disparada=T8
+idToken=125 disparada=T9
+idToken=125 disparada=T10
+idToken=126 disparada=T5
+idToken=125 disparada=T11
+idToken=125 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=126 disparada=T6
+idToken=127 disparada=T7
+idToken=126 disparada=T11
+idToken=126 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=127 disparada=T8
+idToken=127 disparada=T9
+idToken=127 disparada=T10
+idToken=128 disparada=T5
+idToken=127 disparada=T11
+idToken=127 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=128 disparada=T6
+idToken=129 disparada=T7
+idToken=128 disparada=T11
+idToken=128 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=129 disparada=T8
+idToken=129 disparada=T9
+idToken=129 disparada=T10
+idToken=130 disparada=T5
+idToken=129 disparada=T11
+idToken=129 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=130 disparada=T6
+idToken=130 disparada=T11
+idToken=130 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=131 disparada=T5
+idToken=131 disparada=T6
+idToken=132 disparada=T7
+idToken=131 disparada=T11
+idToken=131 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=132 disparada=T8
+idToken=132 disparada=T9
+idToken=132 disparada=T10
+idToken=133 disparada=T5
+idToken=132 disparada=T11
+idToken=132 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=133 disparada=T6
+idToken=134 disparada=T2
+idToken=133 disparada=T11
+idToken=133 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=134 disparada=T3
+idToken=134 disparada=T4
+idToken=135 disparada=T5
+idToken=134 disparada=T11
+idToken=134 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=135 disparada=T6
+idToken=136 disparada=T7
+idToken=135 disparada=T11
+idToken=135 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=136 disparada=T8
+idToken=136 disparada=T9
+idToken=136 disparada=T10
+idToken=137 disparada=T5
+idToken=136 disparada=T11
+idToken=136 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=137 disparada=T6
+idToken=138 disparada=T2
+idToken=137 disparada=T11
+idToken=137 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=138 disparada=T3
+idToken=138 disparada=T4
+idToken=139 disparada=T5
+idToken=138 disparada=T11
+idToken=138 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=139 disparada=T6
+idToken=140 disparada=T2
+idToken=139 disparada=T11
+idToken=139 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=140 disparada=T3
+idToken=140 disparada=T4
+idToken=141 disparada=T5
+idToken=140 disparada=T11
+idToken=140 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=141 disparada=T6
+idToken=141 disparada=T11
+idToken=141 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=142 disparada=T5
+idToken=142 disparada=T6
+idToken=142 disparada=T11
+idToken=142 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=143 disparada=T5
+idToken=143 disparada=T6
+idToken=144 disparada=T7
+idToken=143 disparada=T11
+idToken=143 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=144 disparada=T8
+idToken=144 disparada=T9
+idToken=144 disparada=T10
+idToken=145 disparada=T5
+idToken=144 disparada=T11
+idToken=144 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=145 disparada=T6
+idToken=146 disparada=T7
+idToken=145 disparada=T11
+idToken=145 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=146 disparada=T8
+idToken=146 disparada=T9
+idToken=146 disparada=T10
+idToken=147 disparada=T5
+idToken=146 disparada=T11
+idToken=146 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=147 disparada=T6
+idToken=148 disparada=T2
+idToken=147 disparada=T11
+idToken=147 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=148 disparada=T3
+idToken=148 disparada=T4
+idToken=149 disparada=T5
+idToken=148 disparada=T11
+idToken=148 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=149 disparada=T6
+idToken=149 disparada=T11
+idToken=149 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=150 disparada=T5
+idToken=150 disparada=T6
+idToken=151 disparada=T2
+idToken=150 disparada=T11
+idToken=150 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=151 disparada=T3
+idToken=151 disparada=T4
+idToken=152 disparada=T5
+idToken=151 disparada=T11
+idToken=151 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=152 disparada=T6
+idToken=153 disparada=T2
+idToken=152 disparada=T11
+idToken=152 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=153 disparada=T3
+idToken=153 disparada=T4
+idToken=154 disparada=T5
+idToken=153 disparada=T11
+idToken=153 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=154 disparada=T6
+idToken=155 disparada=T2
+idToken=154 disparada=T11
+idToken=154 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=155 disparada=T3
+idToken=155 disparada=T4
+idToken=156 disparada=T5
+idToken=155 disparada=T11
+idToken=155 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=156 disparada=T6
+idToken=157 disparada=T7
+idToken=156 disparada=T11
+idToken=156 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=157 disparada=T8
+idToken=157 disparada=T9
+idToken=157 disparada=T10
+idToken=158 disparada=T5
+idToken=157 disparada=T11
+idToken=157 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=158 disparada=T6
+idToken=159 disparada=T7
+idToken=158 disparada=T11
+idToken=158 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=159 disparada=T8
+idToken=159 disparada=T9
+idToken=159 disparada=T10
+idToken=160 disparada=T5
+idToken=159 disparada=T11
+idToken=159 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=160 disparada=T6
+idToken=161 disparada=T7
+idToken=160 disparada=T11
+idToken=160 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=161 disparada=T8
+idToken=161 disparada=T9
+idToken=161 disparada=T10
+idToken=162 disparada=T5
+idToken=161 disparada=T11
+idToken=161 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=162 disparada=T6
+idToken=163 disparada=T7
+idToken=162 disparada=T11
+idToken=162 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=163 disparada=T8
+idToken=163 disparada=T9
+idToken=163 disparada=T10
+idToken=164 disparada=T5
+idToken=163 disparada=T11
+idToken=163 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=164 disparada=T6
+idToken=165 disparada=T7
+idToken=164 disparada=T11
+idToken=164 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=165 disparada=T8
+idToken=165 disparada=T9
+idToken=165 disparada=T10
+idToken=166 disparada=T5
+idToken=165 disparada=T11
+idToken=165 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=166 disparada=T6
+idToken=166 disparada=T11
+idToken=166 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=167 disparada=T5
+idToken=167 disparada=T6
+idToken=167 disparada=T11
+idToken=167 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=168 disparada=T5
+idToken=168 disparada=T6
+idToken=168 disparada=T11
+idToken=168 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=169 disparada=T5
+idToken=169 disparada=T6
+idToken=169 disparada=T11
+idToken=169 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=170 disparada=T5
+idToken=170 disparada=T6
+idToken=171 disparada=T2
+idToken=170 disparada=T11
+idToken=170 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=171 disparada=T3
+idToken=171 disparada=T4
+idToken=172 disparada=T5
+idToken=171 disparada=T11
+idToken=171 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=172 disparada=T6
+idToken=173 disparada=T2
+idToken=172 disparada=T11
+idToken=172 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=173 disparada=T3
+idToken=173 disparada=T4
+idToken=174 disparada=T5
+idToken=173 disparada=T11
+idToken=173 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=174 disparada=T6
+idToken=174 disparada=T11
+idToken=174 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=175 disparada=T5
+idToken=175 disparada=T6
+idToken=176 disparada=T7
+idToken=175 disparada=T11
+idToken=175 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=176 disparada=T8
+idToken=176 disparada=T9
+idToken=176 disparada=T10
+idToken=177 disparada=T5
+idToken=176 disparada=T11
+idToken=176 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=177 disparada=T6
+idToken=178 disparada=T2
+idToken=177 disparada=T11
+idToken=177 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=178 disparada=T3
+idToken=178 disparada=T4
+idToken=179 disparada=T5
+idToken=178 disparada=T11
+idToken=178 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=179 disparada=T6
+idToken=180 disparada=T2
+idToken=179 disparada=T11
+idToken=179 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=180 disparada=T3
+idToken=180 disparada=T4
+idToken=181 disparada=T5
+idToken=180 disparada=T11
+idToken=180 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=181 disparada=T6
+idToken=181 disparada=T11
+idToken=181 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=182 disparada=T5
+idToken=182 disparada=T6
+idToken=183 disparada=T7
+idToken=182 disparada=T11
+idToken=182 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=183 disparada=T8
+idToken=183 disparada=T9
+idToken=183 disparada=T10
+idToken=184 disparada=T5
+idToken=183 disparada=T11
+idToken=183 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=184 disparada=T6
+idToken=185 disparada=T7
+idToken=184 disparada=T11
+idToken=184 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=185 disparada=T8
+idToken=185 disparada=T9
+idToken=185 disparada=T10
+idToken=186 disparada=T5
+idToken=185 disparada=T11
+idToken=185 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=186 disparada=T6
+idToken=186 disparada=T11
+idToken=186 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=187 disparada=T5
+idToken=187 disparada=T6
+idToken=188 disparada=T2
+idToken=187 disparada=T11
+idToken=187 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=188 disparada=T3
+idToken=188 disparada=T4
+idToken=189 disparada=T5
+idToken=188 disparada=T11
+idToken=188 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=189 disparada=T6
+idToken=190 disparada=T2
+idToken=189 disparada=T11
+idToken=189 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=190 disparada=T3
+idToken=190 disparada=T4
+idToken=191 disparada=T5
+idToken=190 disparada=T11
+idToken=190 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=191 disparada=T6
+idToken=192 disparada=T2
+idToken=191 disparada=T11
+idToken=191 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=192 disparada=T3
+idToken=192 disparada=T4
+idToken=193 disparada=T5
+idToken=192 disparada=T11
+idToken=192 INVARIANTE modo=MEDIO camino=T0,T1,T2,T3,T4,T11 completo=true
+idToken=193 disparada=T6
+idToken=193 disparada=T11
+idToken=193 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=194 disparada=T5
+idToken=194 disparada=T6
+idToken=194 disparada=T11
+idToken=194 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=195 disparada=T5
+idToken=195 disparada=T6
+idToken=195 disparada=T11
+idToken=195 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=196 disparada=T5
+idToken=196 disparada=T6
+idToken=197 disparada=T7
+idToken=196 disparada=T11
+idToken=196 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=197 disparada=T8
+idToken=197 disparada=T9
+idToken=197 disparada=T10
+idToken=198 disparada=T5
+idToken=197 disparada=T11
+idToken=197 INVARIANTE modo=ALTO camino=T0,T1,T7,T8,T9,T10,T11 completo=true
+idToken=198 disparada=T6
+idToken=198 disparada=T11
+idToken=198 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=199 disparada=T5
+idToken=199 disparada=T6
+idToken=199 disparada=T11
+idToken=199 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
+idToken=200 disparada=T5
+idToken=200 disparada=T6
+idToken=200 disparada=T11
+idToken=200 INVARIANTE modo=SIMPLE camino=T0,T1,T5,T6,T11 completo=true
 
-SUMMARY completed=200 medium=1 simple=199 high=0 invariantOk=true timeMillis=20505
+RESUMEN completo=200 medio=41 simple=120 alto=39 invarianteOk=true tiempoMillis=30272

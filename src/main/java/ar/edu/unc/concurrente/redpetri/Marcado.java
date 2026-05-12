@@ -1,32 +1,32 @@
-package ar.edu.unc.concurrente.petri;
+package ar.edu.unc.concurrente.redpetri;
 
 import java.util.Arrays;
 
-public class Marking {
+public class Marcado {
     private final int[] tokens;
 
-    public Marking(int[] tokens) {
+    public Marcado(int[] tokens) {
         this.tokens = Arrays.copyOf(tokens, tokens.length);
     }
 
-    public int getTokens(int place) {
-        return tokens[place];
+    public int obtenerTokens(int plaza) {
+        return tokens[plaza];
     }
 
-    public Marking add(int[] values) {
-        if (values.length != tokens.length) {
+    public Marcado sumar(int[] valores) {
+        if (valores.length != tokens.length) {
             throw new IllegalArgumentException("El vector debe tener la misma cantidad de plazas que el marcado");
         }
 
-        int[] result = new int[tokens.length];
+        int[] resultado = new int[tokens.length];
         for (int i = 0; i < tokens.length; i++) {
-            result[i] = tokens[i] + values[i];
+            resultado[i] = tokens[i] + valores[i];
         }
 
-        return new Marking(result);
+        return new Marcado(resultado);
     }
 
-    public boolean hasNegativeTokens() {
+    public boolean tieneTokensNegativos() {
         for (int token : tokens) {
             if (token < 0) {
                 return true;
@@ -36,15 +36,15 @@ public class Marking {
         return false;
     }
 
-    public int size() {
+    public int cantidad() {
         return tokens.length;
     }
 
-    public Marking copy() {
-        return new Marking(tokens);
+    public Marcado copia() {
+        return new Marcado(tokens);
     }
 
-    public int[] toArray() {
+    public int[] aArreglo() {
         return Arrays.copyOf(tokens, tokens.length);
     }
 

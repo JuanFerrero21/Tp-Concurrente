@@ -1,157 +1,157 @@
 package ar.edu.unc.concurrente.monitor;
 
-import ar.edu.unc.concurrente.analysis.InvariantChecker;
-import ar.edu.unc.concurrente.analysis.SimulationState;
-import ar.edu.unc.concurrente.log.TransitionLogger;
-import ar.edu.unc.concurrente.petri.PetriNet;
-import ar.edu.unc.concurrente.policy.Policy;
-import ar.edu.unc.concurrente.policy.PrioritySimplePolicy;
-import ar.edu.unc.concurrente.time.SensibilizadoConTiempo;
+import ar.edu.unc.concurrente.analisis.VerificadorInvariantes;
+import ar.edu.unc.concurrente.analisis.EstadoSimulacion;
+import ar.edu.unc.concurrente.registro.RegistradorTransiciones;
+import ar.edu.unc.concurrente.redpetri.RedDePetri;
+import ar.edu.unc.concurrente.politica.Politica;
+import ar.edu.unc.concurrente.politica.PoliticaPrioridadSimple;
+import ar.edu.unc.concurrente.tiempo.SensibilizadoConTiempo;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class Monitor implements MonitorInterface {
-    private final PetriNet petriNet;
-    private final Policy policy;
-    private final SimulationState simulationState;
+    private final RedDePetri redDePetri;
+    private final Politica politica;
+    private final EstadoSimulacion estadoSimulacion;
     private final Mutex mutex;
-    private final TransitionQueues transitionQueues;
+    private final ColasTransiciones colasTransiciones;
     private final SensibilizadoConTiempo sensibilizadoConTiempo;
-    private final boolean verbose;
-    private final TransitionLogger transitionLogger;
-    private final InvariantChecker invariantChecker;
-    private Integer selectedTransition;
+    private final boolean detallado;
+    private final RegistradorTransiciones registradorTransiciones;
+    private final VerificadorInvariantes verificadorInvariantes;
+    private Integer transicionSeleccionada;
 
-    public Monitor(PetriNet petriNet) {
-        this(petriNet, new PrioritySimplePolicy(), null, null, false, null, null);
+    public Monitor(RedDePetri redDePetri) {
+        this(redDePetri, new PoliticaPrioridadSimple(), null, null, false, null, null);
     }
 
-    public Monitor(PetriNet petriNet, Policy policy) {
-        this(petriNet, policy, null, null, false, null, null);
+    public Monitor(RedDePetri redDePetri, Politica politica) {
+        this(redDePetri, politica, null, null, false, null, null);
     }
 
-    public Monitor(PetriNet petriNet, Policy policy, SimulationState simulationState) {
-        this(petriNet, policy, simulationState, null, false, null, null);
+    public Monitor(RedDePetri redDePetri, Politica politica, EstadoSimulacion estadoSimulacion) {
+        this(redDePetri, politica, estadoSimulacion, null, false, null, null);
     }
 
-    public Monitor(PetriNet petriNet, Policy policy, SimulationState simulationState, boolean verbose) {
-        this(petriNet, policy, simulationState, null, verbose, null, null);
-    }
-
-    public Monitor(
-            PetriNet petriNet,
-            Policy policy,
-            SimulationState simulationState,
-            SensibilizadoConTiempo sensibilizadoConTiempo,
-            boolean verbose
-    ) {
-        this(petriNet, policy, simulationState, sensibilizadoConTiempo, verbose, null, null);
+    public Monitor(RedDePetri redDePetri, Politica politica, EstadoSimulacion estadoSimulacion, boolean detallado) {
+        this(redDePetri, politica, estadoSimulacion, null, detallado, null, null);
     }
 
     public Monitor(
-            PetriNet petriNet,
-            Policy policy,
-            SimulationState simulationState,
+            RedDePetri redDePetri,
+            Politica politica,
+            EstadoSimulacion estadoSimulacion,
             SensibilizadoConTiempo sensibilizadoConTiempo,
-            boolean verbose,
-            TransitionLogger transitionLogger
+            boolean detallado
     ) {
-        this(petriNet, policy, simulationState, sensibilizadoConTiempo, verbose, transitionLogger, null);
+        this(redDePetri, politica, estadoSimulacion, sensibilizadoConTiempo, detallado, null, null);
     }
 
     public Monitor(
-            PetriNet petriNet,
-            Policy policy,
-            SimulationState simulationState,
+            RedDePetri redDePetri,
+            Politica politica,
+            EstadoSimulacion estadoSimulacion,
             SensibilizadoConTiempo sensibilizadoConTiempo,
-            boolean verbose,
-            TransitionLogger transitionLogger,
-            InvariantChecker invariantChecker
+            boolean detallado,
+            RegistradorTransiciones registradorTransiciones
     ) {
-        this.petriNet = petriNet;
-        this.policy = policy;
-        this.simulationState = simulationState;
+        this(redDePetri, politica, estadoSimulacion, sensibilizadoConTiempo, detallado, registradorTransiciones, null);
+    }
+
+    public Monitor(
+            RedDePetri redDePetri,
+            Politica politica,
+            EstadoSimulacion estadoSimulacion,
+            SensibilizadoConTiempo sensibilizadoConTiempo,
+            boolean detallado,
+            RegistradorTransiciones registradorTransiciones,
+            VerificadorInvariantes verificadorInvariantes
+    ) {
+        this.redDePetri = redDePetri;
+        this.politica = politica;
+        this.estadoSimulacion = estadoSimulacion;
         this.mutex = new Mutex();
-        this.transitionQueues = new TransitionQueues(mutex, petriNet.getTransitionCount());
+        this.colasTransiciones = new ColasTransiciones(mutex, redDePetri.obtenerCantidadTransiciones());
         this.sensibilizadoConTiempo = sensibilizadoConTiempo;
-        this.verbose = verbose;
-        this.transitionLogger = transitionLogger;
-        this.invariantChecker = invariantChecker;
+        this.detallado = detallado;
+        this.registradorTransiciones = registradorTransiciones;
+        this.verificadorInvariantes = verificadorInvariantes;
 
         actualizarSensibilizadasTemporales();
     }
 
     @Override
-    public boolean fireTransition(int transition) {
+    public boolean fireTransition(int transicion) {
         mutex.acquire();
 
         try {
-            validateTransition(transition);
+            validarTransicion(transicion);
 
-            if (isSimulationFinished() || !canFireBySimulationState(transition)) {
+            if (simulacionFinalizada() || !puedeDispararPorEstadoSimulacion(transicion)) {
                 return false;
             }
 
-            transitionQueues.startWaiting(transition);
-            log("\n" + Thread.currentThread().getName() + " intenta T" + transition);
+            colasTransiciones.empezarEspera(transicion);
+            log("\n" + Thread.currentThread().getName() + " intenta T" + transicion);
 
             while (true) {
-                if (isSimulationFinished() || !canFireBySimulationState(transition)) {
-                    transitionQueues.stopWaiting(transition);
-                    selectedTransition = null;
-                    transitionQueues.signalAll();
+                if (simulacionFinalizada() || !puedeDispararPorEstadoSimulacion(transicion)) {
+                    colasTransiciones.terminarEspera(transicion);
+                    transicionSeleccionada = null;
+                    colasTransiciones.despertarTodos();
                     return false;
                 }
 
                 actualizarSensibilizadasTemporales();
-                updateSelectedTransitionIfNeeded();
+                actualizarTransicionSeleccionadaSiHaceFalta();
 
-                if (selectedTransition != null && selectedTransition == transition) {
+                if (transicionSeleccionada != null && transicionSeleccionada == transicion) {
                     break;
                 }
 
-                if (!petriNet.isEnabled(transition)) {
+                if (!redDePetri.estaSensibilizada(transicion)) {
                     log(Thread.currentThread().getName()
-                            + " NO puede T" + transition
+                            + " NO puede T" + transicion
                             + " porque no esta sensibilizada por tokens. Habilitadas con hilos esperando: "
-                            + getEnabledWaitingTransitions()
+                            + obtenerTransicionesSensibilizadasConHilosEsperando()
                             + ". Espera.");
 
-                    signalSelectedTransition();
-                    transitionQueues.await(transition);
-                } else if (!puedeDispararPorTiempo(transition)) {
-                    esperarPorVentanaTemporal(transition);
+                    despertarTransicionSeleccionada();
+                    colasTransiciones.esperar(transicion);
+                } else if (!puedeDispararPorTiempo(transicion)) {
+                    esperarPorVentanaTemporal(transicion);
                 } else {
                     log(Thread.currentThread().getName()
-                            + " espera para T" + transition
-                            + ". La politica selecciono " + formatSelectedTransition(selectedTransition)
+                            + " espera para T" + transicion
+                            + ". La politica selecciono " + formatearTransicionSeleccionada(transicionSeleccionada)
                             + ". Habilitadas con hilos esperando: "
-                            + getEnabledWaitingTransitions()
+                            + obtenerTransicionesSensibilizadasConHilosEsperando()
                             + ". Espera.");
 
-                    signalSelectedTransition();
-                    transitionQueues.await(transition);
+                    despertarTransicionSeleccionada();
+                    colasTransiciones.esperar(transicion);
                 }
 
                 log(Thread.currentThread().getName()
-                        + " se despierta y reintenta T" + transition);
+                        + " se despierta y reintenta T" + transicion);
             }
 
-            transitionQueues.stopWaiting(transition);
+            colasTransiciones.terminarEspera(transicion);
 
-            boolean fired = petriNet.fire(transition);
+            boolean disparada = redDePetri.disparar(transicion);
 
-            if (!fired) {
-                throw new IllegalStateException("La transicion T" + transition + " fue seleccionada pero no pudo dispararse");
+            if (!disparada) {
+                throw new IllegalStateException("La transicion T" + transicion + " fue seleccionada pero no pudo dispararse");
             }
 
-            verifyPlaceInvariantsAfterFire();
+            verificarInvariantesPlazaLuegoDelDisparo();
 
             actualizarSensibilizadasTemporales();
 
-            if (simulationState != null) {
-                simulationState.recordFiredTransition(transition);
+            if (estadoSimulacion != null) {
+                estadoSimulacion.registrarTransicionDisparada(transicion);
             }
 
             /*
@@ -159,32 +159,32 @@ public class Monitor implements MonitorInterface {
              * Está dentro del monitor, por lo tanto el orden del log respeta
              * el orden real de disparo protegido por el mutex.
              */
-            if (transitionLogger != null) {
-                transitionLogger.recordFiredEvent(transition);
+            if (registradorTransiciones != null) {
+                registradorTransiciones.registrarEventoDisparo(transicion);
             }
 
             log(Thread.currentThread().getName()
-                    + " ejecuto T" + transition
-                    + ". Marcado: " + petriNet.getMarking());
+                    + " ejecuto T" + transicion
+                    + ". Marcado: " + redDePetri.obtenerMarcado());
 
-            selectedTransition = null;
+            transicionSeleccionada = null;
 
-            if (isSimulationFinished()) {
-                transitionQueues.signalAll();
+            if (simulacionFinalizada()) {
+                colasTransiciones.despertarTodos();
             } else {
-                signalSelectedTransition();
+                despertarTransicionSeleccionada();
             }
 
             return true;
-        } catch (InterruptedException exception) {
-            transitionQueues.stopWaiting(transition);
-            selectedTransition = null;
-            transitionQueues.signalAll();
+        } catch (InterruptedException excepcion) {
+            colasTransiciones.terminarEspera(transicion);
+            transicionSeleccionada = null;
+            colasTransiciones.despertarTodos();
 
             Thread.currentThread().interrupt();
 
             log(Thread.currentThread().getName()
-                    + " fue interrumpido mientras esperaba T" + transition);
+                    + " fue interrumpido mientras esperaba T" + transicion);
 
             return false;
         } finally {
@@ -192,122 +192,122 @@ public class Monitor implements MonitorInterface {
         }
     }
 
-    private void verifyPlaceInvariantsAfterFire() {
-        if (invariantChecker != null) {
-            invariantChecker.verifyPlaceInvariantsOrThrow(petriNet.getMarking());
+    private void verificarInvariantesPlazaLuegoDelDisparo() {
+        if (verificadorInvariantes != null) {
+            verificadorInvariantes.verificarInvariantesPlazaOLanzar(redDePetri.obtenerMarcado());
         }
     }
 
-    private void esperarPorVentanaTemporal(int transition) throws InterruptedException {
-        if (sensibilizadoConTiempo == null || !sensibilizadoConTiempo.esTemporal(transition)) {
-            signalSelectedTransition();
-            transitionQueues.await(transition);
+    private void esperarPorVentanaTemporal(int transicion) throws InterruptedException {
+        if (sensibilizadoConTiempo == null || !sensibilizadoConTiempo.esTemporal(transicion)) {
+            despertarTransicionSeleccionada();
+            colasTransiciones.esperar(transicion);
             return;
         }
 
-        if (sensibilizadoConTiempo.estaAntesDeLaVentana(transition)) {
-            long millisHastaAlfa = sensibilizadoConTiempo.milisegundosHastaAlfa(transition);
+        if (sensibilizadoConTiempo.estaAntesDeLaVentana(transicion)) {
+            long millisHastaAlfa = sensibilizadoConTiempo.milisegundosHastaAlfa(transicion);
 
             log(Thread.currentThread().getName()
-                    + " espera T" + transition
+                    + " espera T" + transicion
                     + " porque todavia no llego a alfa. Falta "
                     + millisHastaAlfa
                     + " ms. Estado temporal: "
-                    + sensibilizadoConTiempo.describirEstado(transition));
+                    + sensibilizadoConTiempo.describirEstado(transicion));
 
-            signalSelectedTransition();
-            transitionQueues.awaitMillis(transition, millisHastaAlfa);
+            despertarTransicionSeleccionada();
+            colasTransiciones.esperarMillis(transicion, millisHastaAlfa);
             return;
         }
 
-        if (sensibilizadoConTiempo.estaVencida(transition)) {
+        if (sensibilizadoConTiempo.estaVencida(transicion)) {
             log(Thread.currentThread().getName()
-                    + " espera T" + transition
+                    + " espera T" + transicion
                     + " porque se paso beta en esta ventana. Debe esperar a que la transicion deje de estar sensibilizada y vuelva a sensibilizarse. Estado temporal: "
-                    + sensibilizadoConTiempo.describirEstado(transition));
+                    + sensibilizadoConTiempo.describirEstado(transicion));
 
-            signalSelectedTransition();
-            transitionQueues.await(transition);
+            despertarTransicionSeleccionada();
+            colasTransiciones.esperar(transicion);
             return;
         }
 
-        signalSelectedTransition();
-        transitionQueues.await(transition);
+        despertarTransicionSeleccionada();
+        colasTransiciones.esperar(transicion);
     }
 
-    private void validateTransition(int transition) {
-        if (transition < 0 || transition >= transitionQueues.getTransitionCount()) {
-            throw new IllegalArgumentException("Transicion fuera de rango: " + transition);
+    private void validarTransicion(int transicion) {
+        if (transicion < 0 || transicion >= colasTransiciones.obtenerCantidadTransiciones()) {
+            throw new IllegalArgumentException("Transicion fuera de rango: " + transicion);
         }
     }
 
-    private void updateSelectedTransitionIfNeeded() {
-        Set<Integer> enabledWaitingTransitions = getEnabledWaitingTransitions();
+    private void actualizarTransicionSeleccionadaSiHaceFalta() {
+        Set<Integer> transicionesSensibilizadasConHilosEsperando = obtenerTransicionesSensibilizadasConHilosEsperando();
 
-        if (enabledWaitingTransitions.isEmpty()) {
-            selectedTransition = null;
+        if (transicionesSensibilizadasConHilosEsperando.isEmpty()) {
+            transicionSeleccionada = null;
             return;
         }
 
-        if (selectedTransition == null || !enabledWaitingTransitions.contains(selectedTransition)) {
-            selectedTransition = policy.chooseTransition(enabledWaitingTransitions);
+        if (transicionSeleccionada == null || !transicionesSensibilizadasConHilosEsperando.contains(transicionSeleccionada)) {
+            transicionSeleccionada = politica.elegirTransicion(transicionesSensibilizadasConHilosEsperando);
         }
     }
 
-    private void signalSelectedTransition() {
-        updateSelectedTransitionIfNeeded();
+    private void despertarTransicionSeleccionada() {
+        actualizarTransicionSeleccionadaSiHaceFalta();
 
-        if (selectedTransition != null) {
-            transitionQueues.signal(selectedTransition);
+        if (transicionSeleccionada != null) {
+            colasTransiciones.despertar(transicionSeleccionada);
         }
     }
 
-    private Set<Integer> getEnabledWaitingTransitions() {
-        Set<Integer> enabledWaitingTransitions = new LinkedHashSet<>();
-        Set<Integer> enabledTransitions = petriNet.getEnabledTransitions();
+    private Set<Integer> obtenerTransicionesSensibilizadasConHilosEsperando() {
+        Set<Integer> transicionesSensibilizadasConHilosEsperando = new LinkedHashSet<>();
+        Set<Integer> transicionesSensibilizadas = redDePetri.obtenerTransicionesSensibilizadas();
 
-        actualizarSensibilizadasTemporales(enabledTransitions);
+        actualizarSensibilizadasTemporales(transicionesSensibilizadas);
 
-        for (int transition : enabledTransitions) {
-            if (transitionQueues.hasWaitingThread(transition)
-                    && canFireBySimulationState(transition)
-                    && puedeDispararPorTiempo(transition)) {
-                enabledWaitingTransitions.add(transition);
+        for (int transicion : transicionesSensibilizadas) {
+            if (colasTransiciones.tieneHiloEsperando(transicion)
+                    && puedeDispararPorEstadoSimulacion(transicion)
+                    && puedeDispararPorTiempo(transicion)) {
+                transicionesSensibilizadasConHilosEsperando.add(transicion);
             }
         }
 
-        return enabledWaitingTransitions;
+        return transicionesSensibilizadasConHilosEsperando;
     }
 
-    private boolean puedeDispararPorTiempo(int transition) {
-        return sensibilizadoConTiempo == null || sensibilizadoConTiempo.puedeDispararAhora(transition);
+    private boolean puedeDispararPorTiempo(int transicion) {
+        return sensibilizadoConTiempo == null || sensibilizadoConTiempo.puedeDispararAhora(transicion);
     }
 
     private void actualizarSensibilizadasTemporales() {
-        actualizarSensibilizadasTemporales(petriNet.getEnabledTransitions());
+        actualizarSensibilizadasTemporales(redDePetri.obtenerTransicionesSensibilizadas());
     }
 
-    private void actualizarSensibilizadasTemporales(Set<Integer> enabledTransitions) {
+    private void actualizarSensibilizadasTemporales(Set<Integer> transicionesSensibilizadas) {
         if (sensibilizadoConTiempo != null) {
-            sensibilizadoConTiempo.actualizarSensibilizadas(enabledTransitions);
+            sensibilizadoConTiempo.actualizarSensibilizadas(transicionesSensibilizadas);
         }
     }
 
-    private String formatSelectedTransition(Integer selectedTransition) {
-        return selectedTransition == null ? "ninguna transicion" : "T" + selectedTransition;
+    private String formatearTransicionSeleccionada(Integer transicionSeleccionada) {
+        return transicionSeleccionada == null ? "ninguna transicion" : "T" + transicionSeleccionada;
     }
 
-    private boolean isSimulationFinished() {
-        return simulationState != null && simulationState.isFinished();
+    private boolean simulacionFinalizada() {
+        return estadoSimulacion != null && estadoSimulacion.estaFinalizada();
     }
 
-    private boolean canFireBySimulationState(int transition) {
-        return simulationState == null || simulationState.canFireTransition(transition);
+    private boolean puedeDispararPorEstadoSimulacion(int transicion) {
+        return estadoSimulacion == null || estadoSimulacion.puedeDispararTransicion(transicion);
     }
 
-    private void log(String message) {
-        if (verbose) {
-            System.out.println(message);
+    private void log(String mensaje) {
+        if (detallado) {
+            System.out.println(mensaje);
         }
     }
 }
