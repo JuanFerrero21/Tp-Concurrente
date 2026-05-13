@@ -12,6 +12,8 @@ out/
 # Local tooling / generated results
 .codex
 results/
+logs/*.log
+logs/corridas/
 
 # OS files
 .DS_Store

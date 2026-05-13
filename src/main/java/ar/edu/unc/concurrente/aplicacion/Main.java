@@ -42,12 +42,15 @@ public class Main {
     private static final String NOMBRE_POLITICA = "prioridad";
     private static final int OBJETIVO_INVARIANTES_COMPLETOS = 200;
     private static final boolean DETALLADO = false;
-    private static final Path RUTA_LOG = Paths.get("logs", "simulation.log");
+    private static final Path RUTA_LOG = Paths.get("logs", "simulacion.log");
 
     public static void main(String[] args) throws InterruptedException {
         long inicioMillis = System.currentTimeMillis();
+        String nombrePolitica = obtenerNombrePolitica(args);
+        Path rutaLog = obtenerRutaLog(args);
+        int objetivoInvariantesCompletos = obtenerObjetivoInvariantesCompletos(args);
 
-        ConfiguracionSimulacion config = ConfiguracionSimulacion.configuracionPorDefecto(OBJETIVO_INVARIANTES_COMPLETOS);
+        ConfiguracionSimulacion config = ConfiguracionSimulacion.configuracionPorDefecto(objetivoInvariantesCompletos);
         RedDePetri redDePetri = new RedDePetri(config.obtenerMarcadoInicial(), config.obtenerMatrizIncidencia());
 
         EstadoSimulacion estadoSimulacion = new EstadoSimulacion(
@@ -57,7 +60,7 @@ public class Main {
                 config.obtenerTransicionesConflicto()
         );
 
-        Politica politica = crearPolitica(NOMBRE_POLITICA, config);
+        Politica politica = crearPolitica(nombrePolitica, config);
 
         SensibilizadoConTiempo sensibilizadoConTiempo = new SensibilizadoConTiempo(
                 config.obtenerTransicionesTemporales(),
@@ -67,8 +70,8 @@ public class Main {
 
         RegistradorTransiciones registradorTransiciones = new RegistradorTransiciones(
                 redDePetri.obtenerCantidadTransiciones(),
-                RUTA_LOG,
-                NOMBRE_POLITICA,
+                rutaLog,
+                nombrePolitica,
                 config.obtenerObjetivoInvariantesCompletos(),
                 config.obtenerTransicionesTemporales(),
                 config.obtenerAlfaMillis(),
@@ -87,7 +90,7 @@ public class Main {
                 verificadorInvariantes
         );
 
-        System.out.println("Politica: " + NOMBRE_POLITICA);
+        System.out.println("Politica: " + nombrePolitica);
         System.out.println("Marcado inicial: " + config.obtenerMarcadoInicial());
         System.out.println("Transiciones sensibilizadas: " + redDePetri.obtenerTransicionesSensibilizadas());
         System.out.println("Objetivo de invariantes completos: " + config.obtenerObjetivoInvariantesCompletos());
@@ -127,7 +130,7 @@ public class Main {
         registradorTransiciones.close();
 
         AnalizadorRegexInvariantesTransicion analizadorRegex = new AnalizadorRegexInvariantesTransicion();
-        AnalizadorRegexInvariantesTransicion.ResultadoAnalisisRegex resultadoRegex = analizadorRegex.analizar(RUTA_LOG);
+        AnalizadorRegexInvariantesTransicion.ResultadoAnalisisRegex resultadoRegex = analizadorRegex.analizar(rutaLog);
 
         if (!resultadoRegex.estaRegexOk()) {
             throw new IllegalStateException("El analisis regex de invariantes de transicion fallo");
@@ -148,7 +151,29 @@ public class Main {
                 + Arrays.toString(estadoSimulacion.obtenerCompletosPorModo()));
 
         System.out.println("Tiempo total de ejecucion: " + tiempoTranscurridoMillis + " ms");
-        System.out.println("Log generado en: " + RUTA_LOG);
+        System.out.println("Log generado en: " + rutaLog);
+    }
+
+    private static String obtenerNombrePolitica(String[] args) {
+        return args.length > 0 ? args[0] : NOMBRE_POLITICA;
+    }
+
+    private static Path obtenerRutaLog(String[] args) {
+        return args.length > 1 ? Paths.get(args[1]) : RUTA_LOG;
+    }
+
+    private static int obtenerObjetivoInvariantesCompletos(String[] args) {
+        if (args.length <= 2) {
+            return OBJETIVO_INVARIANTES_COMPLETOS;
+        }
+
+        int objetivo = Integer.parseInt(args[2]);
+
+        if (objetivo <= 0) {
+            throw new IllegalArgumentException("La cantidad objetivo de invariantes debe ser positiva");
+        }
+
+        return objetivo;
     }
 
     private static Hilo[] crearHilos(

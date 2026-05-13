@@ -5,6 +5,8 @@ import ar.edu.unc.concurrente.redpetri.Marcado;
 import java.util.Arrays;
 
 public class ConfiguracionSimulacion {
+    private static final int TOKENS_DATOS_INICIALES = 3;
+
     private final Marcado marcadoInicial;
     private final int[][] matrizIncidencia;
     private final int[][] transicionesHilos;
@@ -89,7 +91,7 @@ public class ConfiguracionSimulacion {
         };
 
         Marcado marcadoInicial = new Marcado(new int[] {
-                objetivoInvariantesCompletos, // P0
+                TOKENS_DATOS_INICIALES, // P0
                 0, // P1
                 1, // P2
                 0, // P3
