@@ -110,20 +110,20 @@ public class Main {
 
         long tiempoTranscurridoMillis = System.currentTimeMillis() - inicioMillis;
 
-        boolean invariantesPlazaOk = verificadorInvariantes.seCumplenInvariantesPlaza(redDePetri.obtenerMarcado());
+        boolean invariantesPlazaCumplidos = verificadorInvariantes.seCumplenInvariantesPlaza(redDePetri.obtenerMarcado());
 
         ResultadoSimulacion resultado = new ResultadoSimulacion(
                 redDePetri.obtenerMarcado(),
                 registradorTransiciones.obtenerIntentosTotales(),
                 registradorTransiciones.obtenerDisparosTotales(),
                 registradorTransiciones.obtenerDisparosPorTransicion(),
-                invariantesPlazaOk
+                invariantesPlazaCumplidos
         );
 
         registradorTransiciones.escribirResumen(
                 estadoSimulacion.obtenerInvariantesCompletos(),
                 estadoSimulacion.obtenerCompletosPorModo(),
-                resultado.invarianteOk(),
+                resultado.seCumplenInvariantesPlaza(),
                 tiempoTranscurridoMillis
         );
 
@@ -132,7 +132,7 @@ public class Main {
         AnalizadorRegexInvariantesTransicion analizadorRegex = new AnalizadorRegexInvariantesTransicion();
         AnalizadorRegexInvariantesTransicion.ResultadoAnalisisRegex resultadoRegex = analizadorRegex.analizar(rutaLog);
 
-        if (!resultadoRegex.estaRegexOk()) {
+        if (!resultadoRegex.esAnalisisRegexValido()) {
             throw new IllegalStateException("El analisis regex de invariantes de transicion fallo");
         }
 

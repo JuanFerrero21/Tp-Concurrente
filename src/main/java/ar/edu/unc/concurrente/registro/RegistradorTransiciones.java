@@ -125,7 +125,7 @@ public class RegistradorTransiciones implements AutoCloseable {
     public synchronized void escribirResumen(
             int invariantesCompletos,
             int[] completosPorModo,
-            boolean invarianteOk,
+            boolean invariantesPlazaCumplidos,
             long tiempoTranscurridoMillis
     ) {
         if (escritor == null) {
@@ -141,7 +141,7 @@ public class RegistradorTransiciones implements AutoCloseable {
                 + " medio=" + medio
                 + " simple=" + simple
                 + " alto=" + alto
-                + " invarianteOk=" + invarianteOk
+                + " invariantesPlazaCumplidos=" + invariantesPlazaCumplidos
                 + " tiempoMillis=" + tiempoTranscurridoMillis);
 
         escritor.flush();

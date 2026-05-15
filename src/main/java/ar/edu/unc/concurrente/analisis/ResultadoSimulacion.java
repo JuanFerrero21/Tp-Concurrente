@@ -9,14 +9,14 @@ public class ResultadoSimulacion {
     private final int intentosTotales;
     private final int disparosTotales;
     private final int[] disparosPorTransicion;
-    private final boolean invarianteOk;
+    private final boolean invariantesPlazaCumplidos;
 
-    public ResultadoSimulacion(Marcado marcadoFinal, int intentosTotales, int disparosTotales, int[] disparosPorTransicion, boolean invarianteOk) {
+    public ResultadoSimulacion(Marcado marcadoFinal, int intentosTotales, int disparosTotales, int[] disparosPorTransicion, boolean invariantesPlazaCumplidos) {
         this.marcadoFinal = marcadoFinal.copia();
         this.intentosTotales = intentosTotales;
         this.disparosTotales = disparosTotales;
         this.disparosPorTransicion = Arrays.copyOf(disparosPorTransicion, disparosPorTransicion.length);
-        this.invarianteOk = invarianteOk;
+        this.invariantesPlazaCumplidos = invariantesPlazaCumplidos;
     }
 
     public Marcado obtenerMarcadoFinal() {
@@ -35,8 +35,8 @@ public class ResultadoSimulacion {
         return Arrays.copyOf(disparosPorTransicion, disparosPorTransicion.length);
     }
 
-    public boolean invarianteOk() {
-        return invarianteOk;
+    public boolean seCumplenInvariantesPlaza() {
+        return invariantesPlazaCumplidos;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ResultadoSimulacion {
                 ", intentosTotales=" + intentosTotales +
                 ", disparosTotales=" + disparosTotales +
                 ", disparosPorTransicion=" + Arrays.toString(disparosPorTransicion) +
-                ", invarianteOk=" + invarianteOk +
+                ", invariantesPlazaCumplidos=" + invariantesPlazaCumplidos +
                 '}';
     }
 }

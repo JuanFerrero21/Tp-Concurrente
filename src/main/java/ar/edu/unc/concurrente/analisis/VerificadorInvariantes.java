@@ -128,7 +128,7 @@ public class VerificadorInvariantes {
     public int sumarValores(Marcado marcado) {
         int total = 0;
 
-        for (int token : marcado.aArreglo()) {
+        for (int token : marcado.obtenerTokensComoArreglo()) {
             total += token;
         }
 

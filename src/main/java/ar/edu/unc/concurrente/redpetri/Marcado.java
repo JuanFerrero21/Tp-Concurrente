@@ -44,7 +44,7 @@ public class Marcado {
         return new Marcado(tokens);
     }
 
-    public int[] aArreglo() {
+    public int[] obtenerTokensComoArreglo() {
         return Arrays.copyOf(tokens, tokens.length);
     }
 

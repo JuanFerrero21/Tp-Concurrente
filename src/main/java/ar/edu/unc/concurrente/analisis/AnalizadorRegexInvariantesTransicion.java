@@ -17,7 +17,7 @@ public class AnalizadorRegexInvariantesTransicion {
             Pattern.compile("^idToken=(\\d+) INVARIANTE modo=([A-Z]+) camino=([T0-9,]+) completo=true$");
 
     private static final Pattern PATRON_RESUMEN =
-            Pattern.compile("^RESUMEN completo=(\\d+) medio=(\\d+) simple=(\\d+) alto=(\\d+) invarianteOk=(true|false) tiempoMillis=(\\d+)$");
+            Pattern.compile("^RESUMEN completo=(\\d+) medio=(\\d+) simple=(\\d+) alto=(\\d+) invariantesPlazaCumplidos=(true|false) tiempoMillis=(\\d+)$");
 
     private static final Pattern PATRON_SIMPLE =
             Pattern.compile("^T0,T1,T5,T6,T11$");
@@ -147,7 +147,7 @@ public class AnalizadorRegexInvariantesTransicion {
         }
 
         int tokensAnalizados = cantidadSimple + cantidadMedio + cantidadAlto;
-        boolean resumenOk = validarResumen(
+        boolean resumenValido = validarResumen(
                 lineaResumen,
                 tokensAnalizados,
                 cantidadMedio,
@@ -158,10 +158,10 @@ public class AnalizadorRegexInvariantesTransicion {
                 errores
         );
 
-        boolean regexOk = cantidadInvalidos == 0
+        boolean analisisRegexValido = cantidadInvalidos == 0
                 && cantidadIncompletos == 0
                 && tokensAnalizados == completosPorIdToken.size()
-                && resumenOk;
+                && resumenValido;
 
         return new ResultadoAnalisisRegex(
                 tokensAnalizados,
@@ -170,8 +170,8 @@ public class AnalizadorRegexInvariantesTransicion {
                 cantidadAlto,
                 cantidadInvalidos,
                 cantidadIncompletos,
-                regexOk,
-                resumenOk,
+                analisisRegexValido,
+                resumenValido,
                 lineaResumen,
                 errores
         );
@@ -192,10 +192,10 @@ public class AnalizadorRegexInvariantesTransicion {
             return false;
         }
 
-        boolean ok = true;
+        boolean valido = true;
 
         if (lineaResumen.completo != tokensAnalizados) {
-            ok = false;
+            valido = false;
             errores.add("RESUMEN completo="
                     + lineaResumen.completo
                     + " pero regex analizo "
@@ -204,7 +204,7 @@ public class AnalizadorRegexInvariantesTransicion {
         }
 
         if (lineaResumen.medio != cantidadMedio) {
-            ok = false;
+            valido = false;
             errores.add("RESUMEN medio="
                     + lineaResumen.medio
                     + " pero regex conto medio="
@@ -212,7 +212,7 @@ public class AnalizadorRegexInvariantesTransicion {
         }
 
         if (lineaResumen.simple != cantidadSimple) {
-            ok = false;
+            valido = false;
             errores.add("RESUMEN simple="
                     + lineaResumen.simple
                     + " pero regex conto simple="
@@ -220,23 +220,23 @@ public class AnalizadorRegexInvariantesTransicion {
         }
 
         if (lineaResumen.alto != cantidadAlto) {
-            ok = false;
+            valido = false;
             errores.add("RESUMEN alto="
                     + lineaResumen.alto
                     + " pero regex conto alto="
                     + cantidadAlto);
         }
 
-        if (!lineaResumen.invarianteOk) {
-            ok = false;
-            errores.add("RESUMEN invarianteOk=false");
+        if (!lineaResumen.invariantesPlazaCumplidos) {
+            valido = false;
+            errores.add("RESUMEN invariantesPlazaCumplidos=false");
         }
 
         if (cantidadInvalidos > 0 || cantidadIncompletos > 0) {
-            ok = false;
+            valido = false;
         }
 
-        return ok;
+        return valido;
     }
 
     private Modo clasificarPorRegex(String camino) {
@@ -285,7 +285,7 @@ public class AnalizadorRegexInvariantesTransicion {
         private final int medio;
         private final int simple;
         private final int alto;
-        private final boolean invarianteOk;
+        private final boolean invariantesPlazaCumplidos;
         private final long tiempoMillis;
 
         private LineaResumen(
@@ -293,14 +293,14 @@ public class AnalizadorRegexInvariantesTransicion {
                 int medio,
                 int simple,
                 int alto,
-                boolean invarianteOk,
+                boolean invariantesPlazaCumplidos,
                 long tiempoMillis
         ) {
             this.completo = completo;
             this.medio = medio;
             this.simple = simple;
             this.alto = alto;
-            this.invarianteOk = invarianteOk;
+            this.invariantesPlazaCumplidos = invariantesPlazaCumplidos;
             this.tiempoMillis = tiempoMillis;
         }
     }
@@ -312,8 +312,8 @@ public class AnalizadorRegexInvariantesTransicion {
         private final int cantidadAlto;
         private final int cantidadInvalidos;
         private final int cantidadIncompletos;
-        private final boolean regexOk;
-        private final boolean resumenOk;
+        private final boolean analisisRegexValido;
+        private final boolean resumenValido;
         private final LineaResumen lineaResumen;
         private final List<String> errores;
 
@@ -324,8 +324,8 @@ public class AnalizadorRegexInvariantesTransicion {
                 int cantidadAlto,
                 int cantidadInvalidos,
                 int cantidadIncompletos,
-                boolean regexOk,
-                boolean resumenOk,
+                boolean analisisRegexValido,
+                boolean resumenValido,
                 LineaResumen lineaResumen,
                 List<String> errores
         ) {
@@ -335,14 +335,14 @@ public class AnalizadorRegexInvariantesTransicion {
             this.cantidadAlto = cantidadAlto;
             this.cantidadInvalidos = cantidadInvalidos;
             this.cantidadIncompletos = cantidadIncompletos;
-            this.regexOk = regexOk;
-            this.resumenOk = resumenOk;
+            this.analisisRegexValido = analisisRegexValido;
+            this.resumenValido = resumenValido;
             this.lineaResumen = lineaResumen;
             this.errores = new ArrayList<>(errores);
         }
 
-        public boolean estaRegexOk() {
-            return regexOk;
+        public boolean esAnalisisRegexValido() {
+            return analisisRegexValido;
         }
 
         public int obtenerTokensAnalizados() {
@@ -399,8 +399,8 @@ public class AnalizadorRegexInvariantesTransicion {
                     .append(cantidadIncompletos)
                     .append(System.lineSeparator());
 
-            constructor.append("Resumen OK: ")
-                    .append(resumenOk)
+            constructor.append("Resumen valido: ")
+                    .append(resumenValido)
                     .append(System.lineSeparator());
 
             if (lineaResumen != null) {
@@ -410,8 +410,8 @@ public class AnalizadorRegexInvariantesTransicion {
                         .append(System.lineSeparator());
             }
 
-            constructor.append("Regex OK: ")
-                    .append(regexOk)
+            constructor.append("Analisis regex valido: ")
+                    .append(analisisRegexValido)
                     .append(System.lineSeparator());
 
             if (!errores.isEmpty()) {
