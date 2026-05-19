@@ -64,6 +64,13 @@ public class ConfiguracionSimulacion {
     }
 
     public static ConfiguracionSimulacion configuracionPorDefecto(int objetivoInvariantesCompletos) {
+        return configuracionPorDefecto(objetivoInvariantesCompletos, "equilibrado");
+    }
+
+    public static ConfiguracionSimulacion configuracionPorDefecto(
+            int objetivoInvariantesCompletos,
+            String perfilTemporal
+    ) {
         int[][] matrizIncidencia = {
                 // T0  T1  T2  T3  T4  T5  T6  T7  T8  T9 T10 T11
                 {-1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1}, // P0
@@ -114,13 +121,7 @@ public class ConfiguracionSimulacion {
         long[] alfaMillis = new long[12];
         long[] betaMillis = new long[12];
 
-        configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 1, 60, 600);
-        configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 3, 90, 900);
-        configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 4, 90, 900);
-        configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 6, 100, 1000);
-        configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 8, 90, 900);
-        configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 9, 90, 900);
-        configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 10, 90, 900);
+        configurarPerfilTemporal(perfilTemporal, transicionesTemporales, alfaMillis, betaMillis);
 
         return new ConfiguracionSimulacion(
                 marcadoInicial,
@@ -135,6 +136,54 @@ public class ConfiguracionSimulacion {
                 alfaMillis,
                 betaMillis
         );
+    }
+
+    private static void configurarPerfilTemporal(
+            String perfilTemporal,
+            boolean[] transicionesTemporales,
+            long[] alfaMillis,
+            long[] betaMillis
+    ) {
+        switch (perfilTemporal.toLowerCase()) {
+            case "rapido":
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 1, 40, 400);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 3, 60, 600);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 4, 60, 600);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 6, 70, 700);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 8, 60, 600);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 9, 60, 600);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 10, 60, 600);
+                return;
+            case "equilibrado":
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 1, 60, 600);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 3, 90, 900);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 4, 90, 900);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 6, 100, 1000);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 8, 90, 900);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 9, 90, 900);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 10, 90, 900);
+                return;
+            case "lento":
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 1, 80, 800);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 3, 120, 1200);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 4, 120, 1200);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 6, 140, 1400);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 8, 120, 1200);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 9, 120, 1200);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 10, 120, 1200);
+                return;
+            case "simple-lento":
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 1, 60, 600);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 3, 90, 900);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 4, 90, 900);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 6, 180, 1800);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 8, 90, 900);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 9, 90, 900);
+                configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 10, 90, 900);
+                return;
+            default:
+                throw new IllegalArgumentException("Perfil temporal desconocido: " + perfilTemporal);
+        }
     }
 
     private static void configurarTransicionTemporal(

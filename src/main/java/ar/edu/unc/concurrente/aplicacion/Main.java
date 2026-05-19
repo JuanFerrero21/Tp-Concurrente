@@ -49,8 +49,12 @@ public class Main {
         String nombrePolitica = obtenerNombrePolitica(args);
         Path rutaLog = obtenerRutaLog(args);
         int objetivoInvariantesCompletos = obtenerObjetivoInvariantesCompletos(args);
+        String perfilTemporal = obtenerPerfilTemporal(args);
 
-        ConfiguracionSimulacion config = ConfiguracionSimulacion.configuracionPorDefecto(objetivoInvariantesCompletos);
+        ConfiguracionSimulacion config = ConfiguracionSimulacion.configuracionPorDefecto(
+                objetivoInvariantesCompletos,
+                perfilTemporal
+        );
         RedDePetri redDePetri = new RedDePetri(config.obtenerMarcadoInicial(), config.obtenerMatrizIncidencia());
 
         EstadoSimulacion estadoSimulacion = new EstadoSimulacion(
@@ -91,6 +95,7 @@ public class Main {
         );
 
         System.out.println("Politica: " + nombrePolitica);
+        System.out.println("Perfil temporal: " + perfilTemporal);
         System.out.println("Marcado inicial: " + config.obtenerMarcadoInicial());
         System.out.println("Transiciones sensibilizadas: " + redDePetri.obtenerTransicionesSensibilizadas());
         System.out.println("Objetivo de invariantes completos: " + config.obtenerObjetivoInvariantesCompletos());
@@ -174,6 +179,10 @@ public class Main {
         }
 
         return objetivo;
+    }
+
+    private static String obtenerPerfilTemporal(String[] args) {
+        return args.length > 3 ? args[3] : "equilibrado";
     }
 
     private static Hilo[] crearHilos(
