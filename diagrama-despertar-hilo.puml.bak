@@ -1,5 +1,5 @@
 @startuml
-title Reintento de un hilo luego de esperar en una cola de condición
+title Reintento de un hilo luego de dormir en una cola
 
 actor "hilo A : Hilo" as HiloA
 actor "hilo B : Hilo" as HiloB
@@ -32,14 +32,12 @@ activate Mutex
 Mutex --> Monitor : mutex liberado
 deactivate Mutex
 
-ColasTransiciones --> HiloA : hilo A esperando en cola de condición de Ti
+ColasTransiciones --> HiloA : hilo A bloqueado
 
 note right of HiloA
 Ti no está sensibilizada.
-El hilo A queda esperando en
-la condición asociada a Ti.
-Al esperar, libera el mutex
-del monitor.
+El hilo A queda dormido en
+la cola asociada a Ti.
 end note
 
 deactivate Monitor
@@ -122,8 +120,7 @@ Monitor -> Monitor : obtenerTransicionesSensibilizadasConHilosEsperando()
 
 note right of Monitor
 El hilo A reintenta luego de ser despertado.
-No asume que Ti puede dispararse:
-vuelve a entrar al monitor y reevalúa
+Ahora Ti puede formar parte de las candidatas
 si el nuevo marcado la dejó sensibilizada.
 end note
 

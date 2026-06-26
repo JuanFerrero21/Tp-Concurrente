@@ -35,14 +35,13 @@ loop hasta disparar Ti o finalizar simulación
         Mutex --> Monitor : mutex liberado
         deactivate Mutex
 
-        ColasTransiciones --> Hilo : hilo esperando en cola de condición de Ti
+        ColasTransiciones --> Hilo : hilo bloqueado en cola de Ti
 
         note right of Hilo
         El hilo no hace espera activa.
-        Queda esperando en la condición
-        asociada a Ti. Al esperar, libera
-        el mutex del monitor y podrá
-        reintentarlo cuando sea despertado.
+        Queda dormido hasta que otro
+        disparo modifique el marcado
+        y pueda despertarlo.
         end note
 
     else Ti está sensibilizada
@@ -69,14 +68,12 @@ loop hasta disparar Ti o finalizar simulación
                 Mutex --> Monitor : mutex liberado
                 deactivate Mutex
 
-                ColasTransiciones --> Hilo : hilo esperando temporizado hasta alfa
+                ColasTransiciones --> Hilo : hilo duerme hasta alfa
 
                 note right of Hilo
                 Este caso no dispara todavía.
-                El hilo espera temporizadamente
-                hasta alfa usando la condición
-                de Ti. Durante esa espera no
-                retiene el mutex del monitor.
+                El hilo espera el tiempo restante
+                hasta que se abra la ventana temporal.
                 end note
 
             else Ti superó beta
@@ -90,15 +87,13 @@ loop hasta disparar Ti o finalizar simulación
                 Mutex --> Monitor : mutex liberado
                 deactivate Mutex
 
-                ColasTransiciones --> Hilo : hilo esperando nueva sensibilización de Ti
+                ColasTransiciones --> Hilo : hilo espera nueva sensibilización
 
                 note right of Hilo
                 Al vencer beta, Ti no puede
                 dispararse dentro de esa misma
-                sensibilización. El hilo espera
-                hasta que Ti deje de estar
-                sensibilizada y luego vuelva
-                a sensibilizarse.
+                sensibilización. Debe esperar
+                una nueva sensibilización.
                 end note
 
             else Ti está dentro de la ventana
@@ -171,15 +166,14 @@ loop hasta disparar Ti o finalizar simulación
             Mutex --> Monitor : mutex liberado
             deactivate Mutex
 
-            ColasTransiciones --> Hilo : hilo esperando en cola de condición de Ti
+            ColasTransiciones --> Hilo : hilo bloqueado en cola de Ti
 
             note right of Hilo
             La política eligió otra transición.
             El hilo actual no dispara Ti.
-            Queda esperando en la condición
-            asociada a Ti y libera el mutex
-            para que otro hilo pueda continuar
-            dentro del monitor.
+            Queda esperando en la cola de Ti
+            y libera el mutex para que otro hilo
+            pueda continuar dentro del monitor.
             end note
         end
     end
