@@ -38,10 +38,6 @@ public class RegistradorTransiciones implements AutoCloseable {
 
     private int siguienteIdToken = 1;
 
-    public RegistradorTransiciones(int cantidadTransiciones) {
-        this(cantidadTransiciones, null, null, 0, null, null, null);
-    }
-
     public RegistradorTransiciones(
             int cantidadTransiciones,
             Path rutaLog,

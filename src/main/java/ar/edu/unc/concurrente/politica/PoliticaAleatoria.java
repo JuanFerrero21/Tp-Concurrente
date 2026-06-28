@@ -7,19 +7,7 @@ public class PoliticaAleatoria implements Politica {
     private final Random aleatorio;
 
     public PoliticaAleatoria() {
-        this(new Random());
-    }
-
-    public PoliticaAleatoria(int[] transicionesConflicto) {
-        this(new Random());
-    }
-
-    public PoliticaAleatoria(Random aleatorio) {
-        this.aleatorio = aleatorio;
-    }
-
-    public PoliticaAleatoria(Random aleatorio, int[] transicionesConflicto) {
-        this(aleatorio);
+        this.aleatorio = new Random();
     }
 
     @Override

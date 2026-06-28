@@ -4,7 +4,6 @@ import ar.edu.unc.concurrente.redpetri.Marcado;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class VerificadorInvariantes {
@@ -12,18 +11,6 @@ public class VerificadorInvariantes {
 
     public VerificadorInvariantes(Marcado marcadoInicial) {
         this.invariantesPlaza = crearInvariantesPlazaPorDefecto(marcadoInicial);
-    }
-
-    /*
-     * Constructor auxiliar para pruebas o casos donde se quieran definir
-     * invariantes manualmente.
-     */
-    public VerificadorInvariantes(List<InvariantePlaza> invariantesPlaza) {
-        if (invariantesPlaza == null || invariantesPlaza.isEmpty()) {
-            throw new IllegalArgumentException("Debe existir al menos un invariante de plaza");
-        }
-
-        this.invariantesPlaza = Collections.unmodifiableList(new ArrayList<>(invariantesPlaza));
     }
 
     /*

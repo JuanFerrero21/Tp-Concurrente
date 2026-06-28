@@ -10,10 +10,6 @@ public class Hilo extends Thread {
     private final EstadoSimulacion estadoSimulacion;
     private final RegistradorTransiciones registradorTransiciones;
 
-    public Hilo(String nombre, MonitorInterface monitor, int[] transicionesAsignadas, EstadoSimulacion estadoSimulacion) {
-        this(nombre, monitor, transicionesAsignadas, estadoSimulacion, null);
-    }
-
     public Hilo(
             String nombre,
             MonitorInterface monitor,

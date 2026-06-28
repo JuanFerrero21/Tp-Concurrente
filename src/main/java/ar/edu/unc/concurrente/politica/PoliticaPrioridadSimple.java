@@ -7,29 +7,9 @@ public class PoliticaPrioridadSimple implements Politica {
     private final Integer transicionModoSimple;
     private final Random aleatorio;
 
-    public PoliticaPrioridadSimple() {
-        this(null, new Random());
-    }
-
     public PoliticaPrioridadSimple(int transicionModoSimple) {
-        this(transicionModoSimple, new Random());
-    }
-
-    public PoliticaPrioridadSimple(int transicionModoSimple, int[] transicionesConflicto) {
-        this(transicionModoSimple, new Random());
-    }
-
-    public PoliticaPrioridadSimple(Random aleatorio) {
-        this(null, aleatorio);
-    }
-
-    public PoliticaPrioridadSimple(int transicionModoSimple, Random aleatorio) {
-        this(Integer.valueOf(transicionModoSimple), aleatorio);
-    }
-
-    private PoliticaPrioridadSimple(Integer transicionModoSimple, Random aleatorio) {
         this.transicionModoSimple = transicionModoSimple;
-        this.aleatorio = aleatorio;
+        this.aleatorio = new Random();
     }
 
     @Override

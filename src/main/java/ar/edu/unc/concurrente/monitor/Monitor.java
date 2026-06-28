@@ -5,7 +5,6 @@ import ar.edu.unc.concurrente.analisis.EstadoSimulacion;
 import ar.edu.unc.concurrente.registro.RegistradorTransiciones;
 import ar.edu.unc.concurrente.redpetri.RedDePetri;
 import ar.edu.unc.concurrente.politica.Politica;
-import ar.edu.unc.concurrente.politica.PoliticaPrioridadSimple;
 import ar.edu.unc.concurrente.tiempo.SensibilizadoConTiempo;
 
 import java.util.LinkedHashSet;
@@ -22,43 +21,6 @@ public class Monitor implements MonitorInterface {
     private final RegistradorTransiciones registradorTransiciones;
     private final VerificadorInvariantes verificadorInvariantes;
     private Integer transicionSeleccionada;
-
-    public Monitor(RedDePetri redDePetri) {
-        this(redDePetri, new PoliticaPrioridadSimple(), null, null, false, null, null);
-    }
-
-    public Monitor(RedDePetri redDePetri, Politica politica) {
-        this(redDePetri, politica, null, null, false, null, null);
-    }
-
-    public Monitor(RedDePetri redDePetri, Politica politica, EstadoSimulacion estadoSimulacion) {
-        this(redDePetri, politica, estadoSimulacion, null, false, null, null);
-    }
-
-    public Monitor(RedDePetri redDePetri, Politica politica, EstadoSimulacion estadoSimulacion, boolean detallado) {
-        this(redDePetri, politica, estadoSimulacion, null, detallado, null, null);
-    }
-
-    public Monitor(
-            RedDePetri redDePetri,
-            Politica politica,
-            EstadoSimulacion estadoSimulacion,
-            SensibilizadoConTiempo sensibilizadoConTiempo,
-            boolean detallado
-    ) {
-        this(redDePetri, politica, estadoSimulacion, sensibilizadoConTiempo, detallado, null, null);
-    }
-
-    public Monitor(
-            RedDePetri redDePetri,
-            Politica politica,
-            EstadoSimulacion estadoSimulacion,
-            SensibilizadoConTiempo sensibilizadoConTiempo,
-            boolean detallado,
-            RegistradorTransiciones registradorTransiciones
-    ) {
-        this(redDePetri, politica, estadoSimulacion, sensibilizadoConTiempo, detallado, registradorTransiciones, null);
-    }
 
     public Monitor(
             RedDePetri redDePetri,

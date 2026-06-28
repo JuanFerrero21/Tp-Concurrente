@@ -209,11 +209,11 @@ public class Main {
 
     private static Politica crearPolitica(String nombrePolitica, ConfiguracionSimulacion config) {
         if ("prioridad".equalsIgnoreCase(nombrePolitica)) {
-            return new PoliticaPrioridadSimple(config.obtenerTransicionModoSimple(), config.obtenerTransicionesConflicto());
+            return new PoliticaPrioridadSimple(config.obtenerTransicionModoSimple());
         }
 
         if ("aleatorio".equalsIgnoreCase(nombrePolitica) || "aleatoria".equalsIgnoreCase(nombrePolitica)) {
-            return new PoliticaAleatoria(config.obtenerTransicionesConflicto());
+            return new PoliticaAleatoria();
         }
 
         throw new IllegalArgumentException("Politica desconocida: " + nombrePolitica);
