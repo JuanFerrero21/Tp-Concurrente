@@ -71,11 +71,6 @@ else puede continuar
             Si hace falta, consulta a la política.
             end note
 
-            opt hay candidatas y hace falta elegir
-                Monitor -> Politica : elegirTransicion(candidatas)
-                Politica --> Monitor : transicionSeleccionada
-            end
-
             alt transicionSeleccionada == Ti
                 note right of Monitor
                 Ti fue elegida por la política.

@@ -62,8 +62,12 @@ Monitor -> RedDePetri : obtenerTransicionesSensibilizadas()
 RedDePetri --> Monitor : sensibilizadas
 Monitor -> Tiempo : actualizarSensibilizadas(sensibilizadas)
 Monitor -> Monitor : actualizarTransicionSeleccionadaSiHaceFalta()
-Monitor -> Politica : elegirTransicion(candidatas)
-Politica --> Monitor : Tj
+
+note right of Monitor
+Si hace falta elegir, este método
+arma candidatas y consulta a la política.
+En este caso queda seleccionada Tj.
+end note
 
 Monitor -> ColasTransiciones : terminarEspera(Tj)
 Monitor -> RedDePetri : disparar(Tj)
@@ -81,13 +85,14 @@ Monitor -> Tiempo : actualizarSensibilizadas(nuevasSensibilizadas)
 Monitor -> Estado : registrarTransicionDisparada(Tj)
 Monitor -> Monitor : transicionSeleccionada = null
 Monitor -> Monitor : despertarTransicionSeleccionada()
-Monitor -> RedDePetri : obtenerTransicionesSensibilizadas()
-RedDePetri --> Monitor : sensibilizadas
-Monitor -> Tiempo : actualizarSensibilizadas(sensibilizadas)
-Monitor -> ColasTransiciones : tieneHiloEsperando(Ti)
-ColasTransiciones --> Monitor : true
-Monitor -> Politica : elegirTransicion(candidatas)
-Politica --> Monitor : Ti
+
+note right of Monitor
+despertarTransicionSeleccionada vuelve a
+actualizar la selección si hace falta.
+Con el nuevo marcado, Ti queda candidata
+y se selecciona para despertar al hilo A.
+end note
+
 Monitor -> ColasTransiciones : despertar(Ti)
 
 Monitor -> Mutex : release()
