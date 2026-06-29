@@ -1,189 +1,180 @@
 @startuml
-title Flujo general del monitor para el disparo de una transición
+title Flujo real del monitor para fireTransition(Ti)
 
 actor "hilo : Hilo" as Hilo
 participant "monitor : Monitor" as Monitor
 participant "mutex : Mutex" as Mutex
 participant "redDePetri : RedDePetri" as RedDePetri
 participant "colasTransiciones : ColasTransiciones" as ColasTransiciones
-participant "sensibilizadoConTiempo : SensibilizadoConTiempo" as SensibilizadoConTiempo
+participant "sensibilizadoConTiempo : SensibilizadoConTiempo" as Tiempo
 participant "politica : Politica" as Politica
+participant "estado : EstadoSimulacion" as Estado
+participant "verificador : VerificadorInvariantes" as Verificador
 
 Hilo -> Monitor : fireTransition(Ti)
 activate Monitor
 
-loop hasta disparar Ti o finalizar simulación
+Monitor -> Mutex : acquire()
+activate Mutex
+Mutex --> Monitor : mutex adquirido
+deactivate Mutex
 
-    Monitor -> Mutex : acquire()
-    activate Mutex
-    Mutex --> Monitor : mutex adquirido
-    deactivate Mutex
+note right of Monitor
+Desde este punto el hilo está dentro
+de la sección crítica del monitor.
+El mutex se libera en el finally.
+Cuando el hilo espera en una Condition,
+await libera temporalmente el mutex y
+lo recupera antes de continuar.
+end note
 
-    Monitor -> RedDePetri : estaSensibilizada(Ti)
-    activate RedDePetri
-    RedDePetri --> Monitor : resultadoSensibilizacion
-    deactivate RedDePetri
+Monitor -> Estado : estaFinalizada()
+Estado --> Monitor : true/false
+Monitor -> Estado : puedeDispararTransicion(Ti)
+Estado --> Monitor : true/false
 
-    alt Ti no está sensibilizada
-        Monitor -> ColasTransiciones : esperar(Ti)
-        activate ColasTransiciones
-        ColasTransiciones --> Monitor : hilo agregado a cola de Ti
-        deactivate ColasTransiciones
+alt simulación finalizada o Ti no puede iniciar más ciclos
+    Monitor --> Hilo : false
+else puede continuar
+    Monitor -> ColasTransiciones : empezarEspera(Ti)
+    note right of ColasTransiciones
+    El hilo queda contado como interesado
+    en Ti. Todavía no necesariamente duerme.
+    Esto permite que el monitor arme
+    candidatas con hilos esperando.
+    end note
 
-        Monitor -> Mutex : release()
-        activate Mutex
-        Mutex --> Monitor : mutex liberado
-        deactivate Mutex
+    loop hasta que Ti sea seleccionada o finalice la simulación
+        Monitor -> Estado : estaFinalizada()
+        Estado --> Monitor : true/false
+        Monitor -> Estado : puedeDispararTransicion(Ti)
+        Estado --> Monitor : true/false
 
-        ColasTransiciones --> Hilo : hilo esperando en cola de condición de Ti
+        alt finalizó o Ti ya no puede dispararse por estado
+            Monitor -> ColasTransiciones : terminarEspera(Ti)
+            Monitor -> Monitor : transicionSeleccionada = null
+            Monitor -> ColasTransiciones : despertarTodos()
+            Monitor --> Hilo : false
+        else la simulación sigue
+            Monitor -> RedDePetri : obtenerTransicionesSensibilizadas()
+            activate RedDePetri
+            RedDePetri --> Monitor : sensibilizadas
+            deactivate RedDePetri
 
-        note right of Hilo
-        El hilo no hace espera activa.
-        Queda esperando en la condición
-        asociada a Ti. Al esperar, libera
-        el mutex del monitor y podrá
-        reintentarlo cuando sea despertado.
-        end note
+            Monitor -> Tiempo : actualizarSensibilizadas(sensibilizadas)
 
-    else Ti está sensibilizada
+            Monitor -> Monitor : actualizarTransicionSeleccionadaSiHaceFalta()
+            activate Monitor
+            Monitor -> RedDePetri : obtenerTransicionesSensibilizadas()
+            RedDePetri --> Monitor : sensibilizadas
+            Monitor -> Tiempo : actualizarSensibilizadas(sensibilizadas)
+            Monitor -> ColasTransiciones : tieneHiloEsperando(Tx)
+            ColasTransiciones --> Monitor : true/false
+            Monitor -> Estado : puedeDispararTransicion(Tx)
+            Estado --> Monitor : true/false
+            Monitor -> Tiempo : puedeDispararAhora(Tx)
+            Tiempo --> Monitor : true/false
 
-        opt Ti es temporal
-            Monitor -> SensibilizadoConTiempo : puedeDispararAhora(Ti)
-            activate SensibilizadoConTiempo
-            SensibilizadoConTiempo --> Monitor : puedeDisparar
-            deactivate SensibilizadoConTiempo
+            alt hay candidatas y hace falta elegir
+                Monitor -> Politica : elegirTransicion(candidatas)
+                Politica --> Monitor : transicionSeleccionada
+            else no hay candidatas
+                Monitor -> Monitor : transicionSeleccionada = null
+            end
+            deactivate Monitor
 
-            alt Ti todavía no alcanzó alfa
-                Monitor -> SensibilizadoConTiempo : milisegundosHastaAlfa(Ti)
-                activate SensibilizadoConTiempo
-                SensibilizadoConTiempo --> Monitor : millisHastaAlfa
-                deactivate SensibilizadoConTiempo
-
-                Monitor -> ColasTransiciones : esperarMillis(Ti, millisHastaAlfa)
-                activate ColasTransiciones
-                ColasTransiciones --> Monitor : hilo agregado a espera temporal
-                deactivate ColasTransiciones
-
-                Monitor -> Mutex : release()
-                activate Mutex
-                Mutex --> Monitor : mutex liberado
-                deactivate Mutex
-
-                ColasTransiciones --> Hilo : hilo esperando temporizado hasta alfa
-
-                note right of Hilo
-                Este caso no dispara todavía.
-                El hilo espera temporizadamente
-                hasta alfa usando la condición
-                de Ti. Durante esa espera no
-                retiene el mutex del monitor.
-                end note
-
-            else Ti superó beta
-                Monitor -> ColasTransiciones : esperar(Ti)
-                activate ColasTransiciones
-                ColasTransiciones --> Monitor : hilo agregado a cola de Ti
-                deactivate ColasTransiciones
-
-                Monitor -> Mutex : release()
-                activate Mutex
-                Mutex --> Monitor : mutex liberado
-                deactivate Mutex
-
-                ColasTransiciones --> Hilo : hilo esperando nueva sensibilización de Ti
-
-                note right of Hilo
-                Al vencer beta, Ti no puede
-                dispararse dentro de esa misma
-                sensibilización. El hilo espera
-                hasta que Ti deje de estar
-                sensibilizada y luego vuelva
-                a sensibilizarse.
-                end note
-
-            else Ti está dentro de la ventana
+            alt transicionSeleccionada == Ti
                 note right of Monitor
-                Ti cumple la restricción temporal
-                y puede competir como candidata.
+                Ti fue elegida por la política.
+                Se sale del while para disparar.
+                end note
+                break Ti seleccionada
+            else Ti no fue seleccionada todavía
+                Monitor -> RedDePetri : estaSensibilizada(Ti)
+                RedDePetri --> Monitor : true/false
+
+                alt Ti no está sensibilizada por tokens
+                    Monitor -> Monitor : despertarTransicionSeleccionada()
+                    Monitor -> ColasTransiciones : despertar(transicionSeleccionada)
+                    Monitor -> ColasTransiciones : esperar(Ti)
+                    note right of ColasTransiciones
+                    Condition.await duerme al hilo.
+                    Mientras duerme libera el mutex.
+                    Al despertar, vuelve con el mutex
+                    tomado y reintenta el while.
+                    end note
+                else Ti está sensibilizada
+                    Monitor -> Tiempo : puedeDispararAhora(Ti)
+                    Tiempo --> Monitor : true/false
+
+                    alt Ti no cumple ventana temporal
+                        Monitor -> Monitor : esperarPorVentanaTemporal(Ti)
+                        activate Monitor
+                        Monitor -> Tiempo : estaAntesDeLaVentana(Ti)
+                        Tiempo --> Monitor : true/false
+
+                        alt antes de alfa
+                            Monitor -> Tiempo : milisegundosHastaAlfa(Ti)
+                            Tiempo --> Monitor : millisHastaAlfa
+                            Monitor -> Monitor : despertarTransicionSeleccionada()
+                            Monitor -> ColasTransiciones : despertar(transicionSeleccionada)
+                            Monitor -> ColasTransiciones : esperarMillis(Ti, millisHastaAlfa)
+                        else vencida o sin ventana válida
+                            Monitor -> Tiempo : estaVencida(Ti)
+                            Tiempo --> Monitor : true/false
+                            Monitor -> Monitor : despertarTransicionSeleccionada()
+                            Monitor -> ColasTransiciones : despertar(transicionSeleccionada)
+                            Monitor -> ColasTransiciones : esperar(Ti)
+                        end
+                        deactivate Monitor
+                    else Ti cumple tokens y tiempo, pero la política eligió otra
+                        Monitor -> Monitor : despertarTransicionSeleccionada()
+                        Monitor -> ColasTransiciones : despertar(transicionSeleccionada)
+                        Monitor -> ColasTransiciones : esperar(Ti)
+                    end
+                end
+
+                note right of Hilo
+                Cuando el hilo despierta no asume
+                que Ti ya puede dispararse. Sigue
+                dentro del mismo fireTransition y
+                vuelve a evaluar estado, tokens,
+                tiempo y política.
                 end note
             end
         end
-
-        Monitor -> RedDePetri : obtenerTransicionesSensibilizadas()
-        activate RedDePetri
-        RedDePetri --> Monitor : transicionesSensibilizadas
-        deactivate RedDePetri
-
-        Monitor -> Monitor : obtenerTransicionesSensibilizadasConHilosEsperando()
-
-        note right of Monitor
-        Este método representa el armado
-        de candidatas reales. Se consideran
-        transiciones sensibilizadas, con hilos
-        esperando y temporalmente válidas.
-        end note
-
-        Monitor -> Politica : elegirTransicion(candidatas)
-        activate Politica
-        Politica --> Monitor : transicionSeleccionada
-        deactivate Politica
-
-        alt transicionSeleccionada == Ti
-            Monitor -> RedDePetri : disparar(Ti)
-            activate RedDePetri
-            RedDePetri --> Monitor : nuevoMarcado
-            deactivate RedDePetri
-
-            Monitor -> Monitor : despertarTransicionSeleccionada()
-
-            note right of Monitor
-            Luego del disparo cambia el marcado.
-            El monitor vuelve a decidir qué transición
-            corresponde despertar según las nuevas
-            candidatas y la política.
-            end note
-
-            Monitor -> ColasTransiciones : despertar(transicionSeleccionada)
-
-            Monitor -> Mutex : release()
-            activate Mutex
-            Mutex --> Monitor : mutex liberado
-            deactivate Mutex
-
-            Monitor --> Hilo : true
-
-        else transicionSeleccionada != Ti
-            Monitor -> ColasTransiciones : despertar(transicionSeleccionada)
-
-            note right of ColasTransiciones
-            Se despierta un hilo de la cola
-            asociada a la transición elegida
-            por la política.
-            end note
-
-            Monitor -> ColasTransiciones : esperar(Ti)
-            activate ColasTransiciones
-            ColasTransiciones --> Monitor : hilo agregado a cola de Ti
-            deactivate ColasTransiciones
-
-            Monitor -> Mutex : release()
-            activate Mutex
-            Mutex --> Monitor : mutex liberado
-            deactivate Mutex
-
-            ColasTransiciones --> Hilo : hilo esperando en cola de condición de Ti
-
-            note right of Hilo
-            La política eligió otra transición.
-            El hilo actual no dispara Ti.
-            Queda esperando en la condición
-            asociada a Ti y libera el mutex
-            para que otro hilo pueda continuar
-            dentro del monitor.
-            end note
-        end
     end
+
+    Monitor -> ColasTransiciones : terminarEspera(Ti)
+    Monitor -> RedDePetri : disparar(Ti)
+    activate RedDePetri
+    RedDePetri --> Monitor : disparada = true
+    deactivate RedDePetri
+
+    Monitor -> Verificador : verificarInvariantesPlazaOLanzar(marcadoActual)
+    Monitor -> RedDePetri : obtenerTransicionesSensibilizadas()
+    RedDePetri --> Monitor : sensibilizadas
+    Monitor -> Tiempo : actualizarSensibilizadas(sensibilizadas)
+    Monitor -> Estado : registrarTransicionDisparada(Ti)
+
+    Monitor -> Monitor : transicionSeleccionada = null
+    Monitor -> Estado : estaFinalizada()
+    Estado --> Monitor : true/false
+
+    alt simulación finalizada
+        Monitor -> ColasTransiciones : despertarTodos()
+    else continúa la simulación
+        Monitor -> Monitor : despertarTransicionSeleccionada()
+        Monitor -> ColasTransiciones : despertar(transicionSeleccionada)
+    end
+
+    Monitor --> Hilo : true
 end
+
+Monitor -> Mutex : release()
+activate Mutex
+Mutex --> Monitor : mutex liberado
+deactivate Mutex
 
 deactivate Monitor
 @enduml

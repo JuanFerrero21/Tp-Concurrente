@@ -1,5 +1,5 @@
 @startuml
-title Reintento de un hilo luego de esperar en una cola de condición
+title Reintento de un hilo luego de dormir en una cola de condición
 
 actor "hilo A : Hilo" as HiloA
 actor "hilo B : Hilo" as HiloB
@@ -7,7 +7,9 @@ participant "monitor : Monitor" as Monitor
 participant "mutex : Mutex" as Mutex
 participant "redDePetri : RedDePetri" as RedDePetri
 participant "colasTransiciones : ColasTransiciones" as ColasTransiciones
+participant "sensibilizadoConTiempo : SensibilizadoConTiempo" as Tiempo
 participant "politica : Politica" as Politica
+participant "estado : EstadoSimulacion" as Estado
 
 HiloA -> Monitor : fireTransition(Ti)
 activate Monitor
@@ -17,32 +19,30 @@ activate Mutex
 Mutex --> Monitor : mutex adquirido
 deactivate Mutex
 
+Monitor -> Estado : estaFinalizada()
+Estado --> Monitor : false
+Monitor -> Estado : puedeDispararTransicion(Ti)
+Estado --> Monitor : true
+Monitor -> ColasTransiciones : empezarEspera(Ti)
+
+Monitor -> RedDePetri : obtenerTransicionesSensibilizadas()
+RedDePetri --> Monitor : sensibilizadas
+Monitor -> Tiempo : actualizarSensibilizadas(sensibilizadas)
+Monitor -> Monitor : actualizarTransicionSeleccionadaSiHaceFalta()
 Monitor -> RedDePetri : estaSensibilizada(Ti)
-activate RedDePetri
 RedDePetri --> Monitor : false
-deactivate RedDePetri
 
+Monitor -> Monitor : despertarTransicionSeleccionada()
 Monitor -> ColasTransiciones : esperar(Ti)
-activate ColasTransiciones
-ColasTransiciones --> Monitor : hilo A agregado a cola de Ti
-deactivate ColasTransiciones
 
-Monitor -> Mutex : release()
-activate Mutex
-Mutex --> Monitor : mutex liberado
-deactivate Mutex
-
-ColasTransiciones --> HiloA : hilo A esperando en cola de condición de Ti
-
-note right of HiloA
-Ti no está sensibilizada.
-El hilo A queda esperando en
-la condición asociada a Ti.
-Al esperar, libera el mutex
-del monitor.
+note right of ColasTransiciones
+El hilo A duerme en la condición de Ti.
+No queda consumiendo CPU.
+Condition.await libera el mutex mientras
+el hilo está dormido.
 end note
 
-deactivate Monitor
+... mientras A está dormido, otro hilo puede entrar al monitor ...
 
 HiloB -> Monitor : fireTransition(Tj)
 activate Monitor
@@ -52,107 +52,82 @@ activate Mutex
 Mutex --> Monitor : mutex adquirido
 deactivate Mutex
 
-Monitor -> RedDePetri : estaSensibilizada(Tj)
-activate RedDePetri
-RedDePetri --> Monitor : true
-deactivate RedDePetri
+Monitor -> Estado : estaFinalizada()
+Estado --> Monitor : false
+Monitor -> Estado : puedeDispararTransicion(Tj)
+Estado --> Monitor : true
+Monitor -> ColasTransiciones : empezarEspera(Tj)
 
 Monitor -> RedDePetri : obtenerTransicionesSensibilizadas()
-activate RedDePetri
-RedDePetri --> Monitor : transicionesSensibilizadas
-deactivate RedDePetri
-
-Monitor -> Monitor : obtenerTransicionesSensibilizadasConHilosEsperando()
-
-note right of Monitor
-Se arma el conjunto de candidatas:
-transiciones sensibilizadas que tienen
-hilos esperando y cumplen las condiciones
-necesarias para avanzar.
-end note
-
+RedDePetri --> Monitor : sensibilizadas
+Monitor -> Tiempo : actualizarSensibilizadas(sensibilizadas)
+Monitor -> Monitor : actualizarTransicionSeleccionadaSiHaceFalta()
 Monitor -> Politica : elegirTransicion(candidatas)
-activate Politica
 Politica --> Monitor : Tj
-deactivate Politica
 
+Monitor -> ColasTransiciones : terminarEspera(Tj)
 Monitor -> RedDePetri : disparar(Tj)
-activate RedDePetri
-RedDePetri --> Monitor : nuevoMarcado
-deactivate RedDePetri
-
-Monitor -> Monitor : despertarTransicionSeleccionada()
+RedDePetri --> Monitor : disparada = true
 
 note right of Monitor
 El disparo de Tj modifica el marcado.
-Luego el monitor recalcula qué transición
-puede despertar según el nuevo estado.
-Si la transición seleccionada es Ti,
-se despierta el hilo A.
+Con el nuevo marcado, Ti puede quedar
+sensibilizada y pasar a ser candidata.
 end note
-
-Monitor -> ColasTransiciones : despertar(transicionSeleccionada)
-
-Monitor -> Mutex : release()
-activate Mutex
-Mutex --> Monitor : mutex liberado
-deactivate Mutex
-
-deactivate Monitor
-
-HiloA -> Monitor : fireTransition(Ti)
-activate Monitor
-
-Monitor -> Mutex : acquire()
-activate Mutex
-Mutex --> Monitor : mutex adquirido
-deactivate Mutex
-
-Monitor -> RedDePetri : estaSensibilizada(Ti)
-activate RedDePetri
-RedDePetri --> Monitor : true
-deactivate RedDePetri
 
 Monitor -> RedDePetri : obtenerTransicionesSensibilizadas()
-activate RedDePetri
-RedDePetri --> Monitor : transicionesSensibilizadas
-deactivate RedDePetri
-
-Monitor -> Monitor : obtenerTransicionesSensibilizadasConHilosEsperando()
-
-note right of Monitor
-El hilo A reintenta luego de ser despertado.
-No asume que Ti puede dispararse:
-vuelve a entrar al monitor y reevalúa
-si el nuevo marcado la dejó sensibilizada.
-end note
-
-Monitor -> Politica : elegirTransicion(candidatas)
-activate Politica
-Politica --> Monitor : Ti
-deactivate Politica
-
-Monitor -> RedDePetri : disparar(Ti)
-activate RedDePetri
-RedDePetri --> Monitor : nuevoMarcado
-deactivate RedDePetri
-
+RedDePetri --> Monitor : nuevasSensibilizadas
+Monitor -> Tiempo : actualizarSensibilizadas(nuevasSensibilizadas)
+Monitor -> Estado : registrarTransicionDisparada(Tj)
+Monitor -> Monitor : transicionSeleccionada = null
 Monitor -> Monitor : despertarTransicionSeleccionada()
-
-note right of Monitor
-Después del disparo exitoso de Ti,
-el monitor puede despertar otra transición
-seleccionada para que el sistema continúe.
-end note
-
-Monitor -> ColasTransiciones : despertar(transicionSeleccionada)
+Monitor -> RedDePetri : obtenerTransicionesSensibilizadas()
+RedDePetri --> Monitor : sensibilizadas
+Monitor -> Tiempo : actualizarSensibilizadas(sensibilizadas)
+Monitor -> ColasTransiciones : tieneHiloEsperando(Ti)
+ColasTransiciones --> Monitor : true
+Monitor -> Politica : elegirTransicion(candidatas)
+Politica --> Monitor : Ti
+Monitor -> ColasTransiciones : despertar(Ti)
 
 Monitor -> Mutex : release()
-activate Mutex
 Mutex --> Monitor : mutex liberado
-deactivate Mutex
-
-Monitor --> HiloA : true
 deactivate Monitor
 
+ColasTransiciones --> HiloA : señal sobre condición de Ti
+
+note right of HiloA
+La señal no ejecuta la transición por sí sola.
+Solo permite que A despierte. Al volver
+desde await, A recupera el mutex y sigue
+en la misma llamada a fireTransition.
+end note
+
+HiloA -> Monitor : continúa dentro del while de fireTransition(Ti)
+
+Monitor -> RedDePetri : obtenerTransicionesSensibilizadas()
+RedDePetri --> Monitor : sensibilizadas
+Monitor -> Tiempo : actualizarSensibilizadas(sensibilizadas)
+Monitor -> Monitor : actualizarTransicionSeleccionadaSiHaceFalta()
+
+alt transicionSeleccionada == Ti
+    Monitor -> ColasTransiciones : terminarEspera(Ti)
+    Monitor -> RedDePetri : disparar(Ti)
+    RedDePetri --> Monitor : disparada = true
+    Monitor -> Estado : registrarTransicionDisparada(Ti)
+    Monitor -> Monitor : transicionSeleccionada = null
+    Monitor -> Monitor : despertarTransicionSeleccionada()
+    Monitor -> Mutex : release()
+    Mutex --> Monitor : mutex liberado
+    Monitor --> HiloA : true
+else Ti ya no es candidata
+    Monitor -> ColasTransiciones : esperar(Ti)
+    note right of HiloA
+    Aunque haya despertado, A vuelve
+    a validar todo. Si Ti ya no puede
+    avanzar, vuelve a dormir.
+    end note
+end
+
+deactivate Monitor
 @enduml
