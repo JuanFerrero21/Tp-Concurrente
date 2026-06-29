@@ -74,9 +74,9 @@ else puede continuar
             alt transicionSeleccionada == Ti
                 note right of Monitor
                 Ti fue elegida por la política.
-                Se sale del while para disparar.
+                En el código se ejecuta break;
+                y se sale del while.
                 end note
-                break Ti seleccionada
             else Ti no fue seleccionada todavía
                 Monitor -> RedDePetri : estaSensibilizada(Ti)
                 RedDePetri --> Monitor : true/false
