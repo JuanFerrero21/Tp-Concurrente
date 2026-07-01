@@ -172,6 +172,7 @@ public class ConfiguracionSimulacion {
                 configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 9, 120, 1200);
                 configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 10, 120, 1200);
                 return;
+            case "penalizado":
             case "simple-lento":
                 configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 1, 60, 600);
                 configurarTransicionTemporal(transicionesTemporales, alfaMillis, betaMillis, 3, 90, 900);
