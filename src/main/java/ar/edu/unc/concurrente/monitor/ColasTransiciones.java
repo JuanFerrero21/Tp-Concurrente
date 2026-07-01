@@ -1,18 +1,24 @@
 package ar.edu.unc.concurrente.monitor;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
+import java.util.concurrent.Semaphore;
 
 public class ColasTransiciones {
-    private final Condition[] condicionesPorTransicion;
+    private final Mutex mutex;
+    private final Semaphore[] semaforosPorTransicion;
     private final int[] esperandoPorTransicion;
+    private final int[] bloqueadosPorTransicion;
+    private final int[] permisosPendientesPorTransicion;
 
     public ColasTransiciones(Mutex mutex, int cantidadTransiciones) {
-        this.condicionesPorTransicion = new Condition[cantidadTransiciones];
+        this.mutex = mutex;
+        this.semaforosPorTransicion = new Semaphore[cantidadTransiciones];
         this.esperandoPorTransicion = new int[cantidadTransiciones];
+        this.bloqueadosPorTransicion = new int[cantidadTransiciones];
+        this.permisosPendientesPorTransicion = new int[cantidadTransiciones];
 
         for (int i = 0; i < cantidadTransiciones; i++) {
-            condicionesPorTransicion[i] = mutex.newCondition();
+            semaforosPorTransicion[i] = new Semaphore(0, true);
         }
     }
 
@@ -33,7 +39,7 @@ public class ColasTransiciones {
     }
 
     public void esperar(int transicion) throws InterruptedException {
-        condicionesPorTransicion[transicion].await();
+        esperarEnSemaforo(transicion, 0, false);
     }
 
     public void esperarMillis(int transicion, long millis) throws InterruptedException {
@@ -41,16 +47,59 @@ public class ColasTransiciones {
             return;
         }
 
-        condicionesPorTransicion[transicion].await(millis, TimeUnit.MILLISECONDS);
+        esperarEnSemaforo(transicion, millis, true);
     }
 
     public void despertar(int transicion) {
-        condicionesPorTransicion[transicion].signal();
+        if (permisosPendientesPorTransicion[transicion] < bloqueadosPorTransicion[transicion]) {
+            permisosPendientesPorTransicion[transicion]++;
+            mutex.registrarReingresoPreferente();
+            semaforosPorTransicion[transicion].release();
+        }
     }
 
     public void despertarTodos() {
-        for (Condition condicion : condicionesPorTransicion) {
-            condicion.signalAll();
+        for (int transicion = 0; transicion < semaforosPorTransicion.length; transicion++) {
+            int permisosNecesarios = bloqueadosPorTransicion[transicion] - permisosPendientesPorTransicion[transicion];
+
+            if (permisosNecesarios > 0) {
+                permisosPendientesPorTransicion[transicion] += permisosNecesarios;
+                for (int i = 0; i < permisosNecesarios; i++) {
+                    mutex.registrarReingresoPreferente();
+                }
+                semaforosPorTransicion[transicion].release(permisosNecesarios);
+            }
+        }
+    }
+
+    private void esperarEnSemaforo(int transicion, long millis, boolean conTimeout) throws InterruptedException {
+        boolean permisoConsumido = false;
+        bloqueadosPorTransicion[transicion]++;
+        mutex.release();
+
+        try {
+            if (conTimeout) {
+                permisoConsumido = semaforosPorTransicion[transicion].tryAcquire(millis, TimeUnit.MILLISECONDS);
+            } else {
+                semaforosPorTransicion[transicion].acquire();
+                permisoConsumido = true;
+            }
+        } finally {
+            if (!permisoConsumido) {
+                permisoConsumido = semaforosPorTransicion[transicion].tryAcquire();
+            }
+
+            if (permisoConsumido) {
+                mutex.adquirirComoPreferente();
+            } else {
+                mutex.acquire();
+            }
+
+            bloqueadosPorTransicion[transicion]--;
+
+            if (permisoConsumido) {
+                permisosPendientesPorTransicion[transicion]--;
+            }
         }
     }
 }

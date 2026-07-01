@@ -1,24 +1,45 @@
 package ar.edu.unc.concurrente.monitor;
 
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.Semaphore;
 
 public class Mutex {
-    private final ReentrantLock lock;
+    private final Semaphore semaforo;
+    private int reingresosPreferentesPendientes;
 
     public Mutex() {
-        this.lock = new ReentrantLock();
+        this.semaforo = new Semaphore(1, true);
     }
 
     public void acquire() {
-        lock.lock();
+        while (true) {
+            semaforo.acquireUninterruptibly();
+
+            synchronized (this) {
+                if (reingresosPreferentesPendientes == 0) {
+                    return;
+                }
+            }
+
+            semaforo.release();
+            Thread.yield();
+        }
+    }
+
+    public void adquirirComoPreferente() {
+        semaforo.acquireUninterruptibly();
+
+        synchronized (this) {
+            if (reingresosPreferentesPendientes > 0) {
+                reingresosPreferentesPendientes--;
+            }
+        }
+    }
+
+    public synchronized void registrarReingresoPreferente() {
+        reingresosPreferentesPendientes++;
     }
 
     public void release() {
-        lock.unlock();
-    }
-
-    public Condition newCondition() {
-        return lock.newCondition();
+        semaforo.release();
     }
 }

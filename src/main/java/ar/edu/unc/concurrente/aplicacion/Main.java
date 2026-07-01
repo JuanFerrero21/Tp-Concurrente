@@ -84,14 +84,15 @@ public class Main {
 
         VerificadorInvariantes verificadorInvariantes = new VerificadorInvariantes(config.obtenerMarcadoInicial());
 
+        redDePetri.configurarSemanticaTemporal(sensibilizadoConTiempo);
+        redDePetri.configurarVerificadorInvariantes(verificadorInvariantes);
+        redDePetri.configurarEstadoSimulacion(estadoSimulacion);
+        redDePetri.configurarRegistradorTransiciones(registradorTransiciones);
+
         MonitorInterface monitor = new Monitor(
                 redDePetri,
                 politica,
-                estadoSimulacion,
-                sensibilizadoConTiempo,
-                DETALLADO,
-                registradorTransiciones,
-                verificadorInvariantes
+                DETALLADO
         );
 
         System.out.println("Politica: " + nombrePolitica);
@@ -115,7 +116,7 @@ public class Main {
 
         long tiempoTranscurridoMillis = System.currentTimeMillis() - inicioMillis;
 
-        boolean invariantesPlazaCumplidos = verificadorInvariantes.seCumplenInvariantesPlaza(redDePetri.obtenerMarcado());
+        boolean invariantesPlazaCumplidos = redDePetri.seCumplenInvariantesPlaza();
 
         ResultadoSimulacion resultado = new ResultadoSimulacion(
                 redDePetri.obtenerMarcado(),
@@ -143,7 +144,7 @@ public class Main {
 
         System.out.println("Resumen: " + resultado);
         System.out.println("Reporte de invariantes de plaza:");
-        System.out.print(verificadorInvariantes.construirReporte(redDePetri.obtenerMarcado()));
+        System.out.print(redDePetri.construirReporteInvariantesPlaza());
         System.out.print(resultadoRegex.construirReporte());
         System.out.println("Invariantes completos: "
                 + estadoSimulacion.obtenerInvariantesCompletos()
