@@ -1,12 +1,18 @@
 @startuml
-title Disparo exitoso con monitor coordinando hilos
+title Disparo exitoso con monitor, semaforos y politica posterior al disparo
 
 actor "hilo : Hilo" as Hilo
+
 participant "monitor : Monitor" as Monitor
 participant "mutex : Mutex" as Mutex
 participant "redDePetri : RedDePetri" as RedDePetri
 participant "colasTransiciones : ColasTransiciones" as ColasTransiciones
+participant "semaforoTi : Semaphore" as SemaforoTi
 participant "politica : Politica" as Politica
+participant "sensibilizadoConTiempo : SensibilizadoConTiempo" as Tiempo
+participant "verificador : VerificadorInvariantes" as Verificador
+participant "estadoSimulacion : EstadoSimulacion" as Estado
+participant "registrador : RegistradorTransiciones" as Registrador
 
 Hilo -> Monitor : fireTransition(Ti)
 activate Monitor
@@ -18,10 +24,11 @@ deactivate Mutex
 
 note right of Monitor
 El monitor toma el mutex para que
-solo un hilo por vez decida si puede
-avanzar, esperar o despertar a otro.
+solo un hilo por vez pueda decidir
+si espera, dispara o despierta a otro.
 end note
 
+Monitor -> Monitor : validarTransicion(Ti)
 Monitor -> RedDePetri : simulacionFinalizada()
 RedDePetri --> Monitor : true/false
 Monitor -> RedDePetri : puedeDispararPorEstadoSimulacion(Ti)
@@ -29,13 +36,17 @@ RedDePetri --> Monitor : true/false
 
 alt simulacion finalizada o Ti ya no puede iniciar ciclos
     Monitor --> Hilo : false
+    Monitor -> Mutex : release()
+    activate Mutex
+    Mutex --> Monitor : mutex liberado
+    deactivate Mutex
 else puede intentar disparar
     Monitor -> ColasTransiciones : empezarEspera(Ti)
 
     note right of ColasTransiciones
     Se registra que este hilo esta
-    intentando disparar Ti.
-    Todavia no necesariamente duerme.
+    intentando disparar Ti. Todavia
+    no necesariamente queda dormido.
     end note
 
     loop hasta que Ti pueda dispararse o finalice la simulacion
@@ -51,54 +62,113 @@ else puede intentar disparar
         else la simulacion sigue
             Monitor -> RedDePetri : puedeDisparar(Ti)
             activate RedDePetri
+
+            RedDePetri -> RedDePetri : estaSensibilizada(Ti)
+            RedDePetri -> Tiempo : puedeDispararAhora(Ti)
+            Tiempo --> RedDePetri : true/false
             RedDePetri --> Monitor : true/false
+
             deactivate RedDePetri
 
             note right of RedDePetri
-            La red decide si Ti puede disparar.
-            Aca se consideran tokens, semantica
-            temporal y estado propio de la red.
+            puedeDisparar(Ti) solo consulta:
+            estado de simulacion, tokens y
+            ventana temporal. No cambia
+            el marcado ni actualiza timestamp.
             end note
 
             alt puedeDisparar(Ti) == true
                 note right of Monitor
-                Ti cumple las condiciones.
-                Se sale del loop y se pasa al disparo.
+                Ti esta en condiciones de disparar.
+                Se sale del loop y se realiza
+                el disparo dentro de RedDePetri.
                 end note
             else Ti todavia no puede disparar
                 Monitor -> RedDePetri : describirMotivoEspera(Ti)
                 RedDePetri --> Monitor : motivo
-                Monitor -> Monitor : esperarSegunEstadoTransicion(Ti)
+                Monitor -> RedDePetri : estaAntesDeLaVentanaTemporal(Ti)
+                RedDePetri --> Monitor : true/false
 
                 alt Ti esta antes de alfa
                     Monitor -> RedDePetri : milisegundosHastaVentanaTemporal(Ti)
                     RedDePetri --> Monitor : esperaMillis
                     Monitor -> ColasTransiciones : esperarMillis(Ti, esperaMillis)
-                else Ti no esta sensibilizada, vencio beta o debe esperar
+                    activate ColasTransiciones
+                    ColasTransiciones -> ColasTransiciones : bloqueadosPorTransicion[Ti]++
+                    ColasTransiciones -> Mutex : release()
+                    activate Mutex
+                    Mutex --> ColasTransiciones : mutex liberado
+                    deactivate Mutex
+                    ColasTransiciones -> SemaforoTi : tryAcquire(esperaMillis)
+                    SemaforoTi --> ColasTransiciones : timeout o permiso
+                    alt desperto por permiso de politica
+                        ColasTransiciones -> Mutex : adquirirComoPreferente()
+                        Mutex --> ColasTransiciones : mutex adquirido con prioridad
+                    else desperto por timeout
+                        ColasTransiciones -> Mutex : acquire()
+                        Mutex --> ColasTransiciones : mutex adquirido
+                    end
+                    ColasTransiciones -> ColasTransiciones : bloqueadosPorTransicion[Ti]--
+                    ColasTransiciones --> Monitor : retorna
+                    deactivate ColasTransiciones
+                else no sensibilizada, beta vencida o espera normal
                     Monitor -> ColasTransiciones : esperar(Ti)
+                    activate ColasTransiciones
+                    ColasTransiciones -> ColasTransiciones : bloqueadosPorTransicion[Ti]++
+                    ColasTransiciones -> Mutex : release()
+                    activate Mutex
+                    Mutex --> ColasTransiciones : mutex liberado
+                    deactivate Mutex
+                    ColasTransiciones -> SemaforoTi : acquire()
+                    SemaforoTi --> ColasTransiciones : permiso recibido
+                    ColasTransiciones -> Mutex : adquirirComoPreferente()
+                    activate Mutex
+                    Mutex --> ColasTransiciones : mutex adquirido con prioridad
+                    deactivate Mutex
+                    ColasTransiciones -> ColasTransiciones : bloqueadosPorTransicion[Ti]--
+                    ColasTransiciones -> ColasTransiciones : permisosPendientes[Ti]--
+                    ColasTransiciones --> Monitor : retorna
+                    deactivate ColasTransiciones
                 end
 
                 note right of ColasTransiciones
-                El hilo libera el mutex mientras espera.
-                Cuando es despertado, vuelve a competir
-                con prioridad para recuperar el mutex y
-                reintentar la evaluacion.
+                La espera se implementa con semaforos.
+                Mientras el hilo duerme, libera el mutex.
+                Si fue despertado por la politica, reingresa
+                como preferente para recuperar el mutex.
                 end note
             end
         end
     end
 
     Monitor -> ColasTransiciones : terminarEspera(Ti)
+
     Monitor -> RedDePetri : disparar(Ti)
     activate RedDePetri
+
+    RedDePetri -> RedDePetri : puedeDisparar(Ti)
+    RedDePetri -> RedDePetri : calcularSiguienteMarcado(Ti)
+    RedDePetri -> Verificador : verificarInvariantesPlazaOLanzar(marcado)
+    Verificador --> RedDePetri : ok
+
+    RedDePetri -> RedDePetri : actualizarSensibilizadasTemporales()
+    RedDePetri -> RedDePetri : obtenerTransicionesSensibilizadas()
+    RedDePetri -> Tiempo : actualizarSensibilizadas(sensibilizadas)
+    Tiempo --> RedDePetri : timestamps actualizados
+
+    RedDePetri -> Estado : registrarTransicionDisparada(Ti)
+    Estado --> RedDePetri : ok
+    RedDePetri -> Registrador : registrarEventoDisparo(Ti)
+    Registrador --> RedDePetri : log actualizado
+
     RedDePetri --> Monitor : true
     deactivate RedDePetri
 
     note right of RedDePetri
-    El disparo real queda dentro de la red:
-    actualiza el marcado, verifica invariantes
-    de plaza, actualiza la semantica temporal,
-    registra estado de simulacion y registra log.
+    El disparo exitoso queda encapsulado
+    en la red: cambia el marcado, verifica
+    invariantes de plaza, actualiza ventanas
+    temporales y registra el disparo.
     end note
 
     Monitor -> RedDePetri : simulacionFinalizada()
@@ -106,31 +176,65 @@ else puede intentar disparar
 
     alt simulacion finalizada
         Monitor -> ColasTransiciones : despertarTodos()
-    else continua la simulacion
-        Monitor -> RedDePetri : obtenerTransicionesDisparables()
-        RedDePetri --> Monitor : disparables
-        Monitor -> ColasTransiciones : tieneHiloEsperando(Tj)
-        ColasTransiciones --> Monitor : true/false
-        Monitor -> Politica : elegirTransicion(candidatas)
-        activate Politica
-        Politica --> Monitor : Tj
-        deactivate Politica
-        Monitor -> ColasTransiciones : despertar(Tj)
-
-        note right of Monitor
-        La politica se consulta despues de un
-        disparo exitoso, solo para elegir que
-        cola despertar a continuacion.
+        note right of ColasTransiciones
+        Se liberan los hilos bloqueados para
+        que puedan salir limpiamente.
         end note
+    else continua la simulacion
+        Monitor -> Monitor : despertarTransicionElegidaPorPolitica()
+        activate Monitor
+
+        Monitor -> RedDePetri : obtenerTransicionesDisparables()
+        activate RedDePetri
+        RedDePetri --> Monitor : disparables
+        deactivate RedDePetri
+
+        loop por cada transicion disparable
+            Monitor -> ColasTransiciones : tieneHiloEsperando(Tj)
+            ColasTransiciones --> Monitor : true/false
+            Monitor -> RedDePetri : puedeDispararPorEstadoSimulacion(Tj)
+            RedDePetri --> Monitor : true/false
+        end
+
+        alt hay candidatas
+            Monitor -> Politica : elegirTransicion(candidatas)
+            activate Politica
+            Politica --> Monitor : Tj
+            deactivate Politica
+
+            Monitor -> ColasTransiciones : despertar(Tj)
+            activate ColasTransiciones
+            ColasTransiciones -> ColasTransiciones : permisosPendientes[Tj]++
+            ColasTransiciones -> Mutex : registrarReingresoPreferente()
+            activate Mutex
+            Mutex --> ColasTransiciones : preferente registrado
+            deactivate Mutex
+            ColasTransiciones -> ColasTransiciones : semaforoPorTransicion[Tj].release()
+            deactivate ColasTransiciones
+
+            note right of Politica
+            La politica solo se consulta despues
+            de un disparo exitoso, porque recien
+            ahi cambio el marcado.
+            end note
+        else no hay candidatas
+            note right of Monitor
+            Si no hay transiciones disparables
+            con hilos esperando, no se despierta
+            ninguna cola.
+            end note
+        end
+
+        deactivate Monitor
     end
 
     Monitor --> Hilo : true
+    Monitor -> Mutex : release()
+    activate Mutex
+    Mutex --> Monitor : mutex liberado
+    deactivate Mutex
 end
 
-Monitor -> Mutex : release()
-activate Mutex
-Mutex --> Monitor : mutex liberado
-deactivate Mutex
-
 deactivate Monitor
+
 @enduml
