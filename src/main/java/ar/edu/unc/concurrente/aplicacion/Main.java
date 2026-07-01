@@ -2,7 +2,6 @@ package ar.edu.unc.concurrente.aplicacion;
 
 import ar.edu.unc.concurrente.analisis.VerificadorInvariantes;
 import ar.edu.unc.concurrente.analisis.ResultadoSimulacion;
-import ar.edu.unc.concurrente.analisis.AnalizadorRegexInvariantesTransicion;
 import ar.edu.unc.concurrente.analisis.EstadoSimulacion;
 import ar.edu.unc.concurrente.configuracion.ConfiguracionSimulacion;
 import ar.edu.unc.concurrente.registro.RegistradorTransiciones;
@@ -135,17 +134,9 @@ public class Main {
 
         registradorTransiciones.close();
 
-        AnalizadorRegexInvariantesTransicion analizadorRegex = new AnalizadorRegexInvariantesTransicion();
-        AnalizadorRegexInvariantesTransicion.ResultadoAnalisisRegex resultadoRegex = analizadorRegex.analizar(rutaLog);
-
-        if (!resultadoRegex.esAnalisisRegexValido()) {
-            throw new IllegalStateException("El analisis regex de invariantes de transicion fallo");
-        }
-
         System.out.println("Resumen: " + resultado);
         System.out.println("Reporte de invariantes de plaza:");
         System.out.print(redDePetri.construirReporteInvariantesPlaza());
-        System.out.print(resultadoRegex.construirReporte());
         System.out.println("Invariantes completos: "
                 + estadoSimulacion.obtenerInvariantesCompletos()
                 + "/"
