@@ -9,6 +9,7 @@ public class ColasTransiciones {
     private final int[] esperandoPorTransicion;
     private final int[] bloqueadosPorTransicion;
     private final int[] permisosPendientesPorTransicion;
+    private final Semaphore controlColas;
 
     public ColasTransiciones(Mutex mutex, int cantidadTransiciones) {
         this.mutex = mutex;
@@ -16,6 +17,7 @@ public class ColasTransiciones {
         this.esperandoPorTransicion = new int[cantidadTransiciones];
         this.bloqueadosPorTransicion = new int[cantidadTransiciones];
         this.permisosPendientesPorTransicion = new int[cantidadTransiciones];
+        this.controlColas = new Semaphore(1, true);
 
         for (int i = 0; i < cantidadTransiciones; i++) {
             semaforosPorTransicion[i] = new Semaphore(0, true);
@@ -51,30 +53,54 @@ public class ColasTransiciones {
     }
 
     public void despertar(int transicion) {
-        if (permisosPendientesPorTransicion[transicion] < bloqueadosPorTransicion[transicion]) {
-            permisosPendientesPorTransicion[transicion]++;
-            mutex.registrarReingresoPreferente();
-            semaforosPorTransicion[transicion].release();
+        controlColas.acquireUninterruptibly();
+
+        try {
+            if (permisosPendientesPorTransicion[transicion]
+                    < bloqueadosPorTransicion[transicion]) {
+
+                permisosPendientesPorTransicion[transicion]++;
+                mutex.registrarReingresoPreferente();
+                semaforosPorTransicion[transicion].release();
+            }
+        } finally {
+            controlColas.release();
         }
     }
 
     public void despertarTodos() {
-        for (int transicion = 0; transicion < semaforosPorTransicion.length; transicion++) {
-            int permisosNecesarios = bloqueadosPorTransicion[transicion] - permisosPendientesPorTransicion[transicion];
+        controlColas.acquireUninterruptibly();
 
-            if (permisosNecesarios > 0) {
-                permisosPendientesPorTransicion[transicion] += permisosNecesarios;
-                for (int i = 0; i < permisosNecesarios; i++) {
-                    mutex.registrarReingresoPreferente();
+        try {
+            for (int transicion = 0; transicion < semaforosPorTransicion.length; transicion++) {
+
+                int permisosNecesarios = bloqueadosPorTransicion[transicion] - permisosPendientesPorTransicion[transicion];
+
+                if (permisosNecesarios > 0) {
+                    permisosPendientesPorTransicion[transicion] += permisosNecesarios;
+
+                    for (int i = 0; i < permisosNecesarios; i++) {
+                        mutex.registrarReingresoPreferente();
+                    }
+
+                    semaforosPorTransicion[transicion].release(permisosNecesarios);
                 }
-                semaforosPorTransicion[transicion].release(permisosNecesarios);
             }
+        } finally {
+            controlColas.release();
         }
     }
 
     private void esperarEnSemaforo(int transicion, long millis, boolean conTimeout) throws InterruptedException {
         boolean permisoConsumido = false;
-        bloqueadosPorTransicion[transicion]++;
+        controlColas.acquireUninterruptibly();
+
+        try {
+            bloqueadosPorTransicion[transicion]++;
+        } finally {
+            controlColas.release();
+        }
+
         mutex.release();
 
         try {
@@ -85,20 +111,27 @@ public class ColasTransiciones {
                 permisoConsumido = true;
             }
         } finally {
-            if (!permisoConsumido) {
-                permisoConsumido = semaforosPorTransicion[transicion].tryAcquire();
+            controlColas.acquireUninterruptibly();
+
+            try {
+                if (!permisoConsumido) {
+                    permisoConsumido =
+                            semaforosPorTransicion[transicion].tryAcquire();
+                }
+
+                bloqueadosPorTransicion[transicion]--;
+
+                if (permisoConsumido) {
+                    permisosPendientesPorTransicion[transicion]--;
+                }
+            } finally {
+                controlColas.release();
             }
 
             if (permisoConsumido) {
                 mutex.adquirirComoPreferente();
             } else {
                 mutex.acquire();
-            }
-
-            bloqueadosPorTransicion[transicion]--;
-
-            if (permisoConsumido) {
-                permisosPendientesPorTransicion[transicion]--;
             }
         }
     }

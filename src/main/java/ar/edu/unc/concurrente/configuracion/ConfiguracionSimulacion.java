@@ -89,12 +89,13 @@ public class ConfiguracionSimulacion {
 
         int[][] transicionesHilos = {
                 {0, 1},          // Hilo-1: ingreso al buffer
-                {2, 3, 4},       // Hilo-2: modo medio
-                {5, 6},          // Hilo-3: modo simple
-                {7, 8, 9, 10},   // Hilo-4: modo alto
-                {11},            // Hilo-5: salida
+                {0, 1},          // Hilo-2: ingreso al buffer
+                {2, 3, 4},       // Hilo-3: modo medio
+                {5, 6},          // Hilo-4: modo simple
+                {7, 8, 9, 10},   // Hilo-5: modo alto
                 {11},            // Hilo-6: salida
-                {11}             // Hilo-7: salida
+                {11},            // Hilo-7: salida
+                {11}             // Hilo-8: salida
         };
 
         Marcado marcadoInicial = new Marcado(new int[] {
