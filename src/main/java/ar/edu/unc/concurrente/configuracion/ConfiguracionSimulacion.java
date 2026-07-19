@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 public class ConfiguracionSimulacion {
     private static final int TOKENS_DATOS_INICIALES = 3;
+    private static final long BETA_SIN_VENCIMIENTO = Long.MAX_VALUE;
 
     private final Marcado marcadoInicial;
     private final int[][] matrizIncidencia;
@@ -198,7 +199,7 @@ public class ConfiguracionSimulacion {
     ) {
         transicionesTemporales[transicion] = true;
         alfaMillis[transicion] = alfa;
-        betaMillis[transicion] = beta;
+        betaMillis[transicion] = BETA_SIN_VENCIMIENTO;
     }
 
     public Marcado obtenerMarcadoInicial() {
