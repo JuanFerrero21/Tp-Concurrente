@@ -1,6 +1,27 @@
 @startuml
 title Disparo exitoso con monitor, semaforos y politica posterior al disparo
 
+skinparam backgroundColor white
+skinparam ActorBorderColor #A80036
+skinparam ActorFontColor black
+skinparam ActorBackgroundColor #FEFECE
+skinparam ParticipantBorderColor #A80036
+skinparam ParticipantBackgroundColor white
+skinparam ParticipantFontColor black
+skinparam LifeLineBorderColor #A80036
+skinparam LifeLineBackgroundColor #A80036
+skinparam ArrowColor #A80036
+skinparam ArrowFontColor black
+skinparam SequenceGroupBorderColor #A80036
+skinparam SequenceGroupBackgroundColor white
+skinparam SequenceGroupFontColor black
+skinparam SequenceDividerBorderColor #A80036
+skinparam SequenceDividerBackgroundColor white
+skinparam SequenceDividerFontColor black
+skinparam NoteBackgroundColor #FBFB77
+skinparam NoteBorderColor #A80036
+skinparam NoteFontColor black
+
 actor "hilo : Hilo" as Hilo
 
 participant "monitor : Monitor" as Monitor
@@ -35,11 +56,11 @@ Monitor -> RedDePetri : puedeDispararPorEstadoSimulacion(Ti)
 RedDePetri --> Monitor : true/false
 
 alt simulacion finalizada o Ti ya no puede iniciar ciclos
-    Monitor --> Hilo : false
     Monitor -> Mutex : release()
     activate Mutex
     Mutex --> Monitor : mutex liberado
     deactivate Mutex
+    Monitor --> Hilo : false
 else puede intentar disparar
     Monitor -> ColasTransiciones : empezarEspera(Ti)
 
@@ -58,7 +79,18 @@ else puede intentar disparar
         alt finalizo o Ti ya no puede dispararse por estado
             Monitor -> ColasTransiciones : terminarEspera(Ti)
             Monitor -> ColasTransiciones : despertarTodos()
+            Monitor -> Mutex : release()
+            activate Mutex
+            Mutex --> Monitor : mutex liberado
+            deactivate Mutex
             Monitor --> Hilo : false
+
+            note right of ColasTransiciones
+            Puede haber otros hilos dormidos en otras
+            colas que todavia no se enteraron de que
+            la simulacion termino. despertarTodos()
+            evita que queden esperando para siempre.
+            end note
         else la simulacion sigue
             Monitor -> RedDePetri : puedeDisparar(Ti)
             activate RedDePetri
@@ -75,6 +107,9 @@ else puede intentar disparar
             estado de simulacion, tokens y
             ventana temporal. No cambia
             el marcado ni actualiza timestamp.
+            Para transiciones no temporales
+            (T0, T2, T5, T7, T11) ni siquiera
+            se llega a consultar a Tiempo.
             end note
 
             alt puedeDisparar(Ti) == true
@@ -101,14 +136,31 @@ else puede intentar disparar
                     deactivate Mutex
                     ColasTransiciones -> SemaforoTi : tryAcquire(esperaMillis)
                     SemaforoTi --> ColasTransiciones : timeout o permiso
-                    alt desperto por permiso de politica
+
+                    alt no se obtuvo permiso dentro del timeout
+                        note right of ColasTransiciones
+                        Se vencio alfa sin recibir permiso, pero
+                        puede haber una carrera: la politica pudo
+                        haber liberado el permiso justo en este
+                        instante. Se hace un ultimo intento no
+                        bloqueante antes de asumir que no hubo
+                        senial.
+                        end note
+                        ColasTransiciones -> SemaforoTi : tryAcquire()
+                        SemaforoTi --> ColasTransiciones : permiso o nada
+                    end
+
+                    ColasTransiciones -> ColasTransiciones : bloqueadosPorTransicion[Ti]--
+
+                    alt se obtuvo permiso (por la politica o por la carrera)
+                        ColasTransiciones -> ColasTransiciones : permisosPendientes[Ti]--
                         ColasTransiciones -> Mutex : adquirirComoPreferente()
                         Mutex --> ColasTransiciones : mutex adquirido con prioridad
-                    else desperto por timeout
+                    else no se obtuvo ningun permiso
                         ColasTransiciones -> Mutex : acquire()
                         Mutex --> ColasTransiciones : mutex adquirido
                     end
-                    ColasTransiciones -> ColasTransiciones : bloqueadosPorTransicion[Ti]--
+
                     ColasTransiciones --> Monitor : retorna
                     deactivate ColasTransiciones
                 else no sensibilizada, beta vencida o espera normal
@@ -121,22 +173,15 @@ else puede intentar disparar
                     deactivate Mutex
                     ColasTransiciones -> SemaforoTi : acquire()
                     SemaforoTi --> ColasTransiciones : permiso recibido
+                    ColasTransiciones -> ColasTransiciones : bloqueadosPorTransicion[Ti]--
+                    ColasTransiciones -> ColasTransiciones : permisosPendientes[Ti]--
                     ColasTransiciones -> Mutex : adquirirComoPreferente()
                     activate Mutex
                     Mutex --> ColasTransiciones : mutex adquirido con prioridad
                     deactivate Mutex
-                    ColasTransiciones -> ColasTransiciones : bloqueadosPorTransicion[Ti]--
-                    ColasTransiciones -> ColasTransiciones : permisosPendientes[Ti]--
                     ColasTransiciones --> Monitor : retorna
                     deactivate ColasTransiciones
                 end
-
-                note right of ColasTransiciones
-                La espera se implementa con semaforos.
-                Mientras el hilo duerme, libera el mutex.
-                Si fue despertado por la politica, reingresa
-                como preferente para recuperar el mutex.
-                end note
             end
         end
     end
@@ -204,12 +249,30 @@ else puede intentar disparar
 
             Monitor -> ColasTransiciones : despertar(Tj)
             activate ColasTransiciones
-            ColasTransiciones -> ColasTransiciones : permisosPendientes[Tj]++
-            ColasTransiciones -> Mutex : registrarReingresoPreferente()
-            activate Mutex
-            Mutex --> ColasTransiciones : preferente registrado
-            deactivate Mutex
-            ColasTransiciones -> ColasTransiciones : semaforoPorTransicion[Tj].release()
+
+            alt permisosPendientes[Tj] < bloqueadosPorTransicion[Tj]
+                ColasTransiciones -> ColasTransiciones : permisosPendientes[Tj]++
+                ColasTransiciones -> Mutex : registrarReingresoPreferente()
+                activate Mutex
+                Mutex --> ColasTransiciones : preferente registrado
+                deactivate Mutex
+                ColasTransiciones -> ColasTransiciones : semaforoPorTransicion[Tj].release()
+
+                note right of ColasTransiciones
+                Solo se libera un permiso si hay
+                realmente un hilo bloqueado sin
+                permiso ya prometido. Evita liberar
+                permisos que nadie va a consumir
+                todavia.
+                end note
+            else no hay hilo bloqueado disponible
+                note right of ColasTransiciones
+                No se hace nada: liberar un permiso
+                aca lo consumiria un hilo futuro que
+                ni siquiera llego a bloquearse todavia.
+                end note
+            end
+
             deactivate ColasTransiciones
 
             note right of Politica
@@ -228,11 +291,11 @@ else puede intentar disparar
         deactivate Monitor
     end
 
-    Monitor --> Hilo : true
     Monitor -> Mutex : release()
     activate Mutex
     Mutex --> Monitor : mutex liberado
     deactivate Mutex
+    Monitor --> Hilo : true
 end
 
 deactivate Monitor

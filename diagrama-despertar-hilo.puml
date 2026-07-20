@@ -1,6 +1,27 @@
 @startuml
 title Reintento de un hilo despertado por la politica
 
+skinparam backgroundColor white
+skinparam ActorBorderColor #A80036
+skinparam ActorFontColor black
+skinparam ActorBackgroundColor #FEFECE
+skinparam ParticipantBorderColor #A80036
+skinparam ParticipantBackgroundColor white
+skinparam ParticipantFontColor black
+skinparam LifeLineBorderColor #A80036
+skinparam LifeLineBackgroundColor #A80036
+skinparam ArrowColor #A80036
+skinparam ArrowFontColor black
+skinparam SequenceGroupBorderColor #A80036
+skinparam SequenceGroupBackgroundColor white
+skinparam SequenceGroupFontColor black
+skinparam SequenceDividerBorderColor #A80036
+skinparam SequenceDividerBackgroundColor white
+skinparam SequenceDividerFontColor black
+skinparam NoteBackgroundColor #FBFB77
+skinparam NoteBorderColor #A80036
+skinparam NoteFontColor black
+
 actor "hilo A : Hilo" as HiloA
 actor "hilo B : Hilo" as HiloB
 
@@ -161,22 +182,39 @@ loop hasta que Ti pueda dispararse o finalice la simulacion
 
     Monitor -> ColasTransiciones : despertar(Ti)
     activate ColasTransiciones
-    ColasTransiciones -> ColasTransiciones : permisosPendientes[Ti]++
-    ColasTransiciones -> Mutex : registrarReingresoPreferente()
-    activate Mutex
-    Mutex --> ColasTransiciones : preferente registrado
-    deactivate Mutex
-    ColasTransiciones -> SemaforoTi : release()
-    SemaforoTi --> ColasTransiciones : permiso liberado
+
+    alt permisosPendientes[Ti] < bloqueadosPorTransicion[Ti]
+        ColasTransiciones -> ColasTransiciones : permisosPendientes[Ti]++
+        ColasTransiciones -> Mutex : registrarReingresoPreferente()
+        activate Mutex
+        Mutex --> ColasTransiciones : preferente registrado
+        deactivate Mutex
+        ColasTransiciones -> SemaforoTi : release()
+        SemaforoTi --> ColasTransiciones : permiso liberado
+
+        note right of ColasTransiciones
+        Se libera un permiso porque hay un hilo
+        (A) realmente bloqueado en Ti que todavia
+        no tiene ningun permiso prometido.
+        end note
+    else no hay hilo bloqueado disponible
+        note right of ColasTransiciones
+        No se libera nada: evitaria otorgar un
+        permiso que ningun hilo bloqueado esta
+        esperando todavia.
+        end note
+    end
+
     deactivate ColasTransiciones
 
     deactivate Monitor
 
-    Monitor --> HiloB : true
     Monitor -> Mutex : release()
     activate Mutex
     Mutex --> Monitor : mutex liberado
     deactivate Mutex
+    Monitor --> HiloB : true
+
     deactivate Monitor
 
     == Hilo A despierta y reingresa con prioridad ==
@@ -184,21 +222,36 @@ loop hasta que Ti pueda dispararse o finalice la simulacion
     SemaforoTi --> ColasTransiciones : acquire() retorna
     deactivate SemaforoTi
 
+    ColasTransiciones -> ColasTransiciones : bloqueadosPorTransicion[Ti]--
+    ColasTransiciones -> ColasTransiciones : permisosPendientes[Ti]--
+
     ColasTransiciones -> Mutex : adquirirComoPreferente()
     activate Mutex
     Mutex --> ColasTransiciones : mutex adquirido con prioridad
     deactivate Mutex
 
-    ColasTransiciones -> ColasTransiciones : bloqueadosPorTransicion[Ti]--
-    ColasTransiciones -> ColasTransiciones : permisosPendientes[Ti]--
     ColasTransiciones --> Monitor : vuelve desde esperar(Ti)
     deactivate ColasTransiciones
 
     note right of Mutex
-    El hilo despertado por la politica
-    recupera el mutex como preferente.
-    Asi no compite en igualdad de
-    condiciones con hilos nuevos.
+    El hilo despertado recupera el mutex como
+    preferente: mientras el contador de reingresos
+    preferentes sea mayor a cero, ningun acquire()
+    normal de otro hilo puede quedarse con el mutex.
+    Asi A no compite en igualdad de condiciones
+    con hilos nuevos que recien llegan.
+    end note
+
+    Monitor -> RedDePetri : simulacionFinalizada()
+    RedDePetri --> Monitor : false
+    Monitor -> RedDePetri : puedeDispararPorEstadoSimulacion(Ti)
+    RedDePetri --> Monitor : true
+
+    note right of Monitor
+    El while vuelve a evaluar todo desde el
+    principio al reingresar, no solo puedeDisparar:
+    nunca se asume que la condicion que motivo
+    la espera se sigue cumpliendo.
     end note
 
     Monitor -> RedDePetri : puedeDisparar(Ti)
@@ -243,11 +296,11 @@ else continua la simulacion
     Monitor -> Monitor : despertarTransicionElegidaPorPolitica()
 end
 
-Monitor --> HiloA : true
 Monitor -> Mutex : release()
 activate Mutex
 Mutex --> Monitor : mutex liberado
 deactivate Mutex
+Monitor --> HiloA : true
 
 deactivate Monitor
 
