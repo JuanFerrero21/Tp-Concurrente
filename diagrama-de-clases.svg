@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="4317.5px" preserveAspectRatio="none" style="width:3322px;height:4317px;" version="1.1" viewBox="0 0 3322 4317" width="3322.5px" zoomAndPan="magnify"><defs/><g><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="392.5" x="1469.375" y="14.6986">Diagrama de clases - Simulador concurrente de Red de Petri</text><!--MD5=[84718776d214be480e4c259efcb737fc]
+class Main--><rect fill="#FFF8D8" height="275.9557" id="Main" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="398.75" x="1390.625" y="28.7274"/><text fill="#000000" font-family="sans-serif" font-size="13.75" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="72.5" x="1553.75" y="49.676">«ejecutable»</text><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="32.5" x="1573.75" y="68.4034">Main</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="1391.875" x2="1788.125" y1="78.6821" y2="78.6821"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="183.75" x="1398.125" y="98.3807">-NOMBRE_POLITICA : String</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="280" x="1398.125" y="117.1081">-OBJETIVO_INVARIANTES_COMPLETOS : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="148.75" x="1398.125" y="135.8354">-DETALLADO : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="116.25" x="1398.125" y="154.5628">-RUTA_LOG : Path</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="1391.875" x2="1788.125" y1="163.5915" y2="163.5915"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="177.5" x="1398.125" y="183.2902">+main(args : String[]) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="307.5" x="1398.125" y="202.0175">-obtenerNombrePolitica(args : String[]) : String</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="251.25" x="1398.125" y="220.7449">-obtenerRutaLog(args : String[]) : Path</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="383.75" x="1398.125" y="239.4722">-obtenerObjetivoInvariantesCompletos(args : String[]) : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="303.75" x="1398.125" y="258.1996">-obtenerPerfilTemporal(args : String[]) : String</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="362.5" x="1398.125" y="276.927">-crearHilos(config, monitor, estado, registrador) : Hilo[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="253.75" x="1398.125" y="295.6543">-crearPolitica(nombre, config) : Politica</text><!--MD5=[7ec5dfdb3a54e80d57bed7f6f5dc8eac]
+class ConfiguracionSimulacion--><rect fill="#FFF8D8" height="650.5029" id="ConfiguracionSimulacion" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="547.5" x="1785" y="364.9774"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="165" x="1976.25" y="385.926">ConfiguracionSimulacion</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="1786.25" x2="2331.25" y1="396.2047" y2="396.2047"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="208.75" x="1792.5" y="415.9034">-TOKENS_DATOS_INICIALES : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="207.5" x="1792.5" y="434.6307">-BETA_SIN_VENCIMIENTO : long</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="170" x="1792.5" y="453.3581">-marcadoInicial : Marcado</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="161.25" x="1792.5" y="472.0854">-matrizIncidencia : int[][]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="165" x="1792.5" y="490.8128">-transicionesHilos : int[][]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="231.25" x="1792.5" y="509.5402">-objetivoInvariantesCompletos : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="150" x="1792.5" y="528.2675">-transicionIngreso : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="175" x="1792.5" y="546.9949">-transicionFinalizacion : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="181.25" x="1792.5" y="565.7222">-transicionesConflicto : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="181.25" x="1792.5" y="584.4496">-transicionModoSimple : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="235" x="1792.5" y="603.177">-transicionesTemporales : boolean[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="113.75" x="1792.5" y="621.9043">-alfaMillis : long[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="118.75" x="1792.5" y="640.6317">-betaMillis : long[]</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="1786.25" x2="2331.25" y1="649.6604" y2="649.6604"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="191.25" x="1792.5" y="669.359">+ConfiguracionSimulacion(...)</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="356.25" x="1792.5" y="688.0864">+configuracionPorDefecto() : ConfiguracionSimulacion</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="438.75" x="1792.5" y="706.8138">+configuracionPorDefecto(objetivo : int) : ConfiguracionSimulacion</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="532.5" x="1792.5" y="725.5411">+configuracionPorDefecto(objetivo : int, perfil : String) : ConfiguracionSimulacion</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="232.5" x="1792.5" y="744.2685">+obtenerMarcadoInicial() : Marcado</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="223.75" x="1792.5" y="762.9958">+obtenerMatrizIncidencia() : int[][]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="230" x="1792.5" y="781.7232">+obtenerTransicionesHilos() : int[][]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="296.25" x="1792.5" y="800.4506">+obtenerObjetivoInvariantesCompletos() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="215" x="1792.5" y="819.1779">+obtenerTransicionIngreso() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="240" x="1792.5" y="837.9053">+obtenerTransicionFinalizacion() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="187.5" x="1792.5" y="856.6326">+obtenerCantidadHilos() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="246.25" x="1792.5" y="875.36">+obtenerTransicionesConflicto() : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="246.25" x="1792.5" y="894.0874">+obtenerTransicionModoSimple() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="300" x="1792.5" y="912.8147">+obtenerTransicionesTemporales() : boolean[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="177.5" x="1792.5" y="931.5421">+obtenerAlfaMillis() : long[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="181.25" x="1792.5" y="950.2694">+obtenerBetaMillis() : long[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="231.25" x="1792.5" y="968.9968">-configurarPerfilTemporal(...) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="263.75" x="1792.5" y="987.7242">-configurarTransicionTemporal(...) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="233.75" x="1792.5" y="1006.4515">-copiarMatriz(matriz : int[][]) : int[][]</text><!--MD5=[13478b0939165f5743cf18a1b555ded7]
+class Hilo--><rect fill="#FFF8D8" height="163.5915" id="Hilo" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="390" x="221.25" y="1131.2274"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="26.25" x="403.125" y="1152.176">Hilo</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="222.5" x2="610" y1="1162.4547" y2="1162.4547"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="182.5" x="228.75" y="1182.1534">-monitor : MonitorInterface</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="188.75" x="228.75" y="1200.8807">-transicionesAsignadas : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="246.25" x="228.75" y="1219.6081">-estadoSimulacion : EstadoSimulacion</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="331.25" x="228.75" y="1238.3354">-registradorTransiciones : RegistradorTransiciones</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="222.5" x2="610" y1="1247.3642" y2="1247.3642"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="375" x="228.75" y="1267.0628">+Hilo(nombre, monitor, transiciones, estado, registrador)</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="78.75" x="228.75" y="1285.7902">+run() : void</text><!--MD5=[4f96a8a0edf39afc9325dc365be6147e]
+class MonitorInterface--><rect fill="#FFF8D8" height="59.9547" id="MonitorInterface" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="277.5" x="1725" y="1183.1024"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="101.25" x="1813.125" y="1204.051">MonitorInterface</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="1726.25" x2="2001.25" y1="1214.3297" y2="1214.3297"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="262.5" x="1732.5" y="1234.0284">+fireTransition(transicion : int) : boolean</text><!--MD5=[9e90051182cb12ed686a454235a977a2]
+class Monitor--><rect fill="#FFF8D8" height="275.9557" id="Monitor" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="475" x="1217.5" y="1074.9774"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="53.75" x="1428.125" y="1095.926">Monitor</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="1218.75" x2="1691.25" y1="1106.2047" y2="1106.2047"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="161.25" x="1225" y="1125.9034">-redDePetri : RedDePetri</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="111.25" x="1225" y="1144.6307">-politica : Politica</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="98.75" x="1225" y="1163.3581">-mutex : Mutex</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="246.25" x="1225" y="1182.0854">-colasTransiciones : ColasTransiciones</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="131.25" x="1225" y="1200.8128">-detallado : boolean</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="1218.75" x2="1691.25" y1="1209.8415" y2="1209.8415"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="263.75" x="1225" y="1229.5402">+Monitor(redDePetri, politica, detallado)</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="262.5" x="1225" y="1248.2675">+fireTransition(transicion : int) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="348.75" x="1225" y="1266.9949">-esperarSegunEstadoTransicion(transicion : int) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="302.5" x="1225" y="1285.7222">-despertarTransicionElegidaPorPolitica() : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="460" x="1225" y="1304.4496">-obtenerTransicionesSensibilizadasConHilosEsperando() : Set&lt;Integer&gt;</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="258.75" x="1225" y="1323.177">-validarTransicion(transicion : int) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="178.75" x="1225" y="1341.9043">-log(mensaje : String) : void</text><!--MD5=[99b90a12960e100891de0e54a7a83c46]
+class Mutex--><rect fill="#FFF8D8" height="182.3189" id="Mutex" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="267.5" x="1570" y="1495.6024"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="41.25" x="1683.125" y="1516.551">Mutex</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="1571.25" x2="1836.25" y1="1526.8297" y2="1526.8297"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="153.75" x="1577.5" y="1546.5284">-semaforo : Semaphore</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="252.5" x="1577.5" y="1565.2557">-reingresosPreferentesPendientes : int</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="1571.25" x2="1836.25" y1="1574.2844" y2="1574.2844"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="56.25" x="1577.5" y="1593.9831">+Mutex()</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="103.75" x="1577.5" y="1612.7104">+acquire() : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="217.5" x="1577.5" y="1631.4378">+adquirirComoPreferente() : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="248.75" x="1577.5" y="1650.1652">+registrarReingresoPreferente() : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="101.25" x="1577.5" y="1668.8925">+release() : void</text><!--MD5=[55156c82009964c3163c807f423bcbca]
+class ColasTransiciones--><rect fill="#FFF8D8" height="350.8651" id="ColasTransiciones" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="388.75" x="1031.875" y="1411.2274"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="116.25" x="1168.125" y="1432.176">ColasTransiciones</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="1033.125" x2="1419.375" y1="1442.4547" y2="1442.4547"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="98.75" x="1039.375" y="1462.1534">-mutex : Mutex</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="261.25" x="1039.375" y="1480.8807">-semaforosPorTransicion : Semaphore[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="205" x="1039.375" y="1499.6081">-esperandoPorTransicion : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="212.5" x="1039.375" y="1518.3354">-bloqueadosPorTransicion : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="267.5" x="1039.375" y="1537.0628">-permisosPendientesPorTransicion : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="173.75" x="1039.375" y="1555.7902">-controlColas : Semaphore</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="1033.125" x2="1419.375" y1="1564.8189" y2="1564.8189"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="317.5" x="1039.375" y="1584.5175">+ColasTransiciones(mutex, cantidadTransiciones)</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="248.75" x="1039.375" y="1603.2449">+empezarEspera(transicion : int) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="250" x="1039.375" y="1621.9722">+terminarEspera(transicion : int) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="302.5" x="1039.375" y="1640.6996">+tieneHiloEsperando(transicion : int) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="236.25" x="1039.375" y="1659.427">+obtenerCantidadTransiciones() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="198.75" x="1039.375" y="1678.1543">+esperar(transicion : int) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="315" x="1039.375" y="1696.8817">+esperarMillis(transicion : int, millis : long) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="212.5" x="1039.375" y="1715.609">+despertar(transicion : int) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="158.75" x="1039.375" y="1734.3364">+despertarTodos() : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="373.75" x="1039.375" y="1753.0638">-esperarEnSemaforo(transicion, millis, conTimeout) : void</text><!--MD5=[c9fc6575ac7581095ac6f8de2238af99]
+class Politica--><rect fill="#FFF8D8" height="59.9547" id="Politica" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="328.75" x="2158.125" y="2145.6024"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="45" x="2300" y="2166.551">Politica</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="2159.375" x2="2485.625" y1="2176.8297" y2="2176.8297"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="313.75" x="2165.625" y="2196.5284">+elegirTransicion(candidatas : Set&lt;Integer&gt;) : int</text><!--MD5=[3676ca319f59152c9340ce081a493c43]
+class PoliticaAleatoria--><rect fill="#FFF8D8" height="107.4094" id="PoliticaAleatoria" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="328.75" x="2145.625" y="1533.1024"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="106.25" x="2256.875" y="1554.051">PoliticaAleatoria</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="2146.875" x2="2473.125" y1="1564.3297" y2="1564.3297"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="130" x="2153.125" y="1584.0284">-aleatorio : Random</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="2146.875" x2="2473.125" y1="1593.0571" y2="1593.0571"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="121.25" x="2153.125" y="1612.7557">+PoliticaAleatoria()</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="313.75" x="2153.125" y="1631.4831">+elegirTransicion(candidatas : Set&lt;Integer&gt;) : int</text><!--MD5=[bd72a039bcedae63f044c34432011ff1]
+class PoliticaPrioridadSimple--><rect fill="#FFF8D8" height="126.1368" id="PoliticaPrioridadSimple" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="360" x="2853.75" y="1523.7274"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="153.75" x="2956.875" y="1544.676">PoliticaPrioridadSimple</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="2855" x2="3212.5" y1="1554.9547" y2="1554.9547"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="212.5" x="2861.25" y="1574.6534">-transicionModoSimple : Integer</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="130" x="2861.25" y="1593.3807">-aleatorio : Random</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="2855" x2="3212.5" y1="1602.4094" y2="1602.4094"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="345" x="2861.25" y="1622.1081">+PoliticaPrioridadSimple(transicionModoSimple : int)</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="313.75" x="2861.25" y="1640.8354">+elegirTransicion(candidatas : Set&lt;Integer&gt;) : int</text><!--MD5=[26653e90920351f1f3ce83b2c3006fe7]
+class RedDePetri--><rect fill="#FFF8D8" height="706.685" id="RedDePetri" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="425" x="845" y="1822.4774"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="73.75" x="1020.625" y="1843.426">RedDePetri</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="846.25" x2="1268.75" y1="1853.7047" y2="1853.7047"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="131.25" x="852.5" y="1873.4034">-marcado : Marcado</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="161.25" x="852.5" y="1892.1307">-matrizIncidencia : int[][]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="335" x="852.5" y="1910.8581">-sensibilizadoConTiempo : SensibilizadoConTiempo</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="307.5" x="852.5" y="1929.5854">-verificadorInvariantes : VerificadorInvariantes</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="246.25" x="852.5" y="1948.3128">-estadoSimulacion : EstadoSimulacion</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="331.25" x="852.5" y="1967.0402">-registradorTransiciones : RegistradorTransiciones</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="846.25" x2="1268.75" y1="1976.0689" y2="1976.0689"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="300" x="852.5" y="1995.7675">+RedDePetri(marcadoInicial, matrizIncidencia)</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="300" x="852.5" y="2014.4949">+configurarSemanticaTemporal(tiempo) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="342.5" x="852.5" y="2033.2222">+configurarVerificadorInvariantes(verificador) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="283.75" x="852.5" y="2051.9496">+configurarEstadoSimulacion(estado) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="358.75" x="852.5" y="2070.677">+configurarRegistradorTransiciones(registrador) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="283.75" x="852.5" y="2089.4043">+estaSensibilizada(transicion : int) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="271.25" x="852.5" y="2108.1317">+puedeDisparar(transicion : int) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="228.75" x="852.5" y="2126.859">+disparar(transicion : int) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="385" x="852.5" y="2145.5864">+estaAntesDeLaVentanaTemporal(transicion : int) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="390" x="852.5" y="2164.3138">+milisegundosHastaVentanaTemporal(transicion : int) : long</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="307.5" x="852.5" y="2183.0411">+describirMotivoEspera(transicion : int) : String</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="333.75" x="852.5" y="2201.7685">+obtenerTransicionesSensibilizadas() : Set&lt;Integer&gt;</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="320" x="852.5" y="2220.4958">+obtenerTransicionesDisparables() : Set&lt;Integer&gt;</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="193.75" x="852.5" y="2239.2232">+obtenerMarcado() : Marcado</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="195" x="852.5" y="2257.9506">+obtenerCantidadPlazas() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="236.25" x="852.5" y="2276.6779">+obtenerCantidadTransiciones() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="260" x="852.5" y="2295.4053">+seCumplenInvariantesPlaza() : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="286.25" x="852.5" y="2314.1326">+construirReporteInvariantesPlaza() : String</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="215" x="852.5" y="2332.86">+simulacionFinalizada() : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="410" x="852.5" y="2351.5874">+puedeDispararPorEstadoSimulacion(transicion : int) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="255" x="852.5" y="2370.3147">-registrarDisparo(transicion : int) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="213.75" x="852.5" y="2389.0421">-verificarInvariantesPlaza() : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="281.25" x="852.5" y="2407.7694">-actualizarSensibilizadasTemporales() : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="352.5" x="852.5" y="2426.4968">-cumpleRestriccionTemporal(transicion : int) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="343.75" x="852.5" y="2445.2242">-calcularSiguienteMarcado(transicion : int) : Marcado</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="256.25" x="852.5" y="2463.9515">-obtenerColumna(transicion : int) : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="258.75" x="852.5" y="2482.6789">-validarTransicion(transicion : int) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="245" x="852.5" y="2501.4062">-validarMatriz(marcado, matriz) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="233.75" x="852.5" y="2520.1336">-copiarMatriz(matriz : int[][]) : int[][]</text><!--MD5=[ef11942d6a23dea2d4cab69f1f120b19]
+class Marcado--><rect fill="#FFF8D8" height="219.7736" id="Marcado" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="256.25" x="2331.875" y="2719.9774"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="57.5" x="2431.25" y="2740.926">Marcado</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="2333.125" x2="2586.875" y1="2751.2047" y2="2751.2047"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="87.5" x="2339.375" y="2770.9034">-tokens : int[]</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="2333.125" x2="2586.875" y1="2779.9321" y2="2779.9321"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="155" x="2339.375" y="2799.6307">+Marcado(tokens : int[])</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="205" x="2339.375" y="2818.3581">+obtenerTokens(plaza : int) : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="211.25" x="2339.375" y="2837.0854">+sumar(valores : int[]) : Marcado</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="223.75" x="2339.375" y="2855.8128">+tieneTokensNegativos() : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="100" x="2339.375" y="2874.5402">+cantidad() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="118.75" x="2339.375" y="2893.2675">+copia() : Marcado</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="241.25" x="2339.375" y="2911.9949">+obtenerTokensComoArreglo() : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="120" x="2339.375" y="2930.7222">+toString() : String</text><!--MD5=[4323488a078d4c1628dbaac7a2669539]
+class SensibilizadoConTiempo--><rect fill="#FFF8D8" height="388.3198" id="SensibilizadoConTiempo" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="406.25" x="1784.375" y="3131.2274"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="160" x="1907.5" y="3152.176">SensibilizadoConTiempo</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="1785.625" x2="2189.375" y1="3162.4547" y2="3162.4547"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="152.5" x="1791.875" y="3182.1534">-SIN_TIMESTAMP : long</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="153.75" x="1791.875" y="3200.8807">-temporales : boolean[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="113.75" x="1791.875" y="3219.6081">-alfaMillis : long[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="118.75" x="1791.875" y="3238.3354">-betaMillis : long[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="158.75" x="1791.875" y="3257.0628">-timestampMillis : long[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="206.25" x="1791.875" y="3275.7902">-estabaSensibilizada : boolean[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="183.75" x="1791.875" y="3294.5175">-ventanaVencida : boolean[]</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="1785.625" x2="2189.375" y1="3303.5462" y2="3303.5462"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="383.75" x="1791.875" y="3323.2449">+SensibilizadoConTiempo(temporales, alfaMillis, betaMillis)</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="391.25" x="1791.875" y="3341.9722">+actualizarSensibilizadas(sensibilizadas : Set&lt;Integer&gt;) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="311.25" x="1791.875" y="3360.6996">+puedeDispararAhora(transicion : int) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="322.5" x="1791.875" y="3379.427">+estaAntesDeLaVentana(transicion : int) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="251.25" x="1791.875" y="3398.1543">+estaVencida(transicion : int) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="298.75" x="1791.875" y="3416.8817">+milisegundosHastaAlfa(transicion : int) : long</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="250" x="1791.875" y="3435.609">+esTemporal(transicion : int) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="261.25" x="1791.875" y="3454.3364">+describirEstado(transicion : int) : String</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="157.5" x="1791.875" y="3473.0638">-validarVentanas() : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="258.75" x="1791.875" y="3491.7911">-validarTransicion(transicion : int) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="92.5" x="1791.875" y="3510.5185">-ahora() : long</text><!--MD5=[f2613d4fa1818230926af1d98d13caaf]
+class EstadoSimulacion--><rect fill="#FFF8D8" height="332.1378" id="EstadoSimulacion" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="425" x="65" y="2663.7274"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="115" x="220" y="2684.676">EstadoSimulacion</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="66.25" x2="488.75" y1="2694.9547" y2="2694.9547"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="231.25" x="72.5" y="2714.6534">-objetivoInvariantesCompletos : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="150" x="72.5" y="2733.3807">-transicionIngreso : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="175" x="72.5" y="2752.1081">-transicionFinalizacion : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="197.5" x="72.5" y="2770.8354">-transicionesInicioModo : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="173.75" x="72.5" y="2789.5628">-completosPorModo : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="165" x="72.5" y="2808.2902">-invariantesIniciados : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="176.25" x="72.5" y="2827.0175">-invariantesCompletos : int</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="66.25" x2="488.75" y1="2836.0462" y2="2836.0462"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="410" x="72.5" y="2855.7449">+EstadoSimulacion(objetivo, ingreso, finalizacion, iniciosModo)</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="340" x="72.5" y="2874.4722">+registrarTransicionDisparada(transicion : int) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="171.25" x="72.5" y="2893.1996">+estaFinalizada() : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="338.75" x="72.5" y="2911.927">+puedeDispararTransicion(transicion : int) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="240" x="72.5" y="2930.6543">+obtenerInvariantesCompletos() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="228.75" x="72.5" y="2949.3817">+obtenerInvariantesIniciados() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="296.25" x="72.5" y="2968.109">+obtenerObjetivoInvariantesCompletos() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="238.75" x="72.5" y="2986.8364">+obtenerCompletosPorModo() : int[]</text><!--MD5=[3c95d98efd4acc7f42f5975c20e01af2]
+class VerificadorInvariantes--><rect fill="#FFF8D8" height="219.7736" id="VerificadorInvariantes" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="412.5" x="1100" y="2719.9774"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="146.25" x="1233.125" y="2740.926">VerificadorInvariantes</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="1101.25" x2="1511.25" y1="2751.2047" y2="2751.2047"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="261.25" x="1107.5" y="2770.9034">-invariantesPlaza : List&lt;InvariantePlaza&gt;</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="1101.25" x2="1511.25" y1="2779.9321" y2="2779.9321"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="326.25" x="1107.5" y="2799.6307">+VerificadorInvariantes(marcadoInicial : Marcado)</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="386.25" x="1107.5" y="2818.3581">+seCumplenInvariantesPlaza(marcado : Marcado) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="397.5" x="1107.5" y="2837.0854">+verificarInvariantesPlazaOLanzar(marcado : Marcado) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="305" x="1107.5" y="2855.8128">+construirReporte(marcado : Marcado) : String</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="291.25" x="1107.5" y="2874.5402">+conservaTotalTokens(inicial, final) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="260" x="1107.5" y="2893.2675">+sumarValores(marcado : Marcado) : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="388.75" x="1107.5" y="2911.9949">-crearInvariantesPlazaPorDefecto(...) : List&lt;InvariantePlaza&gt;</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="317.5" x="1107.5" y="2930.7222">-validarCantidadPlazas(marcado, cantidad) : void</text><!--MD5=[baba747e3c58db73f1249bec373c6d25]
+class InvariantePlaza--><rect fill="#FFF8D8" height="257.2283" id="InvariantePlaza" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="442.5" x="1085" y="3196.8524"/><text fill="#000000" font-family="sans-serif" font-size="13.75" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="88.75" x="1261.875" y="3217.801">«clase interna»</text><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="101.25" x="1255.625" y="3236.5284">InvariantePlaza</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="1086.25" x2="1526.25" y1="3246.8071" y2="3246.8071"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="108.75" x="1092.5" y="3266.5057">-nombre : String</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="83.75" x="1092.5" y="3285.2331">-plazas : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="128.75" x="1092.5" y="3303.9604">-valorEsperado : int</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="1086.25" x2="1526.25" y1="3312.9892" y2="3312.9892"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="318.75" x="1092.5" y="3332.6878">+InvariantePlaza(nombre, plazas, valorEsperado)</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="427.5" x="1092.5" y="3351.4152">+desdeMarcadoInicial(nombre, plazas, marcado) : InvariantePlaza</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="270" x="1092.5" y="3370.1425">+seCumple(marcado : Marcado) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="220" x="1092.5" y="3388.8699">+calcular(marcado : Marcado) : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="172.5" x="1092.5" y="3407.5972">+obtenerNombre() : String</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="146.25" x="1092.5" y="3426.3246">+obtenerPlazas() : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="192.5" x="1092.5" y="3445.052">+obtenerValorEsperado() : int</text><!--MD5=[6e04ac68b224216c0fbc1b1d2b2920df]
+class RegistradorTransiciones--><rect fill="#FFF8D8" height="481.9566" id="RegistradorTransiciones" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="545" x="522.5" y="2588.7274"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="158.75" x="715.625" y="2609.676">RegistradorTransiciones</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="523.75" x2="1066.25" y1="2619.9547" y2="2619.9547"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="188.75" x="530" y="2639.6534">-intentosPorTransicion : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="191.25" x="530" y="2658.3807">-disparosPorTransicion : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="140" x="530" y="2677.1081">-escritor : PrintWriter</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="395" x="530" y="2695.8354">-p1Tokens, p3Tokens, p4Tokens, p5Tokens : Deque&lt;Integer&gt;</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="480" x="530" y="2714.5628">-p7Tokens, p8Tokens, p9Tokens, p10Tokens, p11Tokens : Deque&lt;Integer&gt;</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="272.5" x="530" y="2733.2902">-modoPorIdToken : Map&lt;Integer, String&gt;</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="147.5" x="530" y="2752.0175">-siguienteIdToken : int</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="523.75" x2="1066.25" y1="2761.0462" y2="2761.0462"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="530" x="530" y="2780.7449">+RegistradorTransiciones(cantidad, ruta, politica, objetivo, temporales, alfa, beta)</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="392.5" x="530" y="2799.4722">+registrarIntento(transicion : int, disparada : boolean) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="302.5" x="530" y="2818.1996">+registrarEventoDisparo(transicion : int) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="197.5" x="530" y="2836.927">+obtenerIntentosTotales() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="200" x="530" y="2855.6543">+obtenerDisparosTotales() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="255" x="530" y="2874.3817">+obtenerDisparosPorTransicion() : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="175" x="530" y="2893.109">+escribirResumen(...) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="87.5" x="530" y="2911.8364">+close() : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="125" x="530" y="2930.5638">-registrarT0() : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="132.5" x="530" y="2949.2911">-registrarT11() : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="173.75" x="530" y="2968.0185">-moverYRegistrar(...) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="282.5" x="530" y="2986.7458">-quitarPrimerToken(origen, transicion) : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="277.5" x="530" y="3005.4732">-escribirDisparo(idToken, transicion) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="263.75" x="530" y="3024.2006">-caminoPorModo(modo : String) : String</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="275" x="530" y="3042.9279">-crearEscritor(rutaLog : Path) : PrintWriter</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="217.5" x="530" y="3061.6553">-sumarValores(valores : int[]) : int</text><!--MD5=[fe807826d08cf20e9e0b086112dbcd84]
+class ResultadoSimulacion--><rect fill="#FFF8D8" height="275.9557" id="ResultadoSimulacion" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="275" x="2365" y="551.8524"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="136.25" x="2434.375" y="572.801">ResultadoSimulacion</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="2366.25" x2="2638.75" y1="583.0797" y2="583.0797"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="162.5" x="2372.5" y="602.7784">-marcadoFinal : Marcado</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="133.75" x="2372.5" y="621.5057">-intentosTotales : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="136.25" x="2372.5" y="640.2331">-disparosTotales : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="191.25" x="2372.5" y="658.9604">-disparosPorTransicion : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="246.25" x="2372.5" y="677.6878">-invariantesPlazaCumplidos : boolean</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="2366.25" x2="2638.75" y1="686.7165" y2="686.7165"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="162.5" x="2372.5" y="706.4152">+ResultadoSimulacion(...)</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="225" x="2372.5" y="725.1425">+obtenerMarcadoFinal() : Marcado</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="197.5" x="2372.5" y="743.8699">+obtenerIntentosTotales() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="200" x="2372.5" y="762.5972">+obtenerDisparosTotales() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="255" x="2372.5" y="781.3246">+obtenerDisparosPorTransicion() : int[]</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="260" x="2372.5" y="800.052">+seCumplenInvariantesPlaza() : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="120" x="2372.5" y="818.7793">+toString() : String</text><!--MD5=[38918c0526e972db39f7d9b63d8cee47]
+class Regex--><rect fill="#FFF8D8" height="126.1368" id="Regex" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="266.25" x="224.375" y="3262.4774"/><text fill="#000000" font-family="sans-serif" font-size="13.75" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="158.75" x="278.125" y="3283.426">«ejecutable independiente»</text><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="40" x="337.5" y="3302.1534">Regex</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="225.625" x2="489.375" y1="3312.4321" y2="3312.4321"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="116.25" x="231.875" y="3332.1307">-RUTA_LOG : Path</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="225.625" x2="489.375" y1="3341.1594" y2="3341.1594"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="177.5" x="231.875" y="3360.8581">+main(args : String[]) : void</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="251.25" x="231.875" y="3379.5854">-obtenerRutaLog(args : String[]) : Path</text><!--MD5=[477078a5f9c22d6055d44903652bb1f3]
+class AnalizadorRegexInvariantesTransicion--><rect fill="#FFF8D8" height="257.2283" id="AnalizadorRegexInvariantesTransicion" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="340" x="611.25" y="3579.9774"/><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="251.25" x="655.625" y="3600.926">AnalizadorRegexInvariantesTransicion</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="612.5" x2="950" y1="3611.2047" y2="3611.2047"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="175" x="618.75" y="3630.9034">-PATRON_SIMPLE : Pattern</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="172.5" x="618.75" y="3649.6307">-PATRON_MEDIO : Pattern</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="161.25" x="618.75" y="3668.3581">-PATRON_ALTO : Pattern</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="231.25" x="618.75" y="3687.0854">-PATRON_LINEA_DISPARO : Pattern</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="287.5" x="618.75" y="3705.8128">-PATRON_INVARIANTE_COMPLETO : Pattern</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" text-decoration="underline" textLength="190" x="618.75" y="3724.5402">-PATRON_RESUMEN : Pattern</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="612.5" x2="950" y1="3733.5689" y2="3733.5689"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="325" x="618.75" y="3753.2675">+analizar(rutaLog : Path) : ResultadoAnalisisRegex</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="313.75" x="618.75" y="3771.9949">-construirResultado(...) : ResultadoAnalisisRegex</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="193.75" x="618.75" y="3790.7222">-validarResumen(...) : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="281.25" x="618.75" y="3809.4496">-clasificarPorRegex(camino : String) : Modo</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="261.25" x="618.75" y="3828.177">-leerLineas(rutaLog : Path) : List&lt;String&gt;</text><!--MD5=[c092356f873e972068de38777cec51f6]
+class ResultadoAnalisisRegex--><rect fill="#FFF8D8" height="407.0472" id="ResultadoAnalisisRegex" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="251.25" x="655.625" y="3897.4774"/><text fill="#000000" font-family="sans-serif" font-size="13.75" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="88.75" x="736.875" y="3918.426">«clase interna»</text><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="153.75" x="704.375" y="3937.1534">ResultadoAnalisisRegex</text><line style="stroke: #9A3412; stroke-width: 1.875;" x1="656.875" x2="905.625" y1="3947.4321" y2="3947.4321"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="147.5" x="663.125" y="3967.1307">-tokensAnalizados : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="131.25" x="663.125" y="3985.8581">-cantidadMedio : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="133.75" x="663.125" y="4004.5854">-cantidadSimple : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="116.25" x="663.125" y="4023.3128">-cantidadAlto : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="150" x="663.125" y="4042.0402">-cantidadInvalidos : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="171.25" x="663.125" y="4060.7675">-cantidadIncompletos : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="198.75" x="663.125" y="4079.4949">-analisisRegexValido : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="168.75" x="663.125" y="4098.2222">-resumenValido : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="202.5" x="663.125" y="4116.9496">-lineaResumen : LineaResumen</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="142.5" x="663.125" y="4135.677">-errores : List&lt;String&gt;</text><line style="stroke: #9A3412; stroke-width: 1.25;" x1="656.875" x2="905.625" y1="4144.7057" y2="4144.7057"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="223.75" x="663.125" y="4164.4043">+esAnalisisRegexValido() : boolean</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="212.5" x="663.125" y="4183.1317">+obtenerTokensAnalizados() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="196.25" x="663.125" y="4201.859">+obtenerCantidadMedio() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="198.75" x="663.125" y="4220.5864">+obtenerCantidadSimple() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="181.25" x="663.125" y="4239.3138">+obtenerCantidadAlto() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="215" x="663.125" y="4258.0411">+obtenerCantidadInvalidos() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="236.25" x="663.125" y="4276.7685">+obtenerCantidadIncompletos() : int</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="178.75" x="663.125" y="4295.4958">+construirReporte() : String</text><!--MD5=[948346f2dfe9866ea883595a582714fa]
+class Thread--><rect fill="#F3F4F6" height="49.9547" id="Thread" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="53.75" x="250.625" y="1561.8524"/><text fill="#000000" font-family="sans-serif" font-size="13.75" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="37.5" x="258.75" y="1582.801">«Java»</text><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="46.25" x="254.375" y="1601.5284">Thread</text><!--MD5=[c83b26091bb731d183fce0e20b419d39]
+class Semaphore--><rect fill="#F3F4F6" height="49.9547" id="Semaphore" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="82.5" x="1707.5" y="2150.6024"/><text fill="#000000" font-family="sans-serif" font-size="13.75" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="37.5" x="1730" y="2171.551">«Java»</text><text fill="#1F2937" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="75" x="1711.25" y="2190.2784">Semaphore</text><!--MD5=[c7c826d5760f74c577bea8f7e8e38f92]
+class AutoCloseable--><rect fill="#F3F4F6" height="49.9547" id="AutoCloseable" rx="5" ry="5" style="stroke: #9A3412; stroke-width: 1.875;" width="91.25" x="831.875" y="3300.6024"/><text fill="#000000" font-family="sans-serif" font-size="13.75" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="37.5" x="858.75" y="3321.551">«Java»</text><text fill="#1F2937" font-family="sans-serif" font-size="13.75" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="83.75" x="835.625" y="3340.2784">AutoCloseable</text><path d="M942.5,1174.3524 L942.5,1251.7618 A5,5 0 0 0 947.5,1256.7618 L1180,1256.7618 A5,5 0 0 0 1185,1251.7618 L1185,1218.7274 L1217.175,1213.7274 L1185,1208.7274 L1185,1181.8524 L1172.5,1169.3524 L947.5,1169.3524 A5,5 0 0 0 942.5,1174.3524 " fill="#FFFDF5" style="stroke: #C9A227; stroke-width: 1.25;"/><path d="M1172.5,1169.3524 L1172.5,1179.3524 A2.5,2.5 0 0 0 1175,1181.8524 L1185,1181.8524 L1172.5,1169.3524 " fill="#FFFDF5" style="stroke: #C9A227; stroke-width: 1.25;"/><text fill="#374151" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="216.25" x="950" y="1190.301">Unico metodo publico operativo:</text><text fill="#374151" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="117.5" x="950" y="1209.0284">fireTransition(int).</text><text fill="#374151" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="207.5" x="950" y="1227.7557">Coordina mutex, colas, esperas,</text><text fill="#374151" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="113.75" x="950" y="1246.4831">senales y politica.</text><path d="M1890,2146.2274 L1890,2141.2274 L1270.1125,2146.2274 L1890,2151.2274 L1890,2204.9094 A5,5 0 0 0 1895,2209.9094 L2120,2209.9094 A5,5 0 0 0 2125,2204.9094 L2125,2153.7274 L2112.5,2141.2274 L1895,2141.2274 A5,5 0 0 0 1890,2146.2274 " fill="#FFFDF5" style="stroke: #C9A227; stroke-width: 1.25;"/><path d="M2112.5,2141.2274 L2112.5,2151.2274 A2.5,2.5 0 0 0 2115,2153.7274 L2125,2153.7274 L2112.5,2141.2274 " fill="#FFFDF5" style="stroke: #C9A227; stroke-width: 1.25;"/><text fill="#374151" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="193.75" x="1897.5" y="2162.176">Realiza el disparo y concentra</text><text fill="#374151" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="195" x="1897.5" y="2180.9034">marcado, tiempo, invariantes,</text><text fill="#374151" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="208.75" x="1897.5" y="2199.6307">estado de simulacion y registro.</text><path d="M1302.5,2155.6024 L1302.5,2195.5571 A5,5 0 0 0 1307.5,2200.5571 L1670,2200.5571 A5,5 0 0 0 1675,2195.5571 L1675,2163.1024 L1662.5,2150.6024 L1366.5625,2150.6024 L1361.5625,1762.7024 L1356.5625,2150.6024 L1307.5,2150.6024 A5,5 0 0 0 1302.5,2155.6024 " fill="#FFFDF5" style="stroke: #C9A227; stroke-width: 1.25;"/><path d="M1662.5,2150.6024 L1662.5,2160.6024 A2.5,2.5 0 0 0 1665,2163.1024 L1675,2163.1024 L1662.5,2150.6024 " fill="#FFFDF5" style="stroke: #C9A227; stroke-width: 1.25;"/><text fill="#374151" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="295" x="1310" y="2171.551">controlColas protege contadores y permisos.</text><text fill="#374151" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="346.25" x="1310" y="2190.2784">El hilo senalado reingresa al mutex como preferente.</text><path d="M163.75,3688.7274 L163.75,3728.6821 A5,5 0 0 0 168.75,3733.6821 L573.75,3733.6821 A5,5 0 0 0 578.75,3728.6821 L578.75,3696.2274 L566.25,3683.7274 L362.5,3683.7274 L357.5,3388.8649 L352.5,3683.7274 L168.75,3683.7274 A5,5 0 0 0 163.75,3688.7274 " fill="#FFFDF5" style="stroke: #C9A227; stroke-width: 1.25;"/><path d="M566.25,3683.7274 L566.25,3693.7274 A2.5,2.5 0 0 0 568.75,3696.2274 L578.75,3696.2274 L566.25,3683.7274 " fill="#FFFDF5" style="stroke: #C9A227; stroke-width: 1.25;"/><text fill="#374151" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="388.75" x="171.25" y="3704.676">Regex y su analizador forman un ejecutable independiente.</text><text fill="#374151" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="388.75" x="171.25" y="3723.4034">No dependen de Main, Monitor ni RegistradorTransiciones.</text><!--MD5=[fb1fedb3601bee4785d74149b03126ff]
+link Hilo to Thread--><path d="M268.5375,1295.1274 C268.5375,1295.1274 268.5375,1536.8149 268.5375,1536.8149 " fill="none" id="Hilo-&gt;Thread" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="none" points="277.2875,1536.8149,268.5375,1561.8149,259.7875,1536.8149,277.2875,1536.8149" style="stroke: #4B5563; stroke-width: 1.25;"/><!--MD5=[fb1fedb3601bee4785d74149b03126ff]
+link Hilo to Thread--><!--MD5=[dccd421fdea8abf753298987138206f0]
+link Monitor to MonitorInterface--><path d="M1692.775,1203.7274 C1692.775,1203.7274 1699.925,1203.7274 1699.925,1203.7274 " fill="none" id="Monitor-&gt;MonitorInterface" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="none" points="1699.925,1194.9774,1724.925,1203.7274,1699.925,1212.4774,1699.925,1194.9774" style="stroke: #4B5563; stroke-width: 1.25;"/><!--MD5=[39142f61b531d8e72b1b2d5c3dfe57d4]
+link MonitorInterface to Monitor--><!--MD5=[3566d5953fef0e25dd99d692862f0dc0]
+link PoliticaAleatoria to Politica--><path d="M2316.25,1640.6649 C2316.25,1640.6649 2316.25,2120.3024 2316.25,2120.3024 " fill="none" id="PoliticaAleatoria-&gt;Politica" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="none" points="2325,2120.3024,2316.25,2145.3024,2307.5,2120.3024,2325,2120.3024" style="stroke: #4B5563; stroke-width: 1.25;"/><!--MD5=[3e2d090ad4a1da454073f7eef2edb6e3]
+link PoliticaPrioridadSimple to Politica--><path d="M2853.4875,1643.7274 C2693.3125,1643.7274 2484.375,1643.7274 2484.375,1643.7274 C2484.375,1643.7274 2484.375,2120.4774 2484.375,2120.4774 " fill="none" id="PoliticaPrioridadSimple-&gt;Politica" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="none" points="2493.125,2120.4774,2484.375,2145.4774,2475.625,2120.4774,2493.125,2120.4774" style="stroke: #4B5563; stroke-width: 1.25;"/><!--MD5=[7a4f90c3b0abfdf22c4ed46dea2091f7]
+link RegistradorTransiciones to AutoCloseable--><path d="M877.5,3071.2524 C877.5,3071.2524 877.5,3275.5399 877.5,3275.5399 " fill="none" id="RegistradorTransiciones-&gt;AutoCloseable" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="none" points="886.25,3275.5399,877.5,3300.5399,868.75,3275.5399,886.25,3275.5399" style="stroke: #4B5563; stroke-width: 1.25;"/><!--MD5=[691450c5ca46bef15fdea847161f8053]
+link Hilo to MonitorInterface--><path d="M589.0625,1295.4024 C589.0625,1333.8274 589.0625,1371.2274 589.0625,1371.2274 C589.0625,1371.2274 1753.125,1371.2274 1753.125,1371.2274 C1753.125,1371.2274 1753.125,1249.4649 1753.125,1249.4649 " fill="none" id="Hilo-&gt;MonitorInterface" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="1753.125,1243.2149,1748.125,1254.4649,1753.125,1249.4649,1758.125,1254.4649,1753.125,1243.2149" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="105" x="753.75" y="1050.926">solicita disparos</text><!--MD5=[691450c5ca46bef15fdea847161f8053]
+link Hilo to MonitorInterface--><!--MD5=[85ecc545fe7a35997c2027d15782e875]
+link Hilo to EstadoSimulacion--><path d="M235.9375,1295.5024 C235.9375,1295.5024 235.9375,2657.1899 235.9375,2657.1899 " fill="none" id="Hilo-&gt;EstadoSimulacion" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="235.9375,2663.4399,240.9375,2652.1899,235.9375,2657.1899,230.9375,2652.1899,235.9375,2663.4399" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="132.5" x="350" y="1798.426">consulta finalizacion</text><!--MD5=[3274131f47e35939b224815235b3645e]
+link Hilo to RegistradorTransiciones--><path d="M544.6875,1295.5024 C544.6875,1295.5024 544.6875,2582.1774 544.6875,2582.1774 " fill="none" id="Hilo-&gt;RegistradorTransiciones" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="544.6875,2588.4274,549.6875,2577.1774,544.6875,2582.1774,539.6875,2577.1774,544.6875,2588.4274" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="108.75" x="526.25" y="1798.426">registra intentos</text><!--MD5=[2c3c1c8976d785f7a26f4b79626f43c7]
+reverse link Monitor to Mutex--><path d="M1631.25,1367.9899 C1631.25,1367.9899 1631.25,1495.5024 1631.25,1495.5024 " fill="none" id="Monitor&lt;-Mutex" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="1631.25,1351.7399,1626.25,1359.2399,1631.25,1366.7399,1636.25,1359.2399,1631.25,1351.7399" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="97.5" x="1580" y="1387.176">crea y controla</text><!--MD5=[f24f71dc2bf231c25049b3bd722ceae5]
+reverse link Monitor to ColasTransiciones--><path d="M1319.0625,1367.9899 C1319.0625,1367.9899 1319.0625,1411.0149 1319.0625,1411.0149 " fill="none" id="Monitor&lt;-ColasTransiciones" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="1319.0625,1351.7399,1314.0625,1359.2399,1319.0625,1366.7399,1324.0625,1359.2399,1319.0625,1351.7399" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="97.5" x="1272.5" y="1387.176">crea y controla</text><!--MD5=[b7e588ff6034f81fee95c6cdf124dd1a]
+link Monitor to RedDePetri--><path d="M1217.325,1323.7274 C1101.6375,1323.7274 987.1875,1323.7274 987.1875,1323.7274 C987.1875,1323.7274 987.1875,1816.1024 987.1875,1816.1024 " fill="none" id="Monitor-&gt;RedDePetri" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="987.1875,1822.3524,992.1875,1811.1024,987.1875,1816.1024,982.1875,1811.1024,987.1875,1822.3524" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="118.75" x="878.75" y="1592.801">consulta y dispara</text><!--MD5=[25a33279178a45f9626c7bdf11a44d9b]
+link Monitor to Politica--><path d="M1692.5875,1271.2274 C1995.2,1271.2274 2479.375,1271.2274 2479.375,1271.2274 C2479.375,1271.2274 2479.375,2139.2649 2479.375,2139.2649 " fill="none" id="Monitor-&gt;Politica" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="2479.375,2145.5149,2484.375,2134.2649,2479.375,2139.2649,2474.375,2134.2649,2479.375,2145.5149" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="140" x="1971.25" y="1592.801">elige cola a despertar</text><!--MD5=[25a33279178a45f9626c7bdf11a44d9b]
+link Monitor to Politica--><!--MD5=[f6039b784ae4dbdd278a8321db2fe08d]
+link ColasTransiciones to Mutex--><path d="M1420.8125,1557.4774 C1420.8125,1557.4774 1563.575,1557.4774 1563.575,1557.4774 " fill="none" id="ColasTransiciones-&gt;Mutex" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="1569.825,1557.4774,1558.575,1552.4774,1563.575,1557.4774,1558.575,1562.4774,1569.825,1557.4774" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="115" x="1434.6875" y="1573.426">libera y reingresa</text><!--MD5=[13bec9ad823288e261073453601bd80d]
+link Mutex to ColasTransiciones--><!--MD5=[979ed955d2fda3f28c53d88e60ce005c]
+reverse link ColasTransiciones to Semaphore--><path d="M1437.0125,1734.9774 C1437.0125,1734.9774 1735,1734.9774 1735,1734.9774 C1735,1734.9774 1735,2056.7024 1735,2150.3274 " fill="none" id="ColasTransiciones&lt;-Semaphore" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="1420.7625,1734.9774,1428.2625,1739.9774,1435.7625,1734.9774,1428.2625,1729.9774,1420.7625,1734.9774" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="130" x="1536.25" y="1798.426">colas y controlColas</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="22.5" x="1704.2188" y="2136.466">1..*</text><!--MD5=[935d84db4f27d9e039a38c5bf8091302]
+reverse link Mutex to Semaphore--><path d="M1762.5,1694.4524 C1762.5,1694.4524 1762.5,2150.4274 1762.5,2150.4274 " fill="none" id="Mutex&lt;-Semaphore" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="1762.5,1678.2024,1757.5,1685.7024,1762.5,1693.2024,1767.5,1685.7024,1762.5,1678.2024" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="107.5" x="1707.5" y="1798.426">exclusion mutua</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="7.5" x="1758.3125" y="2136.5991">1</text><!--MD5=[233213af21d399f39500b7e9e0d7ffb3]
+reverse link RedDePetri to Marcado--><path d="M1286.375,2337.4774 C1286.375,2337.4774 2435.2125,2337.4774 2435.2125,2337.4774 C2435.2125,2337.4774 2435.2125,2574.2399 2435.2125,2719.4524 " fill="none" id="RedDePetri&lt;-Marcado" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="1270.125,2337.4774,1277.625,2342.4774,1285.125,2337.4774,1277.625,2332.4774,1270.125,2337.4774" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="100" x="2017.5" y="2564.676">marcado actual</text><!--MD5=[2fd634ae0c790021ee84d0ab992cc15f]
+link RedDePetri to Marcado--><!--MD5=[70d2d0e73de249bc5cbc582f6f51c56b]
+link RedDePetri to SensibilizadoConTiempo--><path d="M1270.3625,2464.9774 C1496.475,2464.9774 1821.6625,2464.9774 1821.6625,2464.9774 C1821.6625,2464.9774 1821.6625,3124.6024 1821.6625,3124.6024 " fill="none" id="RedDePetri-&gt;SensibilizadoConTiempo" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="1821.6625,3130.8524,1826.6625,3119.6024,1821.6625,3124.6024,1816.6625,3119.6024,1821.6625,3130.8524" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="128.75" x="1726.25" y="2835.926">semantica temporal</text><!--MD5=[34f99241fa420a2e57ec7e45f1cde97f]
+link RedDePetri to VerificadorInvariantes--><path d="M1185,2529.1274 C1185,2529.1274 1185,2713.5649 1185,2713.5649 " fill="none" id="RedDePetri-&gt;VerificadorInvariantes" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="1185,2719.8149,1190,2708.5649,1185,2713.5649,1180,2708.5649,1185,2719.8149" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="123.75" x="1137.5" y="2564.676">verifica invariantes</text><!--MD5=[b198d0fa2dcaadfed852f3490043c0b6]
+link RedDePetri to EstadoSimulacion--><path d="M844.9375,2176.2274 C651.9125,2176.2274 397.1875,2176.2274 397.1875,2176.2274 C397.1875,2176.2274 397.1875,2657.0649 397.1875,2657.0649 " fill="none" id="RedDePetri-&gt;EstadoSimulacion" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="397.1875,2663.3149,402.1875,2652.0649,397.1875,2657.0649,392.1875,2652.0649,397.1875,2663.3149" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="105" x="398.75" y="2564.676">actualiza avance</text><!--MD5=[2239cefa4437a1b0d3278ec77ab34537]
+link RedDePetri to RegistradorTransiciones--><path d="M956.25,2529.1274 C956.25,2529.1274 956.25,2582.3149 956.25,2582.3149 " fill="none" id="RedDePetri-&gt;RegistradorTransiciones" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="956.25,2588.5649,961.25,2577.3149,956.25,2582.3149,951.25,2577.3149,956.25,2588.5649" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="111.25" x="978.75" y="2564.676">registra disparos</text><!--MD5=[055528a8e5def09132319f2383833ed5]
+reverse link VerificadorInvariantes to InvariantePlaza--><path d="M1306.25,2956.8399 C1306.25,2956.8399 1306.25,3196.4774 1306.25,3196.4774 " fill="none" id="VerificadorInvariantes&lt;-InvariantePlaza" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="1306.25,2940.5899,1301.25,2948.0899,1306.25,2955.5899,1311.25,2948.0899,1306.25,2940.5899" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="130" x="1307.5" y="3107.176">invariantes de plaza</text><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="7.5" x="1298.4512" y="3182.7488">3</text><!--MD5=[4036a9dfcf4004441bcd326f271deae1]
+reverse link ConfiguracionSimulacion to Marcado--><path d="M2348.9,922.4774 C2348.9,922.4774 2512.1875,922.4774 2512.1875,922.4774 C2512.1875,922.4774 2512.1875,2313.6649 2512.1875,2719.8774 " fill="none" id="ConfiguracionSimulacion&lt;-Marcado" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="2332.65,922.4774,2340.15,927.4774,2347.65,922.4774,2340.15,917.4774,2332.65,922.4774" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="76.25" x="2541.25" y="1592.801">copia inicial</text><!--MD5=[97986da17a577d0d8a0dcba5ad259391]
+reverse link ResultadoSimulacion to Marcado--><path d="M2537.5,844.5774 C2537.5,844.5774 2537.5,2719.8899 2537.5,2719.8899 " fill="none" id="ResultadoSimulacion&lt;-Marcado" style="stroke: #4B5563; stroke-width: 1.25;"/><polygon fill="#4B5563" points="2537.5,828.3274,2532.5,835.8274,2537.5,843.3274,2542.5,835.8274,2537.5,828.3274" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="67.5" x="2752.5" y="1592.801">copia final</text><!--MD5=[34c6b74124006e8d2269641f6b9a4ba2]
+link Main to ConfiguracionSimulacion--><path d="M1761,305.2524 C1761,426.1524 1761,582.4774 1761,582.4774 C1761,582.4774 1778.6125,582.4774 1778.6125,582.4774 " fill="none" id="Main-&gt;ConfiguracionSimulacion" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="1784.8625,582.4774,1773.6125,577.4774,1778.6125,582.4774,1773.6125,587.4774,1784.8625,582.4774" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="145" x="1817.5" y="340.926">obtiene configuracion</text><!--MD5=[34c6b74124006e8d2269641f6b9a4ba2]
+link Main to ConfiguracionSimulacion--><!--MD5=[422ed39b86e651f26ee4ee3931b249ee]
+link Main to RedDePetri--><path d="M1390.4875,259.9774 C1184.7375,259.9774 893.75,259.9774 893.75,259.9774 C893.75,259.9774 893.75,1815.7649 893.75,1815.7649 " fill="none" id="Main-&gt;RedDePetri" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="893.75,1822.0149,898.75,1810.7649,893.75,1815.7649,888.75,1810.7649,893.75,1822.0149" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="27.5" x="847.5" y="1219.051">crea</text><!--MD5=[8d8901890e908633d2b57f9dd911858d]
+link Main to EstadoSimulacion--><path d="M1390.3375,74.9774 C993.425,74.9774 143.125,74.9774 143.125,74.9774 C143.125,74.9774 143.125,2657.0774 143.125,2657.0774 " fill="none" id="Main-&gt;EstadoSimulacion" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="143.125,2663.3274,148.125,2652.0774,143.125,2657.0774,138.125,2652.0774,143.125,2663.3274" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="27.5" x="172.5" y="1387.176">crea</text><!--MD5=[25f8ed71b10358c33b009426856255cd]
+link Main to SensibilizadoConTiempo--><path d="M1714.1625,305.3149 C1714.1625,633.7149 1714.1625,1432.4774 1714.1625,1432.4774 C1714.1625,1432.4774 1872.5,1432.4774 1872.5,1432.4774 C1872.5,1432.4774 1872.5,3124.7649 1872.5,3124.7649 " fill="none" id="Main-&gt;SensibilizadoConTiempo" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="1872.5,3131.0149,1877.5,3119.7649,1872.5,3124.7649,1867.5,3119.7649,1872.5,3131.0149" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="27.5" x="3280" y="1592.801">crea</text><!--MD5=[9c9fcf5da9de0f94aa713a51201f51d0]
+link Main to RegistradorTransiciones--><path d="M1390.1,213.7274 C1135.5,213.7274 728.125,213.7274 728.125,213.7274 C728.125,213.7274 728.125,2582.2899 728.125,2582.2899 " fill="none" id="Main-&gt;RegistradorTransiciones" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="728.125,2588.5399,733.125,2577.2899,728.125,2582.2899,723.125,2577.2899,728.125,2588.5399" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="27.5" x="661.25" y="1387.176">crea</text><!--MD5=[de30da0a728f0803d40a98aa5e2769a3]
+link Main to VerificadorInvariantes--><path d="M1703.3375,305.1774 C1703.3375,637.5524 1703.3375,1453.7274 1703.3375,1453.7274 C1703.3375,1453.7274 1855,1453.7274 1855,1453.7274 C1855,1453.7274 1855,2764.9774 1855,2764.9774 C1855,2764.9774 1518.7875,2764.9774 1518.7875,2764.9774 " fill="none" id="Main-&gt;VerificadorInvariantes" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="1512.5375,2764.9774,1523.7875,2769.9774,1518.7875,2764.9774,1523.7875,2759.9774,1512.5375,2764.9774" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="27.5" x="730" y="1387.176">crea</text><!--MD5=[4c8c91913336314e167e3de625c9ac13]
+link Main to Politica--><path d="M1749,305.0274 C1749,552.3149 1749,1044.9774 1749,1044.9774 C1749,1044.9774 2481.875,1044.9774 2481.875,1044.9774 C2481.875,1044.9774 2481.875,2139.1149 2481.875,2139.1149 " fill="none" id="Main-&gt;Politica" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="2481.875,2145.3649,2486.875,2134.1149,2481.875,2139.1149,2476.875,2134.1149,2481.875,2145.3649" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="92.5" x="2691.25" y="1219.051">usa como tipo</text><!--MD5=[0e5e887de323894622a5c318d3e70248]
+link Main to PoliticaAleatoria--><path d="M1789.85,236.2274 C2014.65,236.2274 2348.75,236.2274 2348.75,236.2274 C2348.75,236.2274 2348.75,1526.8274 2348.75,1526.8274 " fill="none" id="Main-&gt;PoliticaAleatoria" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="2348.75,1533.0774,2353.75,1521.8274,2348.75,1526.8274,2343.75,1521.8274,2348.75,1533.0774" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="78.75" x="1987.5" y="1050.926">puede crear</text><!--MD5=[93b0c5e81653ef68d5c7ab7e17dd3ada]
+link Main to PoliticaPrioridadSimple--><path d="M1789.6125,98.7274 C2185.825,98.7274 3033.75,98.7274 3033.75,98.7274 C3033.75,98.7274 3033.75,1517.1399 3033.75,1517.1399 " fill="none" id="Main-&gt;PoliticaPrioridadSimple" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="3033.75,1523.3899,3038.75,1512.1399,3033.75,1517.1399,3028.75,1512.1399,3033.75,1523.3899" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="78.75" x="2935" y="1050.926">puede crear</text><!--MD5=[d0c9530585fa3d18abd85359f7467a51]
+link Main to Monitor--><path d="M1541.5625,305.2524 C1541.5625,305.2524 1541.5625,1068.4399 1541.5625,1068.4399 " fill="none" id="Main-&gt;Monitor" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="1541.5625,1074.6899,1546.5625,1063.4399,1541.5625,1068.4399,1536.5625,1063.4399,1541.5625,1074.6899" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="27.5" x="1476.25" y="695.926">crea</text><!--MD5=[2ab620d5f7064d5392b91a2d4a6c2611]
+link Main to MonitorInterface--><path d="M1737,305.2524 C1737,305.2524 1737,1176.5524 1737,1176.5524 " fill="none" id="Main-&gt;MonitorInterface" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="1737,1182.8024,1742,1171.5524,1737,1176.5524,1732,1171.5524,1737,1182.8024" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="92.5" x="1591.25" y="695.926">usa como tipo</text><!--MD5=[6a2754adf4da6748e874fa8d6f942c2c]
+link Main to Hilo--><path d="M1390.2875,121.2274 C1039.9,121.2274 351.25,121.2274 351.25,121.2274 C351.25,121.2274 351.25,1124.7899 351.25,1124.7899 " fill="none" id="Main-&gt;Hilo" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="351.25,1131.0399,356.25,1119.7899,351.25,1124.7899,346.25,1119.7899,351.25,1131.0399" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="76.25" x="525" y="695.926">crea e inicia</text><!--MD5=[6a2754adf4da6748e874fa8d6f942c2c]
+link Main to Hilo--><!--MD5=[bf70fb962b6d3802a44e226accad40bf]
+link Main to ResultadoSimulacion--><path d="M1789.6875,167.4774 C2058.2375,167.4774 2502.5,167.4774 2502.5,167.4774 C2502.5,167.4774 2502.5,545.4149 2502.5,545.4149 " fill="none" id="Main-&gt;ResultadoSimulacion" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="2502.5,551.6649,2507.5321,540.4292,2502.5179,545.4149,2497.5322,540.4006,2502.5,551.6649" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="93.75" x="2286.25" y="340.926">crea resultado</text><!--MD5=[59557a50fd6914218434850ab7d29d55]
+link Regex to AnalizadorRegexInvariantesTransicion--><path d="M491.1,3363.7274 C581.6,3363.7274 684.7875,3363.7274 684.7875,3363.7274 C684.7875,3363.7274 684.7875,3573.5274 684.7875,3573.5274 " fill="none" id="Regex-&gt;AnalizadorRegexInvariantesTransicion" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="684.7875,3579.7774,689.7875,3568.5274,684.7875,3573.5274,679.7875,3568.5274,684.7875,3579.7774" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="88.75" x="548.75" y="3555.926">crea y ejecuta</text><!--MD5=[4ec7550831ab778c1466e20fff33a543]
+link Regex to ResultadoAnalisisRegex--><path d="M490.825,3376.2274 C544.9625,3376.2274 595,3376.2274 595,3376.2274 C595,3376.2274 595,4101.2274 595,4101.2274 C595,4101.2274 649.225,4101.2274 649.225,4101.2274 " fill="none" id="Regex-&gt;ResultadoAnalisisRegex" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="655.475,4101.2274,644.225,4096.2274,649.225,4101.2274,644.225,4106.2274,655.475,4101.2274" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="121.25" x="8.75" y="3714.676">consulta resultado</text><!--MD5=[b8e4e88ba25f3ed39dce45c1f6e60c68]
+link AnalizadorRegexInvariantesTransicion to ResultadoAnalisisRegex--><path d="M781.25,3837.7899 C781.25,3837.7899 781.25,3890.8899 781.25,3890.8899 " fill="none" id="AnalizadorRegexInvariantesTransicion-&gt;ResultadoAnalisisRegex" style="stroke: #4B5563; stroke-width: 1.25; stroke-dasharray: 7.0,7.0;"/><polygon fill="#4B5563" points="781.25,3897.1399,786.25,3885.8899,781.25,3890.8899,776.25,3885.8899,781.25,3897.1399" style="stroke: #4B5563; stroke-width: 1.25;"/><text fill="#000000" font-family="sans-serif" font-size="13.75" lengthAdjust="spacingAndGlyphs" textLength="101.25" x="782.5" y="3873.426">crea y devuelve</text><!--MD5=[981208c80b3dae1375ffad99c6d5b9c7]
+link ConfiguracionSimulacion to ResultadoSimulacion--><!--MD5=[b46f4491ebacb5b55e2a50db8c8b690e]
+link Politica to RedDePetri--><!--MD5=[9005133811d73cc995a53cda70b250f7]
+link Thread to Mutex--><!--MD5=[49158529b154e67d0dd6a62181d0879b]
+link ColasTransiciones to PoliticaAleatoria--><!--MD5=[048c55445108342a100798725f0d2d24]
+link PoliticaAleatoria to PoliticaPrioridadSimple--><!--MD5=[1532b41f3068ef939d8b91a0d1cb8978]
+link PoliticaPrioridadSimple to Marcado--><!--MD5=[c683fdd74fa0f39fe0f43987353a691a]
+link EstadoSimulacion to RegistradorTransiciones--><!--MD5=[cd1ec5f70f5fafc0eaa7c92d4b268698]
+link RegistradorTransiciones to VerificadorInvariantes--><!--MD5=[3415e3331b7f717ca122fd44581f2fb3]
+link VerificadorInvariantes to SensibilizadoConTiempo--><!--MD5=[2670c3bad18c99800563f742cc445a65]
+link Thread to EstadoSimulacion--><!--MD5=[2e6a4998ce0249fc37dfaae1123c21a9]
+link EstadoSimulacion to Regex--><!--MD5=[bf9db2b0862302d78edd4a120e64a839]
+link ConfiguracionSimulacion to MonitorInterface--><!--MD5=[d03b13939d3426631f8428f6913a0d51]
+link MonitorInterface to ColasTransiciones--><!--MD5=[85f9f127264040fe0a7f986ba97d54ed]
+link ColasTransiciones to RegistradorTransiciones--><!--MD5=[85fe55638949e55acd877df745ae1f2b]
+link RegistradorTransiciones to AnalizadorRegexInvariantesTransicion--><!--MD5=[444a51f3aeedf3a95cc9f23fc12b702f]
+link ResultadoSimulacion to Monitor--><!--MD5=[a65278668cab185522329c7997b189b6]
+link Monitor to PoliticaAleatoria--><!--MD5=[1f9615995add4be4253bf137adb94d99]
+link PoliticaAleatoria to VerificadorInvariantes--><!--MD5=[9848598f1572410018f81a168988d546]
+link VerificadorInvariantes to ResultadoAnalisisRegex--><!--MD5=[d9fb95298c3bf82b8caaf711726fc378]
+link Marcado to SensibilizadoConTiempo--><!--MD5=[376cd9fe52cd50e09aa222edea126d28]
+@startuml
+
+title Diagrama de clases - Simulador concurrente de Red de Petri
+
+top to bottom direction
+skinparam dpi 120
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam linetype ortho
+skinparam nodesep 26
+skinparam ranksep 32
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 11
+skinparam ArrowColor #4B5563
+skinparam ArrowThickness 1
+skinparam classBorderColor #9A3412
+skinparam classBackgroundColor #FFF8D8
+skinparam classHeaderBackgroundColor #FFF1B8
+skinparam classFontColor #1F2937
+skinparam noteBackgroundColor #FFFDF5
+skinparam noteBorderColor #C9A227
+skinparam noteFontColor #374151
+skinparam interfaceBorderColor #1D4ED8
+skinparam interfaceBackgroundColor #EAF2FF
+skinparam interfaceFontColor #1E3A8A
+skinparam stereotypeCBackgroundColor #F8FAFC
+skinparam stereotypeCBorderColor #64748B
+
+hide empty members
+hide circle
+
+
+class Main <<ejecutable>> {
+    {static} - NOMBRE_POLITICA : String
+    {static} - OBJETIVO_INVARIANTES_COMPLETOS : int
+    {static} - DETALLADO : boolean
+    {static} - RUTA_LOG : Path
+    - -
+    {static} + main(args : String[]) : void
+    {static} - obtenerNombrePolitica(args : String[]) : String
+    {static} - obtenerRutaLog(args : String[]) : Path
+    {static} - obtenerObjetivoInvariantesCompletos(args : String[]) : int
+    {static} - obtenerPerfilTemporal(args : String[]) : String
+    {static} - crearHilos(config, monitor, estado, registrador) : Hilo[]
+    {static} - crearPolitica(nombre, config) : Politica
+}
+
+class ConfiguracionSimulacion {
+    {static} - TOKENS_DATOS_INICIALES : int
+    {static} - BETA_SIN_VENCIMIENTO : long
+    - marcadoInicial : Marcado
+    - matrizIncidencia : int[][]
+    - transicionesHilos : int[][]
+    - objetivoInvariantesCompletos : int
+    - transicionIngreso : int
+    - transicionFinalizacion : int
+    - transicionesConflicto : int[]
+    - transicionModoSimple : int
+    - transicionesTemporales : boolean[]
+    - alfaMillis : long[]
+    - betaMillis : long[]
+    - -
+    + ConfiguracionSimulacion(...)
+    {static} + configuracionPorDefecto() : ConfiguracionSimulacion
+    {static} + configuracionPorDefecto(objetivo : int) : ConfiguracionSimulacion
+    {static} + configuracionPorDefecto(objetivo : int, perfil : String) : ConfiguracionSimulacion
+    + obtenerMarcadoInicial() : Marcado
+    + obtenerMatrizIncidencia() : int[][]
+    + obtenerTransicionesHilos() : int[][]
+    + obtenerObjetivoInvariantesCompletos() : int
+    + obtenerTransicionIngreso() : int
+    + obtenerTransicionFinalizacion() : int
+    + obtenerCantidadHilos() : int
+    + obtenerTransicionesConflicto() : int[]
+    + obtenerTransicionModoSimple() : int
+    + obtenerTransicionesTemporales() : boolean[]
+    + obtenerAlfaMillis() : long[]
+    + obtenerBetaMillis() : long[]
+    {static} - configurarPerfilTemporal(...) : void
+    {static} - configurarTransicionTemporal(...) : void
+    {static} - copiarMatriz(matriz : int[][]) : int[][]
+}
+
+class Hilo {
+    - monitor : MonitorInterface
+    - transicionesAsignadas : int[]
+    - estadoSimulacion : EstadoSimulacion
+    - registradorTransiciones : RegistradorTransiciones
+    - -
+    + Hilo(nombre, monitor, transiciones, estado, registrador)
+    + run() : void
+}
+
+interface MonitorInterface {
+    + fireTransition(transicion : int) : boolean
+}
+
+class Monitor {
+    - redDePetri : RedDePetri
+    - politica : Politica
+    - mutex : Mutex
+    - colasTransiciones : ColasTransiciones
+    - detallado : boolean
+    - -
+    + Monitor(redDePetri, politica, detallado)
+    + fireTransition(transicion : int) : boolean
+    - esperarSegunEstadoTransicion(transicion : int) : void
+    - despertarTransicionElegidaPorPolitica() : void
+    - obtenerTransicionesSensibilizadasConHilosEsperando() : Set<Integer>
+    - validarTransicion(transicion : int) : void
+    - log(mensaje : String) : void
+}
+
+class Mutex {
+    - semaforo : Semaphore
+    - reingresosPreferentesPendientes : int
+    - -
+    + Mutex()
+    + acquire() : void
+    + adquirirComoPreferente() : void
+    + registrarReingresoPreferente() : void
+    + release() : void
+}
+
+class ColasTransiciones {
+    - mutex : Mutex
+    - semaforosPorTransicion : Semaphore[]
+    - esperandoPorTransicion : int[]
+    - bloqueadosPorTransicion : int[]
+    - permisosPendientesPorTransicion : int[]
+    - controlColas : Semaphore
+    - -
+    + ColasTransiciones(mutex, cantidadTransiciones)
+    + empezarEspera(transicion : int) : void
+    + terminarEspera(transicion : int) : void
+    + tieneHiloEsperando(transicion : int) : boolean
+    + obtenerCantidadTransiciones() : int
+    + esperar(transicion : int) : void
+    + esperarMillis(transicion : int, millis : long) : void
+    + despertar(transicion : int) : void
+    + despertarTodos() : void
+    - esperarEnSemaforo(transicion, millis, conTimeout) : void
+}
+
+interface Politica {
+    + elegirTransicion(candidatas : Set<Integer>) : int
+}
+
+class PoliticaAleatoria {
+    - aleatorio : Random
+    - -
+    + PoliticaAleatoria()
+    + elegirTransicion(candidatas : Set<Integer>) : int
+}
+
+class PoliticaPrioridadSimple {
+    - transicionModoSimple : Integer
+    - aleatorio : Random
+    - -
+    + PoliticaPrioridadSimple(transicionModoSimple : int)
+    + elegirTransicion(candidatas : Set<Integer>) : int
+}
+
+class RedDePetri {
+    - marcado : Marcado
+    - matrizIncidencia : int[][]
+    - sensibilizadoConTiempo : SensibilizadoConTiempo
+    - verificadorInvariantes : VerificadorInvariantes
+    - estadoSimulacion : EstadoSimulacion
+    - registradorTransiciones : RegistradorTransiciones
+    - -
+    + RedDePetri(marcadoInicial, matrizIncidencia)
+    + configurarSemanticaTemporal(tiempo) : void
+    + configurarVerificadorInvariantes(verificador) : void
+    + configurarEstadoSimulacion(estado) : void
+    + configurarRegistradorTransiciones(registrador) : void
+    + estaSensibilizada(transicion : int) : boolean
+    + puedeDisparar(transicion : int) : boolean
+    + disparar(transicion : int) : boolean
+    + estaAntesDeLaVentanaTemporal(transicion : int) : boolean
+    + milisegundosHastaVentanaTemporal(transicion : int) : long
+    + describirMotivoEspera(transicion : int) : String
+    + obtenerTransicionesSensibilizadas() : Set<Integer>
+    + obtenerTransicionesDisparables() : Set<Integer>
+    + obtenerMarcado() : Marcado
+    + obtenerCantidadPlazas() : int
+    + obtenerCantidadTransiciones() : int
+    + seCumplenInvariantesPlaza() : boolean
+    + construirReporteInvariantesPlaza() : String
+    + simulacionFinalizada() : boolean
+    + puedeDispararPorEstadoSimulacion(transicion : int) : boolean
+    - registrarDisparo(transicion : int) : void
+    - verificarInvariantesPlaza() : void
+    - actualizarSensibilizadasTemporales() : void
+    - cumpleRestriccionTemporal(transicion : int) : boolean
+    - calcularSiguienteMarcado(transicion : int) : Marcado
+    - obtenerColumna(transicion : int) : int[]
+    - validarTransicion(transicion : int) : void
+    {static} - validarMatriz(marcado, matriz) : void
+    {static} - copiarMatriz(matriz : int[][]) : int[][]
+}
+
+class Marcado {
+    - tokens : int[]
+    - -
+    + Marcado(tokens : int[])
+    + obtenerTokens(plaza : int) : int
+    + sumar(valores : int[]) : Marcado
+    + tieneTokensNegativos() : boolean
+    + cantidad() : int
+    + copia() : Marcado
+    + obtenerTokensComoArreglo() : int[]
+    + toString() : String
+}
+
+class SensibilizadoConTiempo {
+    {static} - SIN_TIMESTAMP : long
+    - temporales : boolean[]
+    - alfaMillis : long[]
+    - betaMillis : long[]
+    - timestampMillis : long[]
+    - estabaSensibilizada : boolean[]
+    - ventanaVencida : boolean[]
+    - -
+    + SensibilizadoConTiempo(temporales, alfaMillis, betaMillis)
+    + actualizarSensibilizadas(sensibilizadas : Set<Integer>) : void
+    + puedeDispararAhora(transicion : int) : boolean
+    + estaAntesDeLaVentana(transicion : int) : boolean
+    + estaVencida(transicion : int) : boolean
+    + milisegundosHastaAlfa(transicion : int) : long
+    + esTemporal(transicion : int) : boolean
+    + describirEstado(transicion : int) : String
+    - validarVentanas() : void
+    - validarTransicion(transicion : int) : void
+    - ahora() : long
+}
+
+class EstadoSimulacion {
+    - objetivoInvariantesCompletos : int
+    - transicionIngreso : int
+    - transicionFinalizacion : int
+    - transicionesInicioModo : int[]
+    - completosPorModo : int[]
+    - invariantesIniciados : int
+    - invariantesCompletos : int
+    - -
+    + EstadoSimulacion(objetivo, ingreso, finalizacion, iniciosModo)
+    + registrarTransicionDisparada(transicion : int) : void
+    + estaFinalizada() : boolean
+    + puedeDispararTransicion(transicion : int) : boolean
+    + obtenerInvariantesCompletos() : int
+    + obtenerInvariantesIniciados() : int
+    + obtenerObjetivoInvariantesCompletos() : int
+    + obtenerCompletosPorModo() : int[]
+}
+
+class VerificadorInvariantes {
+    - invariantesPlaza : List<InvariantePlaza>
+    - -
+    + VerificadorInvariantes(marcadoInicial : Marcado)
+    + seCumplenInvariantesPlaza(marcado : Marcado) : boolean
+    + verificarInvariantesPlazaOLanzar(marcado : Marcado) : void
+    + construirReporte(marcado : Marcado) : String
+    + conservaTotalTokens(inicial, final) : boolean
+    + sumarValores(marcado : Marcado) : int
+    {static} - crearInvariantesPlazaPorDefecto(...) : List<InvariantePlaza>
+    {static} - validarCantidadPlazas(marcado, cantidad) : void
+}
+
+class InvariantePlaza <<clase interna>> {
+    - nombre : String
+    - plazas : int[]
+    - valorEsperado : int
+    - -
+    + InvariantePlaza(nombre, plazas, valorEsperado)
+    {static} + desdeMarcadoInicial(nombre, plazas, marcado) : InvariantePlaza
+    + seCumple(marcado : Marcado) : boolean
+    + calcular(marcado : Marcado) : int
+    + obtenerNombre() : String
+    + obtenerPlazas() : int[]
+    + obtenerValorEsperado() : int
+}
+
+class RegistradorTransiciones {
+    - intentosPorTransicion : int[]
+    - disparosPorTransicion : int[]
+    - escritor : PrintWriter
+    - p1Tokens, p3Tokens, p4Tokens, p5Tokens : Deque<Integer>
+    - p7Tokens, p8Tokens, p9Tokens, p10Tokens, p11Tokens : Deque<Integer>
+    - modoPorIdToken : Map<Integer, String>
+    - siguienteIdToken : int
+    - -
+    + RegistradorTransiciones(cantidad, ruta, politica, objetivo, temporales, alfa, beta)
+    + registrarIntento(transicion : int, disparada : boolean) : void
+    + registrarEventoDisparo(transicion : int) : void
+    + obtenerIntentosTotales() : int
+    + obtenerDisparosTotales() : int
+    + obtenerDisparosPorTransicion() : int[]
+    + escribirResumen(...) : void
+    + close() : void
+    - registrarT0() : void
+    - registrarT11() : void
+    - moverYRegistrar(...) : void
+    - quitarPrimerToken(origen, transicion) : int
+    - escribirDisparo(idToken, transicion) : void
+    - caminoPorModo(modo : String) : String
+    - crearEscritor(rutaLog : Path) : PrintWriter
+    {static} - sumarValores(valores : int[]) : int
+}
+
+class ResultadoSimulacion {
+    - marcadoFinal : Marcado
+    - intentosTotales : int
+    - disparosTotales : int
+    - disparosPorTransicion : int[]
+    - invariantesPlazaCumplidos : boolean
+    - -
+    + ResultadoSimulacion(...)
+    + obtenerMarcadoFinal() : Marcado
+    + obtenerIntentosTotales() : int
+    + obtenerDisparosTotales() : int
+    + obtenerDisparosPorTransicion() : int[]
+    + seCumplenInvariantesPlaza() : boolean
+    + toString() : String
+}
+
+
+class Regex <<ejecutable independiente>> {
+    {static} - RUTA_LOG : Path
+    - -
+    {static} + main(args : String[]) : void
+    {static} - obtenerRutaLog(args : String[]) : Path
+}
+
+class AnalizadorRegexInvariantesTransicion {
+    {static} - PATRON_SIMPLE : Pattern
+    {static} - PATRON_MEDIO : Pattern
+    {static} - PATRON_ALTO : Pattern
+    {static} - PATRON_LINEA_DISPARO : Pattern
+    {static} - PATRON_INVARIANTE_COMPLETO : Pattern
+    {static} - PATRON_RESUMEN : Pattern
+    - -
+    + analizar(rutaLog : Path) : ResultadoAnalisisRegex
+    - construirResultado(...) : ResultadoAnalisisRegex
+    - validarResumen(...) : boolean
+    - clasificarPorRegex(camino : String) : Modo
+    - leerLineas(rutaLog : Path) : List<String>
+}
+
+class ResultadoAnalisisRegex <<clase interna>> {
+    - tokensAnalizados : int
+    - cantidadMedio : int
+    - cantidadSimple : int
+    - cantidadAlto : int
+    - cantidadInvalidos : int
+    - cantidadIncompletos : int
+    - analisisRegexValido : boolean
+    - resumenValido : boolean
+    - lineaResumen : LineaResumen
+    - errores : List<String>
+    - -
+    + esAnalisisRegexValido() : boolean
+    + obtenerTokensAnalizados() : int
+    + obtenerCantidadMedio() : int
+    + obtenerCantidadSimple() : int
+    + obtenerCantidadAlto() : int
+    + obtenerCantidadInvalidos() : int
+    + obtenerCantidadIncompletos() : int
+    + construirReporte() : String
+}
+
+class Thread <<Java>> #F3F4F6
+class Semaphore <<Java>> #F3F4F6
+interface AutoCloseable <<Java>> #F3F4F6
+
+
+Hilo - -|> Thread
+Monitor ..|> MonitorInterface
+PoliticaAleatoria ..|> Politica
+PoliticaPrioridadSimple ..|> Politica
+RegistradorTransiciones ..|> AutoCloseable
+
+
+Hilo - -> MonitorInterface : solicita disparos
+Hilo - -> EstadoSimulacion : consulta finalizacion
+Hilo - -> RegistradorTransiciones : registra intentos
+
+Monitor *- - Mutex : crea y controla
+Monitor *- - ColasTransiciones : crea y controla
+Monitor - -> RedDePetri : consulta y dispara
+Monitor - -> Politica : elige cola a despertar
+
+ColasTransiciones - -> Mutex : libera y reingresa
+ColasTransiciones *- - "1..*" Semaphore : colas y controlColas
+Mutex *- - "1" Semaphore : exclusion mutua
+
+RedDePetri *- - Marcado : marcado actual
+RedDePetri - -> SensibilizadoConTiempo : semantica temporal
+RedDePetri - -> VerificadorInvariantes : verifica invariantes
+RedDePetri - -> EstadoSimulacion : actualiza avance
+RedDePetri - -> RegistradorTransiciones : registra disparos
+
+VerificadorInvariantes *- - "3" InvariantePlaza : invariantes de plaza
+ConfiguracionSimulacion *- - Marcado : copia inicial
+ResultadoSimulacion *- - Marcado : copia final
+
+
+Main ..> ConfiguracionSimulacion : obtiene configuracion
+Main ..> RedDePetri : crea
+Main ..> EstadoSimulacion : crea
+Main ..> SensibilizadoConTiempo : crea
+Main ..> RegistradorTransiciones : crea
+Main ..> VerificadorInvariantes : crea
+Main ..> Politica : usa como tipo
+Main ..> PoliticaAleatoria : puede crear
+Main ..> PoliticaPrioridadSimple : puede crear
+Main ..> Monitor : crea
+Main ..> MonitorInterface : usa como tipo
+Main ..> Hilo : crea e inicia
+Main ..> ResultadoSimulacion : crea resultado
+
+
+Regex ..> AnalizadorRegexInvariantesTransicion : crea y ejecuta
+Regex ..> ResultadoAnalisisRegex : consulta resultado
+AnalizadorRegexInvariantesTransicion ..> ResultadoAnalisisRegex : crea y devuelve
+
+
+Main -[hidden]right-> ConfiguracionSimulacion
+ConfiguracionSimulacion -[hidden]right-> ResultadoSimulacion
+
+Hilo -[hidden]right-> MonitorInterface
+MonitorInterface -[hidden]right-> Monitor
+Monitor -[hidden]right-> Politica
+Politica -[hidden]right-> RedDePetri
+
+Thread -[hidden]right-> Mutex
+Mutex -[hidden]right-> ColasTransiciones
+ColasTransiciones -[hidden]right-> PoliticaAleatoria
+PoliticaAleatoria -[hidden]right-> PoliticaPrioridadSimple
+PoliticaPrioridadSimple -[hidden]right-> Marcado
+
+EstadoSimulacion -[hidden]right-> RegistradorTransiciones
+RegistradorTransiciones -[hidden]right-> VerificadorInvariantes
+VerificadorInvariantes -[hidden]right-> SensibilizadoConTiempo
+
+Main -[hidden]down-> Hilo
+Hilo -[hidden]down-> Thread
+Thread -[hidden]down-> EstadoSimulacion
+EstadoSimulacion -[hidden]down-> Regex
+
+ConfiguracionSimulacion -[hidden]down-> MonitorInterface
+MonitorInterface -[hidden]down-> ColasTransiciones
+ColasTransiciones -[hidden]down-> RegistradorTransiciones
+RegistradorTransiciones -[hidden]down-> AnalizadorRegexInvariantesTransicion
+
+ResultadoSimulacion -[hidden]down-> Monitor
+Monitor -[hidden]down-> PoliticaAleatoria
+PoliticaAleatoria -[hidden]down-> VerificadorInvariantes
+VerificadorInvariantes -[hidden]down-> ResultadoAnalisisRegex
+
+RedDePetri -[hidden]down-> Marcado
+Marcado -[hidden]down-> SensibilizadoConTiempo
+
+note left of Monitor
+Unico metodo publico operativo:
+fireTransition(int).
+Coordina mutex, colas, esperas,
+senales y politica.
+end note
+
+note right of RedDePetri
+Realiza el disparo y concentra
+marcado, tiempo, invariantes,
+estado de simulacion y registro.
+end note
+
+note bottom of ColasTransiciones
+controlColas protege contadores y permisos.
+El hilo senalado reingresa al mutex como preferente.
+end note
+
+note bottom of Regex
+Regex y su analizador forman un ejecutable independiente.
+No dependen de Main, Monitor ni RegistradorTransiciones.
+end note
+
+@enduml
+
+PlantUML version 1.2020.02(Sun Mar 01 07:22:07 GMT-03:00 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 25.0.3+9-2-24.04.2-Ubuntu
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

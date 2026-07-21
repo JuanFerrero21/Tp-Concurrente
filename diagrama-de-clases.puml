@@ -1,353 +1,510 @@
 @startuml
+
 title Diagrama de clases - Simulador concurrente de Red de Petri
 
 top to bottom direction
-skinparam classAttributeIconSize 0
+skinparam dpi 120
 skinparam shadowing false
+skinparam roundcorner 8
 skinparam linetype ortho
-skinparam packageStyle rectangle
-skinparam dpi 180
+skinparam nodesep 26
+skinparam ranksep 32
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 11
+skinparam ArrowColor #4B5563
+skinparam ArrowThickness 1
+skinparam classBorderColor #9A3412
+skinparam classBackgroundColor #FFF8D8
+skinparam classHeaderBackgroundColor #FFF1B8
+skinparam classFontColor #1F2937
+skinparam noteBackgroundColor #FFFDF5
+skinparam noteBorderColor #C9A227
+skinparam noteFontColor #374151
+skinparam interfaceBorderColor #1D4ED8
+skinparam interfaceBackgroundColor #EAF2FF
+skinparam interfaceFontColor #1E3A8A
+skinparam stereotypeCBackgroundColor #F8FAFC
+skinparam stereotypeCBorderColor #64748B
 
 hide empty members
+hide circle
 
-package "aplicacion" {
-    class Main <<ejecutable>> {
-        - NOMBRE_POLITICA : String
-        - OBJETIVO_INVARIANTES_COMPLETOS : int
-        - DETALLADO : boolean
-        - RUTA_LOG : Path
-        + main(args : String[]) : void
-        - crearHilos(...) : Hilo[]
-        - crearPolitica(nombrePolitica, config) : Politica
-    }
+' ================================================================
+' CLASES PRINCIPALES
+' ================================================================
 
-    class Regex <<ejecutable>> {
-        - RUTA_LOG : Path
-        + main(args : String[]) : void
-        - obtenerRutaLog(args : String[]) : Path
-    }
+class Main <<ejecutable>> {
+    {static} - NOMBRE_POLITICA : String
+    {static} - OBJETIVO_INVARIANTES_COMPLETOS : int
+    {static} - DETALLADO : boolean
+    {static} - RUTA_LOG : Path
+    --
+    {static} + main(args : String[]) : void
+    {static} - obtenerNombrePolitica(args : String[]) : String
+    {static} - obtenerRutaLog(args : String[]) : Path
+    {static} - obtenerObjetivoInvariantesCompletos(args : String[]) : int
+    {static} - obtenerPerfilTemporal(args : String[]) : String
+    {static} - crearHilos(config, monitor, estado, registrador) : Hilo[]
+    {static} - crearPolitica(nombre, config) : Politica
 }
 
-package "configuracion" {
-    class ConfiguracionSimulacion {
-        - marcadoInicial : Marcado
-        - matrizIncidencia : int[][]
-        - transicionesHilos : int[][]
-        - objetivoInvariantesCompletos : int
-        - transicionIngreso : int
-        - transicionFinalizacion : int
-        - transicionesConflicto : int[]
-        - transicionModoSimple : int
-        - transicionesTemporales : boolean[]
-        - alfaMillis : long[]
-        - betaMillis : long[]
-        + configuracionPorDefecto() : ConfiguracionSimulacion
-        + configuracionPorDefecto(objetivo) : ConfiguracionSimulacion
-        + configuracionPorDefecto(objetivo, perfilTemporal) : ConfiguracionSimulacion
-        + obtenerMarcadoInicial() : Marcado
-        + obtenerMatrizIncidencia() : int[][]
-        + obtenerTransicionesHilos() : int[][]
-        + obtenerCantidadHilos() : int
-        + obtenerTransicionesConflicto() : int[]
-        + obtenerTransicionModoSimple() : int
-        + obtenerTransicionesTemporales() : boolean[]
-        + obtenerAlfaMillis() : long[]
-        + obtenerBetaMillis() : long[]
-    }
+class ConfiguracionSimulacion {
+    {static} - TOKENS_DATOS_INICIALES : int
+    {static} - BETA_SIN_VENCIMIENTO : long
+    - marcadoInicial : Marcado
+    - matrizIncidencia : int[][]
+    - transicionesHilos : int[][]
+    - objetivoInvariantesCompletos : int
+    - transicionIngreso : int
+    - transicionFinalizacion : int
+    - transicionesConflicto : int[]
+    - transicionModoSimple : int
+    - transicionesTemporales : boolean[]
+    - alfaMillis : long[]
+    - betaMillis : long[]
+    --
+    + ConfiguracionSimulacion(...)
+    {static} + configuracionPorDefecto() : ConfiguracionSimulacion
+    {static} + configuracionPorDefecto(objetivo : int) : ConfiguracionSimulacion
+    {static} + configuracionPorDefecto(objetivo : int, perfil : String) : ConfiguracionSimulacion
+    + obtenerMarcadoInicial() : Marcado
+    + obtenerMatrizIncidencia() : int[][]
+    + obtenerTransicionesHilos() : int[][]
+    + obtenerObjetivoInvariantesCompletos() : int
+    + obtenerTransicionIngreso() : int
+    + obtenerTransicionFinalizacion() : int
+    + obtenerCantidadHilos() : int
+    + obtenerTransicionesConflicto() : int[]
+    + obtenerTransicionModoSimple() : int
+    + obtenerTransicionesTemporales() : boolean[]
+    + obtenerAlfaMillis() : long[]
+    + obtenerBetaMillis() : long[]
+    {static} - configurarPerfilTemporal(...) : void
+    {static} - configurarTransicionTemporal(...) : void
+    {static} - copiarMatriz(matriz : int[][]) : int[][]
 }
 
-package "hilo" {
-    class Hilo extends Thread {
-        - monitor : MonitorInterface
-        - transicionesAsignadas : int[]
-        - estadoSimulacion : EstadoSimulacion
-        - registradorTransiciones : RegistradorTransiciones
-        + Hilo(nombre, monitor, transiciones, estado, registrador)
-        + run() : void
-    }
+class Hilo {
+    - monitor : MonitorInterface
+    - transicionesAsignadas : int[]
+    - estadoSimulacion : EstadoSimulacion
+    - registradorTransiciones : RegistradorTransiciones
+    --
+    + Hilo(nombre, monitor, transiciones, estado, registrador)
+    + run() : void
 }
 
-package "monitor" {
-    interface MonitorInterface {
-        + fireTransition(transicion : int) : boolean
-    }
-
-    class Monitor {
-        - redDePetri : RedDePetri
-        - politica : Politica
-        - mutex : Mutex
-        - colasTransiciones : ColasTransiciones
-        - detallado : boolean
-        + Monitor(redDePetri, politica, detallado)
-        + fireTransition(transicion : int) : boolean
-        - esperarSegunEstadoTransicion(transicion : int) : void
-        - despertarTransicionElegidaPorPolitica() : void
-        - obtenerTransicionesSensibilizadasConHilosEsperando() : Set<Integer>
-        - validarTransicion(transicion : int) : void
-    }
-
-    class Mutex {
-        - semaforo : Semaphore
-        - reingresosPreferentesPendientes : int
-        + Mutex()
-        + acquire() : void
-        + adquirirComoPreferente() : void
-        + registrarReingresoPreferente() : void
-        + release() : void
-    }
-
-    class ColasTransiciones {
-        - mutex : Mutex
-        - semaforosPorTransicion : Semaphore[]
-        - esperandoPorTransicion : int[]
-        - bloqueadosPorTransicion : int[]
-        - permisosPendientesPorTransicion : int[]
-        + ColasTransiciones(mutex, cantidadTransiciones)
-        + empezarEspera(transicion : int) : void
-        + terminarEspera(transicion : int) : void
-        + tieneHiloEsperando(transicion : int) : boolean
-        + esperar(transicion : int) : void
-        + esperarMillis(transicion : int, millis : long) : void
-        + despertar(transicion : int) : void
-        + despertarTodos() : void
-    }
+interface MonitorInterface {
+    + fireTransition(transicion : int) : boolean
 }
 
-package "redpetri" {
-    class RedDePetri {
-        - marcado : Marcado
-        - matrizIncidencia : int[][]
-        - sensibilizadoConTiempo : SensibilizadoConTiempo
-        - verificadorInvariantes : VerificadorInvariantes
-        - estadoSimulacion : EstadoSimulacion
-        - registradorTransiciones : RegistradorTransiciones
-        + RedDePetri(marcadoInicial, matrizIncidencia)
-        + configurarSemanticaTemporal(sensibilizadoConTiempo) : void
-        + configurarVerificadorInvariantes(verificadorInvariantes) : void
-        + configurarEstadoSimulacion(estadoSimulacion) : void
-        + configurarRegistradorTransiciones(registradorTransiciones) : void
-        + estaSensibilizada(transicion : int) : boolean
-        + puedeDisparar(transicion : int) : boolean
-        + disparar(transicion : int) : boolean
-        + obtenerTransicionesSensibilizadas() : Set<Integer>
-        + obtenerTransicionesDisparables() : Set<Integer>
-        + obtenerMarcado() : Marcado
-        + simulacionFinalizada() : boolean
-        + puedeDispararPorEstadoSimulacion(transicion : int) : boolean
-    }
-
-    class Marcado {
-        - tokens : int[]
-        + Marcado(tokens : int[])
-        + obtenerTokens(plaza : int) : int
-        + sumar(valores : int[]) : Marcado
-        + tieneTokensNegativos() : boolean
-        + cantidad() : int
-        + copia() : Marcado
-        + obtenerTokensComoArreglo() : int[]
-        + toString() : String
-    }
+class Monitor {
+    - redDePetri : RedDePetri
+    - politica : Politica
+    - mutex : Mutex
+    - colasTransiciones : ColasTransiciones
+    - detallado : boolean
+    --
+    + Monitor(redDePetri, politica, detallado)
+    + fireTransition(transicion : int) : boolean
+    - esperarSegunEstadoTransicion(transicion : int) : void
+    - despertarTransicionElegidaPorPolitica() : void
+    - obtenerTransicionesSensibilizadasConHilosEsperando() : Set<Integer>
+    - validarTransicion(transicion : int) : void
+    - log(mensaje : String) : void
 }
 
-package "tiempo" {
-    class SensibilizadoConTiempo {
-        - temporales : boolean[]
-        - alfaMillis : long[]
-        - betaMillis : long[]
-        - timestampMillis : long[]
-        - estabaSensibilizada : boolean[]
-        - ventanaVencida : boolean[]
-        + actualizarSensibilizadas(transicionesSensibilizadas : Set<Integer>) : void
-        + puedeDispararAhora(transicion : int) : boolean
-        + estaAntesDeLaVentana(transicion : int) : boolean
-        + estaVencida(transicion : int) : boolean
-        + milisegundosHastaAlfa(transicion : int) : long
-        + describirEstado(transicion : int) : String
-    }
+class Mutex {
+    - semaforo : Semaphore
+    - reingresosPreferentesPendientes : int
+    --
+    + Mutex()
+    + acquire() : void
+    + adquirirComoPreferente() : void
+    + registrarReingresoPreferente() : void
+    + release() : void
 }
 
-package "politica" {
-    interface Politica {
-        + elegirTransicion(transicionesSensibilizadas : Set<Integer>) : int
-    }
-
-    class PoliticaAleatoria {
-        - aleatorio : Random
-        + PoliticaAleatoria()
-        + elegirTransicion(transicionesSensibilizadas : Set<Integer>) : int
-    }
-
-    class PoliticaPrioridadSimple {
-        - transicionModoSimple : Integer
-        - aleatorio : Random
-        + PoliticaPrioridadSimple(transicionModoSimple : int)
-        + elegirTransicion(transicionesSensibilizadas : Set<Integer>) : int
-    }
+class ColasTransiciones {
+    - mutex : Mutex
+    - semaforosPorTransicion : Semaphore[]
+    - esperandoPorTransicion : int[]
+    - bloqueadosPorTransicion : int[]
+    - permisosPendientesPorTransicion : int[]
+    - controlColas : Semaphore
+    --
+    + ColasTransiciones(mutex, cantidadTransiciones)
+    + empezarEspera(transicion : int) : void
+    + terminarEspera(transicion : int) : void
+    + tieneHiloEsperando(transicion : int) : boolean
+    + obtenerCantidadTransiciones() : int
+    + esperar(transicion : int) : void
+    + esperarMillis(transicion : int, millis : long) : void
+    + despertar(transicion : int) : void
+    + despertarTodos() : void
+    - esperarEnSemaforo(transicion, millis, conTimeout) : void
 }
 
-package "analisis" {
-    class EstadoSimulacion {
-        - objetivoInvariantesCompletos : int
-        - transicionIngreso : int
-        - transicionFinalizacion : int
-        - transicionesInicioModo : int[]
-        - completosPorModo : int[]
-        - invariantesIniciados : int
-        - invariantesCompletos : int
-        + registrarTransicionDisparada(transicion : int) : void
-        + estaFinalizada() : boolean
-        + puedeDispararTransicion(transicion : int) : boolean
-        + obtenerInvariantesCompletos() : int
-        + obtenerInvariantesIniciados() : int
-        + obtenerCompletosPorModo() : int[]
-    }
-
-    class VerificadorInvariantes {
-        - invariantesPlaza : List<InvariantePlaza>
-        + VerificadorInvariantes(marcadoInicial : Marcado)
-        + seCumplenInvariantesPlaza(marcado : Marcado) : boolean
-        + verificarInvariantesPlazaOLanzar(marcado : Marcado) : void
-        + construirReporte(marcado : Marcado) : String
-        + conservaTotalTokens(marcadoInicial, marcadoFinal) : boolean
-    }
-
-    class InvariantePlaza {
-        - nombre : String
-        - plazas : int[]
-        - valorEsperado : int
-        + seCumple(marcado : Marcado) : boolean
-        + calcular(marcado : Marcado) : int
-        + obtenerNombre() : String
-        + obtenerValorEsperado() : int
-    }
-
-    class ResultadoSimulacion {
-        - marcadoFinal : Marcado
-        - intentosTotales : int
-        - disparosTotales : int
-        - disparosPorTransicion : int[]
-        - invariantesPlazaCumplidos : boolean
-        + obtenerMarcadoFinal() : Marcado
-        + obtenerIntentosTotales() : int
-        + obtenerDisparosTotales() : int
-        + obtenerDisparosPorTransicion() : int[]
-        + seCumplenInvariantesPlaza() : boolean
-        + toString() : String
-    }
-
-    class AnalizadorRegexInvariantesTransicion {
-        - PATRON_SIMPLE : Pattern
-        - PATRON_MEDIO : Pattern
-        - PATRON_ALTO : Pattern
-        - PATRON_LINEA_DISPARO : Pattern
-        - PATRON_INVARIANTE_COMPLETO : Pattern
-        - PATRON_RESUMEN : Pattern
-        + analizar(rutaLog : Path) : ResultadoAnalisisRegex
-    }
-
-    class ResultadoAnalisisRegex {
-        - tokensAnalizados : int
-        - cantidadMedio : int
-        - cantidadSimple : int
-        - cantidadAlto : int
-        - cantidadInvalidos : int
-        - cantidadIncompletos : int
-        - analisisRegexValido : boolean
-        - resumenValido : boolean
-        - errores : List<String>
-        + esAnalisisRegexValido() : boolean
-        + construirReporte() : String
-    }
+interface Politica {
+    + elegirTransicion(candidatas : Set<Integer>) : int
 }
 
-package "registro" {
-    class RegistradorTransiciones implements AutoCloseable {
-        - intentosPorTransicion : int[]
-        - disparosPorTransicion : int[]
-        - escritor : PrintWriter
-        - siguienteIdToken : int
-        - modoPorIdToken : Map<Integer, String>
-        + RegistradorTransiciones(cantidadTransiciones, rutaLog)
-        + registrarIntento(transicion : int, disparada : boolean) : void
-        + registrarEventoDisparo(transicion : int) : void
-        + obtenerIntentosTotales() : int
-        + obtenerDisparosTotales() : int
-        + obtenerDisparosPorTransicion() : int[]
-        + escribirResumen(...) : void
-        + close() : void
-    }
+class PoliticaAleatoria {
+    - aleatorio : Random
+    --
+    + PoliticaAleatoria()
+    + elegirTransicion(candidatas : Set<Integer>) : int
 }
 
-' Implementaciones de interfaces
+class PoliticaPrioridadSimple {
+    - transicionModoSimple : Integer
+    - aleatorio : Random
+    --
+    + PoliticaPrioridadSimple(transicionModoSimple : int)
+    + elegirTransicion(candidatas : Set<Integer>) : int
+}
+
+class RedDePetri {
+    - marcado : Marcado
+    - matrizIncidencia : int[][]
+    - sensibilizadoConTiempo : SensibilizadoConTiempo
+    - verificadorInvariantes : VerificadorInvariantes
+    - estadoSimulacion : EstadoSimulacion
+    - registradorTransiciones : RegistradorTransiciones
+    --
+    + RedDePetri(marcadoInicial, matrizIncidencia)
+    + configurarSemanticaTemporal(tiempo) : void
+    + configurarVerificadorInvariantes(verificador) : void
+    + configurarEstadoSimulacion(estado) : void
+    + configurarRegistradorTransiciones(registrador) : void
+    + estaSensibilizada(transicion : int) : boolean
+    + puedeDisparar(transicion : int) : boolean
+    + disparar(transicion : int) : boolean
+    + estaAntesDeLaVentanaTemporal(transicion : int) : boolean
+    + milisegundosHastaVentanaTemporal(transicion : int) : long
+    + describirMotivoEspera(transicion : int) : String
+    + obtenerTransicionesSensibilizadas() : Set<Integer>
+    + obtenerTransicionesDisparables() : Set<Integer>
+    + obtenerMarcado() : Marcado
+    + obtenerCantidadPlazas() : int
+    + obtenerCantidadTransiciones() : int
+    + seCumplenInvariantesPlaza() : boolean
+    + construirReporteInvariantesPlaza() : String
+    + simulacionFinalizada() : boolean
+    + puedeDispararPorEstadoSimulacion(transicion : int) : boolean
+    - registrarDisparo(transicion : int) : void
+    - verificarInvariantesPlaza() : void
+    - actualizarSensibilizadasTemporales() : void
+    - cumpleRestriccionTemporal(transicion : int) : boolean
+    - calcularSiguienteMarcado(transicion : int) : Marcado
+    - obtenerColumna(transicion : int) : int[]
+    - validarTransicion(transicion : int) : void
+    {static} - validarMatriz(marcado, matriz) : void
+    {static} - copiarMatriz(matriz : int[][]) : int[][]
+}
+
+class Marcado {
+    - tokens : int[]
+    --
+    + Marcado(tokens : int[])
+    + obtenerTokens(plaza : int) : int
+    + sumar(valores : int[]) : Marcado
+    + tieneTokensNegativos() : boolean
+    + cantidad() : int
+    + copia() : Marcado
+    + obtenerTokensComoArreglo() : int[]
+    + toString() : String
+}
+
+class SensibilizadoConTiempo {
+    {static} - SIN_TIMESTAMP : long
+    - temporales : boolean[]
+    - alfaMillis : long[]
+    - betaMillis : long[]
+    - timestampMillis : long[]
+    - estabaSensibilizada : boolean[]
+    - ventanaVencida : boolean[]
+    --
+    + SensibilizadoConTiempo(temporales, alfaMillis, betaMillis)
+    + actualizarSensibilizadas(sensibilizadas : Set<Integer>) : void
+    + puedeDispararAhora(transicion : int) : boolean
+    + estaAntesDeLaVentana(transicion : int) : boolean
+    + estaVencida(transicion : int) : boolean
+    + milisegundosHastaAlfa(transicion : int) : long
+    + esTemporal(transicion : int) : boolean
+    + describirEstado(transicion : int) : String
+    - validarVentanas() : void
+    - validarTransicion(transicion : int) : void
+    - ahora() : long
+}
+
+class EstadoSimulacion {
+    - objetivoInvariantesCompletos : int
+    - transicionIngreso : int
+    - transicionFinalizacion : int
+    - transicionesInicioModo : int[]
+    - completosPorModo : int[]
+    - invariantesIniciados : int
+    - invariantesCompletos : int
+    --
+    + EstadoSimulacion(objetivo, ingreso, finalizacion, iniciosModo)
+    + registrarTransicionDisparada(transicion : int) : void
+    + estaFinalizada() : boolean
+    + puedeDispararTransicion(transicion : int) : boolean
+    + obtenerInvariantesCompletos() : int
+    + obtenerInvariantesIniciados() : int
+    + obtenerObjetivoInvariantesCompletos() : int
+    + obtenerCompletosPorModo() : int[]
+}
+
+class VerificadorInvariantes {
+    - invariantesPlaza : List<InvariantePlaza>
+    --
+    + VerificadorInvariantes(marcadoInicial : Marcado)
+    + seCumplenInvariantesPlaza(marcado : Marcado) : boolean
+    + verificarInvariantesPlazaOLanzar(marcado : Marcado) : void
+    + construirReporte(marcado : Marcado) : String
+    + conservaTotalTokens(inicial, final) : boolean
+    + sumarValores(marcado : Marcado) : int
+    {static} - crearInvariantesPlazaPorDefecto(...) : List<InvariantePlaza>
+    {static} - validarCantidadPlazas(marcado, cantidad) : void
+}
+
+class InvariantePlaza <<clase interna>> {
+    - nombre : String
+    - plazas : int[]
+    - valorEsperado : int
+    --
+    + InvariantePlaza(nombre, plazas, valorEsperado)
+    {static} + desdeMarcadoInicial(nombre, plazas, marcado) : InvariantePlaza
+    + seCumple(marcado : Marcado) : boolean
+    + calcular(marcado : Marcado) : int
+    + obtenerNombre() : String
+    + obtenerPlazas() : int[]
+    + obtenerValorEsperado() : int
+}
+
+class RegistradorTransiciones {
+    - intentosPorTransicion : int[]
+    - disparosPorTransicion : int[]
+    - escritor : PrintWriter
+    - p1Tokens, p3Tokens, p4Tokens, p5Tokens : Deque<Integer>
+    - p7Tokens, p8Tokens, p9Tokens, p10Tokens, p11Tokens : Deque<Integer>
+    - modoPorIdToken : Map<Integer, String>
+    - siguienteIdToken : int
+    --
+    + RegistradorTransiciones(cantidad, ruta, politica, objetivo, temporales, alfa, beta)
+    + registrarIntento(transicion : int, disparada : boolean) : void
+    + registrarEventoDisparo(transicion : int) : void
+    + obtenerIntentosTotales() : int
+    + obtenerDisparosTotales() : int
+    + obtenerDisparosPorTransicion() : int[]
+    + escribirResumen(...) : void
+    + close() : void
+    - registrarT0() : void
+    - registrarT11() : void
+    - moverYRegistrar(...) : void
+    - quitarPrimerToken(origen, transicion) : int
+    - escribirDisparo(idToken, transicion) : void
+    - caminoPorModo(modo : String) : String
+    - crearEscritor(rutaLog : Path) : PrintWriter
+    {static} - sumarValores(valores : int[]) : int
+}
+
+class ResultadoSimulacion {
+    - marcadoFinal : Marcado
+    - intentosTotales : int
+    - disparosTotales : int
+    - disparosPorTransicion : int[]
+    - invariantesPlazaCumplidos : boolean
+    --
+    + ResultadoSimulacion(...)
+    + obtenerMarcadoFinal() : Marcado
+    + obtenerIntentosTotales() : int
+    + obtenerDisparosTotales() : int
+    + obtenerDisparosPorTransicion() : int[]
+    + seCumplenInvariantesPlaza() : boolean
+    + toString() : String
+}
+
+' ================================================================
+' EJECUTABLE REGEX INDEPENDIENTE
+' ================================================================
+
+class Regex <<ejecutable independiente>> {
+    {static} - RUTA_LOG : Path
+    --
+    {static} + main(args : String[]) : void
+    {static} - obtenerRutaLog(args : String[]) : Path
+}
+
+class AnalizadorRegexInvariantesTransicion {
+    {static} - PATRON_SIMPLE : Pattern
+    {static} - PATRON_MEDIO : Pattern
+    {static} - PATRON_ALTO : Pattern
+    {static} - PATRON_LINEA_DISPARO : Pattern
+    {static} - PATRON_INVARIANTE_COMPLETO : Pattern
+    {static} - PATRON_RESUMEN : Pattern
+    --
+    + analizar(rutaLog : Path) : ResultadoAnalisisRegex
+    - construirResultado(...) : ResultadoAnalisisRegex
+    - validarResumen(...) : boolean
+    - clasificarPorRegex(camino : String) : Modo
+    - leerLineas(rutaLog : Path) : List<String>
+}
+
+class ResultadoAnalisisRegex <<clase interna>> {
+    - tokensAnalizados : int
+    - cantidadMedio : int
+    - cantidadSimple : int
+    - cantidadAlto : int
+    - cantidadInvalidos : int
+    - cantidadIncompletos : int
+    - analisisRegexValido : boolean
+    - resumenValido : boolean
+    - lineaResumen : LineaResumen
+    - errores : List<String>
+    --
+    + esAnalisisRegexValido() : boolean
+    + obtenerTokensAnalizados() : int
+    + obtenerCantidadMedio() : int
+    + obtenerCantidadSimple() : int
+    + obtenerCantidadAlto() : int
+    + obtenerCantidadInvalidos() : int
+    + obtenerCantidadIncompletos() : int
+    + construirReporte() : String
+}
+
+class Thread <<Java>> #F3F4F6
+class Semaphore <<Java>> #F3F4F6
+interface AutoCloseable <<Java>> #F3F4F6
+
+' ================================================================
+' HERENCIA E IMPLEMENTACIONES
+' Se declaran solo aqui para evitar flechas duplicadas.
+' ================================================================
+
+Hilo --|> Thread
 Monitor ..|> MonitorInterface
 PoliticaAleatoria ..|> Politica
 PoliticaPrioridadSimple ..|> Politica
+RegistradorTransiciones ..|> AutoCloseable
 
-' Ejecucion principal
-Main ..> ConfiguracionSimulacion : configura
-Main ..> RedDePetri : crea
-Main ..> Monitor : crea
-Main ..> Hilo : inicia
-Main ..> Politica : selecciona
-Main ..> EstadoSimulacion : crea
-Main ..> RegistradorTransiciones : crea
-Main ..> VerificadorInvariantes : crea
-Main ..> SensibilizadoConTiempo : crea
+' ================================================================
+' RELACIONES DEL NUCLEO
+' ================================================================
 
-Regex ..> AnalizadorRegexInvariantesTransicion : ejecuta
-
-' Monitor y sincronizacion
-Hilo --> MonitorInterface : solicita fireTransition()
+Hilo --> MonitorInterface : solicita disparos
 Hilo --> EstadoSimulacion : consulta finalizacion
 Hilo --> RegistradorTransiciones : registra intentos
 
-Monitor *-- Mutex : exclusion mutua
-Monitor *-- ColasTransiciones : colas por transicion
-Monitor --> RedDePetri : consulta/dispara
+Monitor *-- Mutex : crea y controla
+Monitor *-- ColasTransiciones : crea y controla
+Monitor --> RedDePetri : consulta y dispara
 Monitor --> Politica : elige cola a despertar
 
-ColasTransiciones --> Mutex : libera/reingresa
-ColasTransiciones o-- "1..*" Semaphore : semaforos por transicion
-Mutex o-- Semaphore : semaforo binario
+ColasTransiciones --> Mutex : libera y reingresa
+ColasTransiciones *-- "1..*" Semaphore : colas y controlColas
+Mutex *-- "1" Semaphore : exclusion mutua
 
-' Red de Petri
 RedDePetri *-- Marcado : marcado actual
-RedDePetri --> SensibilizadoConTiempo : controla ventana temporal
-RedDePetri --> VerificadorInvariantes : verifica invariantes de plaza
-RedDePetri --> EstadoSimulacion : registra avance
-RedDePetri --> RegistradorTransiciones : registra disparo/log
+RedDePetri --> SensibilizadoConTiempo : semantica temporal
+RedDePetri --> VerificadorInvariantes : verifica invariantes
+RedDePetri --> EstadoSimulacion : actualiza avance
+RedDePetri --> RegistradorTransiciones : registra disparos
 
-VerificadorInvariantes *-- "1..*" InvariantePlaza
-ResultadoSimulacion --> Marcado : marcado final
+VerificadorInvariantes *-- "3" InvariantePlaza : invariantes de plaza
+ConfiguracionSimulacion *-- Marcado : copia inicial
+ResultadoSimulacion *-- Marcado : copia final
 
-' Analisis posterior
-AnalizadorRegexInvariantesTransicion --> ResultadoAnalisisRegex : produce
-AnalizadorRegexInvariantesTransicion ..> RegistradorTransiciones : valida log generado por
+' ================================================================
+' DEPENDENCIAS REALES DE MAIN
+' ================================================================
 
-' Datos de configuracion
-ConfiguracionSimulacion --> Marcado : marcado inicial
+Main ..> ConfiguracionSimulacion : obtiene configuracion
+Main ..> RedDePetri : crea
+Main ..> EstadoSimulacion : crea
+Main ..> SensibilizadoConTiempo : crea
+Main ..> RegistradorTransiciones : crea
+Main ..> VerificadorInvariantes : crea
+Main ..> Politica : usa como tipo
+Main ..> PoliticaAleatoria : puede crear
+Main ..> PoliticaPrioridadSimple : puede crear
+Main ..> Monitor : crea
+Main ..> MonitorInterface : usa como tipo
+Main ..> Hilo : crea e inicia
+Main ..> ResultadoSimulacion : crea resultado
 
-note right of Monitor
-El unico metodo publico operativo es
-fireTransition(int transicion).
-El monitor coordina hilos, mutex,
-colas y politica, pero no actualiza
-el marcado directamente.
+' ================================================================
+' ANALISIS REGEX INDEPENDIENTE DEL NUCLEO
+' ================================================================
+
+Regex ..> AnalizadorRegexInvariantesTransicion : crea y ejecuta
+Regex ..> ResultadoAnalisisRegex : consulta resultado
+AnalizadorRegexInvariantesTransicion ..> ResultadoAnalisisRegex : crea y devuelve
+
+' ================================================================
+' ORDEN VISUAL: enlaces invisibles, sin significado UML
+' ================================================================
+
+Main -[hidden]right-> ConfiguracionSimulacion
+ConfiguracionSimulacion -[hidden]right-> ResultadoSimulacion
+
+Hilo -[hidden]right-> MonitorInterface
+MonitorInterface -[hidden]right-> Monitor
+Monitor -[hidden]right-> Politica
+Politica -[hidden]right-> RedDePetri
+
+Thread -[hidden]right-> Mutex
+Mutex -[hidden]right-> ColasTransiciones
+ColasTransiciones -[hidden]right-> PoliticaAleatoria
+PoliticaAleatoria -[hidden]right-> PoliticaPrioridadSimple
+PoliticaPrioridadSimple -[hidden]right-> Marcado
+
+EstadoSimulacion -[hidden]right-> RegistradorTransiciones
+RegistradorTransiciones -[hidden]right-> VerificadorInvariantes
+VerificadorInvariantes -[hidden]right-> SensibilizadoConTiempo
+
+Main -[hidden]down-> Hilo
+Hilo -[hidden]down-> Thread
+Thread -[hidden]down-> EstadoSimulacion
+EstadoSimulacion -[hidden]down-> Regex
+
+ConfiguracionSimulacion -[hidden]down-> MonitorInterface
+MonitorInterface -[hidden]down-> ColasTransiciones
+ColasTransiciones -[hidden]down-> RegistradorTransiciones
+RegistradorTransiciones -[hidden]down-> AnalizadorRegexInvariantesTransicion
+
+ResultadoSimulacion -[hidden]down-> Monitor
+Monitor -[hidden]down-> PoliticaAleatoria
+PoliticaAleatoria -[hidden]down-> VerificadorInvariantes
+VerificadorInvariantes -[hidden]down-> ResultadoAnalisisRegex
+
+RedDePetri -[hidden]down-> Marcado
+Marcado -[hidden]down-> SensibilizadoConTiempo
+
+note left of Monitor
+Unico metodo publico operativo:
+fireTransition(int).
+Coordina mutex, colas, esperas,
+senales y politica.
 end note
 
 note right of RedDePetri
-La red encapsula el disparo real:
-calcula nuevo marcado, verifica
-invariantes de plaza, actualiza
-timestamps temporales, registra
-estado de simulacion y log.
+Realiza el disparo y concentra
+marcado, tiempo, invariantes,
+estado de simulacion y registro.
 end note
 
 note bottom of ColasTransiciones
-Cada transicion tiene un semaforo.
-Si el monitor despierta una cola,
-registra reingreso preferente para
-que el hilo despertado recupere el mutex.
+controlColas protege contadores y permisos.
+El hilo senalado reingresa al mutex como preferente.
+end note
+
+note bottom of Regex
+Regex y su analizador forman un ejecutable independiente.
+No dependen de Main, Monitor ni RegistradorTransiciones.
 end note
 
 @enduml
