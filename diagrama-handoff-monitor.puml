@@ -1,0 +1,161 @@
+@startuml
+title Handoff del monitor al hilo despertado por politica
+
+skinparam backgroundColor white
+skinparam ActorBorderColor #A80036
+skinparam ActorFontColor black
+skinparam ActorBackgroundColor #FEFECE
+skinparam ParticipantBorderColor #A80036
+skinparam ParticipantBackgroundColor white
+skinparam ParticipantFontColor black
+skinparam LifeLineBorderColor #A80036
+skinparam LifeLineBackgroundColor #A80036
+skinparam ArrowColor #A80036
+skinparam ArrowFontColor black
+skinparam SequenceGroupBorderColor #A80036
+skinparam SequenceGroupBackgroundColor white
+skinparam SequenceGroupFontColor black
+skinparam NoteBackgroundColor #FBFB77
+skinparam NoteBorderColor #A80036
+skinparam NoteFontColor black
+
+actor "hilo A : Hilo\n(esperando Ti)" as HiloA
+actor "hilo B : Hilo\n(dispara Tj)" as HiloB
+
+participant "monitor : Monitor" as Monitor
+participant "mutex : Semaphore" as Mutex
+participant "colas : ColasTransiciones" as Colas
+participant "semaforoTi : Semaphore" as SemaforoTi
+participant "red : RedDePetri" as Red
+participant "politica : Politica" as Politica
+
+== Hilo A se duerme esperando Ti ==
+
+HiloA -> Monitor : fireTransition(Ti)
+activate Monitor
+Monitor -> Mutex : acquire()
+activate Mutex
+Mutex --> Monitor : mutex tomado
+deactivate Mutex
+
+Monitor -> Red : puedeDisparar(Ti)
+Red --> Monitor : false
+
+Monitor -> Colas : esperar(Ti)
+activate Colas
+Colas -> Colas : bloqueados[Ti]++
+Colas -> Mutex : release()
+activate Mutex
+Mutex --> Colas : monitor liberado
+deactivate Mutex
+Colas -> SemaforoTi : acquire()
+activate SemaforoTi
+
+note right of Colas
+El hilo A queda dormido en la cola
+de Ti y ya no tiene el mutex.
+end note
+
+... otro hilo puede entrar al monitor ...
+
+== Hilo B dispara y decide a quien pasarle el monitor ==
+
+HiloB -> Monitor : fireTransition(Tj)
+activate Monitor
+Monitor -> Mutex : acquire()
+activate Mutex
+Mutex --> Monitor : mutex tomado
+deactivate Mutex
+
+Monitor -> Red : puedeDisparar(Tj)
+Red --> Monitor : true
+Monitor -> Red : disparar(Tj)
+Red --> Monitor : true
+
+Monitor -> Red : obtenerTransicionesDisparables()
+Red --> Monitor : candidatas por red
+Monitor -> Colas : filtrar con hilos esperando
+Colas --> Monitor : Ti esta esperando
+Monitor -> Politica : elegirTransicion(candidatas)
+Politica --> Monitor : Ti
+
+== Caso principal: hay hilo elegido por politica ==
+
+Monitor -> Colas : despertar(Ti)
+activate Colas
+Colas -> Colas : controlColas.acquire()
+
+alt hay bloqueado en Ti sin permiso pendiente
+    Colas -> Colas : permisosPendientes[Ti]++
+    Colas -> SemaforoTi : release()
+    SemaforoTi --> Colas : permiso liberado
+    note right of Colas
+    Se despierta un solo hilo de Ti.
+    Este release NO libera el mutex del monitor:
+    solo libera el semaforo de la cola Ti.
+    end note
+else no hay hilo real para despertar
+    note right of Colas
+    No se libera permiso para evitar
+    permisos sobrantes en el semaforo.
+    end note
+end
+
+Colas -> Colas : controlColas.release()
+Colas --> Monitor : desperto=true
+deactivate Colas
+
+note right of Monitor
+Correccion del profesor:
+si desperte a un hilo elegido por politica,
+NO hago mutex.release().
+El monitor se transfiere logicamente al hilo A.
+end note
+
+Monitor --> HiloB : true
+deactivate Monitor
+
+== Hilo A recibe la posta del monitor ==
+
+SemaforoTi --> Colas : acquire() retorna
+deactivate SemaforoTi
+
+Colas -> Colas : controlColas.acquire()
+Colas -> Colas : bloqueados[Ti]--
+Colas -> Colas : permisosPendientes[Ti]--
+Colas -> Colas : controlColas.release()
+
+note right of Colas
+Como A salio por permiso de politica,
+no vuelve a competir por el mutex.
+No llama mutex.acquire().
+Continua con el monitor recibido por handoff.
+end note
+
+Colas --> Monitor : vuelve desde esperar(Ti)
+deactivate Colas
+
+Monitor -> Red : puedeDisparar(Ti)
+Red --> Monitor : true/false
+
+alt Ti puede disparar ahora
+    Monitor -> Red : disparar(Ti)
+    Red --> Monitor : true
+else Ti todavia no puede
+    Monitor -> Colas : esperar(Ti)
+end
+
+== Caso alternativo: no hay hilo para despertar ==
+
+note over Monitor,Mutex
+Si despues de disparar no hay ninguna transicion
+candidata con hilos esperando, no existe handoff.
+En ese caso el hilo actual SI debe liberar el mutex.
+end note
+
+Monitor -> Mutex : release()
+activate Mutex
+Mutex --> Monitor : monitor liberado
+deactivate Mutex
+
+@enduml
