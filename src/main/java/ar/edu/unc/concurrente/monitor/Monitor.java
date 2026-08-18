@@ -28,6 +28,7 @@ public class Monitor implements MonitorInterface {
     @Override
     public boolean fireTransition(int transicion) {
         mutex.acquire();
+        boolean liberarMutex = true;
 
         try {
             validarTransicion(transicion);
@@ -71,7 +72,7 @@ public class Monitor implements MonitorInterface {
             if (redDePetri.simulacionFinalizada()) {
                 colasTransiciones.despertarTodos();
             } else {
-                despertarTransicionElegidaPorPolitica();
+                liberarMutex = !despertarTransicionElegidaPorPolitica();
             }
 
             return true;
@@ -86,7 +87,9 @@ public class Monitor implements MonitorInterface {
 
             return false;
         } finally {
-            mutex.release();
+            if (liberarMutex) {
+                mutex.release();
+            }
         }
     }
 
@@ -110,16 +113,16 @@ public class Monitor implements MonitorInterface {
         }
     }
 
-    private void despertarTransicionElegidaPorPolitica() {
+    private boolean despertarTransicionElegidaPorPolitica() {
         Set<Integer> transicionesSensibilizadasConHilosEsperando = obtenerTransicionesSensibilizadasConHilosEsperando();
 
         if (transicionesSensibilizadasConHilosEsperando.isEmpty()) {
-            return;
+            return false;
         }
 
         int transicionSeleccionada = politica.elegirTransicion(transicionesSensibilizadasConHilosEsperando);
 
-        colasTransiciones.despertar(transicionSeleccionada);
+        return colasTransiciones.despertar(transicionSeleccionada);
     }
 
     private Set<Integer> obtenerTransicionesSensibilizadasConHilosEsperando() {
