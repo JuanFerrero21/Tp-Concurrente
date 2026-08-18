@@ -1,6 +1,5 @@
 package ar.edu.unc.concurrente.monitor;
 
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.Semaphore;
 
 public class ColasTransiciones {
@@ -43,7 +42,7 @@ public class ColasTransiciones {
     }
 
     public void esperar(int transicion) throws InterruptedException {
-        esperarEnSemaforo(transicion, 0, false);
+        esperarEnSemaforo(transicion);
     }
 
     public void esperarMillis(int transicion, long millis) throws InterruptedException {
@@ -51,7 +50,13 @@ public class ColasTransiciones {
             return;
         }
 
-        esperarEnSemaforo(transicion, millis, true);
+        mutex.release();
+
+        try {
+            Thread.sleep(millis);
+        } finally {
+            mutex.acquire();
+        }
     }
 
     public boolean despertar(int transicion) {
@@ -92,7 +97,7 @@ public class ColasTransiciones {
         }
     }
 
-    private void esperarEnSemaforo(int transicion, long millis, boolean conTimeout) throws InterruptedException {
+    private void esperarEnSemaforo(int transicion) throws InterruptedException {
         boolean permisoConsumido = false;
         boolean mutexTransferido = false;
         controlColas.acquireUninterruptibly();
@@ -106,21 +111,12 @@ public class ColasTransiciones {
         mutex.release();
 
         try {
-            if (conTimeout) {
-                permisoConsumido = semaforosPorTransicion[transicion].tryAcquire(millis, TimeUnit.MILLISECONDS);
-            } else {
-                semaforosPorTransicion[transicion].acquire();
-                permisoConsumido = true;
-            }
+            semaforosPorTransicion[transicion].acquire();
+            permisoConsumido = true;
         } finally {
             controlColas.acquireUninterruptibly();
 
             try {
-                if (!permisoConsumido) {
-                    permisoConsumido =
-                            semaforosPorTransicion[transicion].tryAcquire();
-                }
-
                 bloqueadosPorTransicion[transicion]--;
 
                 if (permisoConsumido) {
