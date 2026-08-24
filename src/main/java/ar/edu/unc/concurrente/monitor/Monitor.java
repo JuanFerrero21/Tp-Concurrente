@@ -101,10 +101,20 @@ public class Monitor implements MonitorInterface {
                 + obtenerTransicionesSensibilizadasConHilosEsperando());
 
         if (redDePetri.estaAntesDeLaVentanaTemporal(transicion)) {
-            colasTransiciones.esperarMillis(transicion, redDePetri.milisegundosHastaVentanaTemporal(transicion));
-        } else {
-            colasTransiciones.esperar(transicion);
+            long esperaMillis = redDePetri.milisegundosHastaVentanaTemporal(transicion);
+
+            if (esperaMillis > 0) {
+                colasTransiciones.esperarMillis(transicion, esperaMillis);
+            }
+
+            return;
         }
+
+        if (redDePetri.puedeDisparar(transicion)) {
+            return;
+        }
+
+        colasTransiciones.esperar(transicion);
     }
 
     private void validarTransicion(int transicion) {
