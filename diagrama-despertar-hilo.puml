@@ -185,9 +185,21 @@ Colas -> Colas : bloqueadosPorTransicion[Ti]--
 
 Colas -> Colas : permisosPendientesPorTransicion[Ti]--
 
-Colas -> Colas : permisosHandoffPendientesPorTransicion[Ti]--
+alt permisosHandoffPendientesPorTransicion[Ti] > 0
 
-Colas -> Colas : mutexTransferido = true
+    Colas -> Colas : permisosHandoffPendientesPorTransicion[Ti]--
+
+    Colas -> Colas : mutexTransferido = true
+
+else no habia promesa de handoff pendiente
+
+    note right of Colas
+    Este permiso vino de despertarTodos(),
+    que nunca incrementa el contador de handoff.
+    mutexTransferido se queda en false.
+    end note
+
+end
 
 Colas -> Colas : controlColas.release()
 
