@@ -3,6 +3,7 @@
 title Diagrama de clases - Simulador concurrente de Red de Petri
 
 top to bottom direction
+
 skinparam dpi 120
 skinparam shadowing false
 skinparam roundcorner 8
@@ -12,20 +13,22 @@ skinparam ranksep 32
 skinparam classAttributeIconSize 0
 skinparam defaultFontName SansSerif
 skinparam defaultFontSize 11
+
 skinparam ArrowColor #4B5563
 skinparam ArrowThickness 1
+
 skinparam classBorderColor #9A3412
 skinparam classBackgroundColor #FFF8D8
 skinparam classHeaderBackgroundColor #FFF1B8
 skinparam classFontColor #1F2937
+
 skinparam noteBackgroundColor #FFFDF5
 skinparam noteBorderColor #C9A227
 skinparam noteFontColor #374151
+
 skinparam interfaceBorderColor #1D4ED8
 skinparam interfaceBackgroundColor #EAF2FF
 skinparam interfaceFontColor #1E3A8A
-skinparam stereotypeCBackgroundColor #F8FAFC
-skinparam stereotypeCBorderColor #64748B
 
 hide empty members
 hide circle
@@ -52,6 +55,7 @@ class Main <<ejecutable>> {
 class ConfiguracionSimulacion {
     {static} - TOKENS_DATOS_INICIALES : int
     {static} - BETA_SIN_VENCIMIENTO : long
+
     - marcadoInicial : Marcado
     - matrizIncidencia : int[][]
     - transicionesHilos : int[][]
@@ -109,7 +113,7 @@ class Monitor {
     + Monitor(redDePetri, politica, detallado)
     + fireTransition(transicion : int) : boolean
     - esperarSegunEstadoTransicion(transicion : int) : void
-    - despertarTransicionElegidaPorPolitica() : void
+    - despertarTransicionElegidaPorPolitica() : boolean
     - obtenerTransicionesSensibilizadasConHilosEsperando() : Set<Integer>
     - validarTransicion(transicion : int) : void
     - log(mensaje : String) : void
@@ -117,12 +121,9 @@ class Monitor {
 
 class Mutex {
     - semaforo : Semaphore
-    - reingresosPreferentesPendientes : int
     --
     + Mutex()
     + acquire() : void
-    + adquirirComoPreferente() : void
-    + registrarReingresoPreferente() : void
     + release() : void
 }
 
@@ -132,6 +133,7 @@ class ColasTransiciones {
     - esperandoPorTransicion : int[]
     - bloqueadosPorTransicion : int[]
     - permisosPendientesPorTransicion : int[]
+    - permisosHandoffPendientesPorTransicion : int[]
     - controlColas : Semaphore
     --
     + ColasTransiciones(mutex, cantidadTransiciones)
@@ -141,9 +143,9 @@ class ColasTransiciones {
     + obtenerCantidadTransiciones() : int
     + esperar(transicion : int) : void
     + esperarMillis(transicion : int, millis : long) : void
-    + despertar(transicion : int) : void
+    + despertar(transicion : int) : boolean
     + despertarTodos() : void
-    - esperarEnSemaforo(transicion, millis, conTimeout) : void
+    - esperarEnSemaforo(transicion : int) : void
 }
 
 interface Politica {
@@ -329,7 +331,7 @@ class ResultadoSimulacion {
 }
 
 ' ================================================================
-' EJECUTABLE REGEX INDEPENDIENTE
+' ANALISIS REGEX
 ' ================================================================
 
 class Regex <<ejecutable independiente>> {
@@ -381,14 +383,16 @@ class Semaphore <<Java>> #F3F4F6
 interface AutoCloseable <<Java>> #F3F4F6
 
 ' ================================================================
-' HERENCIA E IMPLEMENTACIONES
-' Se declaran solo aqui para evitar flechas duplicadas.
+' HERENCIA / IMPLEMENTACION
 ' ================================================================
 
 Hilo --|> Thread
+
 Monitor ..|> MonitorInterface
+
 PoliticaAleatoria ..|> Politica
 PoliticaPrioridadSimple ..|> Politica
+
 RegistradorTransiciones ..|> AutoCloseable
 
 ' ================================================================
@@ -402,9 +406,9 @@ Hilo --> RegistradorTransiciones : registra intentos
 Monitor *-- Mutex : crea y controla
 Monitor *-- ColasTransiciones : crea y controla
 Monitor --> RedDePetri : consulta y dispara
-Monitor --> Politica : elige cola a despertar
+Monitor --> Politica : selecciona candidata
 
-ColasTransiciones --> Mutex : libera y reingresa
+ColasTransiciones --> Mutex : libera / readquiere\nsi no hay handoff
 ColasTransiciones *-- "1..*" Semaphore : colas y controlColas
 Mutex *-- "1" Semaphore : exclusion mutua
 
@@ -415,11 +419,13 @@ RedDePetri --> EstadoSimulacion : actualiza avance
 RedDePetri --> RegistradorTransiciones : registra disparos
 
 VerificadorInvariantes *-- "3" InvariantePlaza : invariantes de plaza
-ConfiguracionSimulacion *-- Marcado : copia inicial
-ResultadoSimulacion *-- Marcado : copia final
+
+ConfiguracionSimulacion *-- Marcado : marcado inicial
+
+ResultadoSimulacion *-- Marcado : marcado final
 
 ' ================================================================
-' DEPENDENCIAS REALES DE MAIN
+' DEPENDENCIAS DE MAIN
 ' ================================================================
 
 Main ..> ConfiguracionSimulacion : obtiene configuracion
@@ -428,24 +434,24 @@ Main ..> EstadoSimulacion : crea
 Main ..> SensibilizadoConTiempo : crea
 Main ..> RegistradorTransiciones : crea
 Main ..> VerificadorInvariantes : crea
-Main ..> Politica : usa como tipo
+Main ..> Politica : usa
 Main ..> PoliticaAleatoria : puede crear
 Main ..> PoliticaPrioridadSimple : puede crear
 Main ..> Monitor : crea
-Main ..> MonitorInterface : usa como tipo
+Main ..> MonitorInterface : usa
 Main ..> Hilo : crea e inicia
-Main ..> ResultadoSimulacion : crea resultado
+Main ..> ResultadoSimulacion : crea
 
 ' ================================================================
-' ANALISIS REGEX INDEPENDIENTE DEL NUCLEO
+' REGEX
 ' ================================================================
 
 Regex ..> AnalizadorRegexInvariantesTransicion : crea y ejecuta
-Regex ..> ResultadoAnalisisRegex : consulta resultado
-AnalizadorRegexInvariantesTransicion ..> ResultadoAnalisisRegex : crea y devuelve
+Regex ..> ResultadoAnalisisRegex : consulta
+AnalizadorRegexInvariantesTransicion ..> ResultadoAnalisisRegex : crea
 
 ' ================================================================
-' ORDEN VISUAL: enlaces invisibles, sin significado UML
+' ORDEN VISUAL
 ' ================================================================
 
 Main -[hidden]right-> ConfiguracionSimulacion
@@ -487,24 +493,44 @@ Marcado -[hidden]down-> SensibilizadoConTiempo
 note left of Monitor
 Unico metodo publico operativo:
 fireTransition(int).
-Coordina mutex, colas, esperas,
-senales y politica.
+
+Coordina:
+- exclusion mutua
+- esperas
+- colas
+- politica
+- transferencia del monitor
 end note
 
 note right of RedDePetri
-Realiza el disparo y concentra
-marcado, tiempo, invariantes,
+Concentra la logica de la Red de Petri:
+marcado, matriz de incidencia,
+semantica temporal, invariantes,
 estado de simulacion y registro.
 end note
 
+note bottom of Mutex
+Usa Semaphore(1, true).
+
+Al no tener ownership estricto,
+permite que un hilo haga acquire()
+y otro hilo libere posteriormente
+el permiso luego de un handoff.
+end note
+
 note bottom of ColasTransiciones
-controlColas protege contadores y permisos.
-El hilo senalado reingresa al mutex como preferente.
+Cada transicion posee su semaforo de condicion.
+
+Si despertar(Ti) entrega handoff,
+el hilo despertado continua sin hacer mutex.acquire().
+
+Si no hay handoff, el hilo readquiere
+el mutex normalmente.
 end note
 
 note bottom of Regex
-Regex y su analizador forman un ejecutable independiente.
-No dependen de Main, Monitor ni RegistradorTransiciones.
+Regex es un ejecutable independiente
+que analiza el archivo de log al finalizar.
 end note
 
 @enduml
