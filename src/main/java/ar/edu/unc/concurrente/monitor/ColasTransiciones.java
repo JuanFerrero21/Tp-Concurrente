@@ -7,7 +7,6 @@ public class ColasTransiciones {
     private final Semaphore[] semaforosPorTransicion;
     private final int[] esperandoPorTransicion;
     private final int[] bloqueadosPorTransicion;
-    private final int[] permisosPendientesPorTransicion;
     private final int[] permisosHandoffPendientesPorTransicion;
     private final Semaphore controlColas;
 
@@ -16,7 +15,6 @@ public class ColasTransiciones {
         this.semaforosPorTransicion = new Semaphore[cantidadTransiciones];
         this.esperandoPorTransicion = new int[cantidadTransiciones];
         this.bloqueadosPorTransicion = new int[cantidadTransiciones];
-        this.permisosPendientesPorTransicion = new int[cantidadTransiciones];
         this.permisosHandoffPendientesPorTransicion = new int[cantidadTransiciones];
         this.controlColas = new Semaphore(1, true);
 
@@ -63,10 +61,8 @@ public class ColasTransiciones {
         controlColas.acquireUninterruptibly();
 
         try {
-            if (permisosPendientesPorTransicion[transicion]
-                    < bloqueadosPorTransicion[transicion]) {
-
-                permisosPendientesPorTransicion[transicion]++;
+            if (bloqueadosPorTransicion[transicion] > 0) {
+                bloqueadosPorTransicion[transicion]--;
                 permisosHandoffPendientesPorTransicion[transicion]++;
                 semaforosPorTransicion[transicion].release();
                 return true;
@@ -84,10 +80,10 @@ public class ColasTransiciones {
         try {
             for (int transicion = 0; transicion < semaforosPorTransicion.length; transicion++) {
 
-                int permisosNecesarios = bloqueadosPorTransicion[transicion] - permisosPendientesPorTransicion[transicion];
+                int permisosNecesarios = bloqueadosPorTransicion[transicion];
 
                 if (permisosNecesarios > 0) {
-                    permisosPendientesPorTransicion[transicion] += permisosNecesarios;
+                    bloqueadosPorTransicion[transicion] = 0;
 
                     semaforosPorTransicion[transicion].release(permisosNecesarios);
                 }
@@ -98,7 +94,6 @@ public class ColasTransiciones {
     }
 
     private void esperarEnSemaforo(int transicion) throws InterruptedException {
-        boolean permisoConsumido = false;
         boolean mutexTransferido = false;
         controlColas.acquireUninterruptibly();
 
@@ -112,20 +107,13 @@ public class ColasTransiciones {
 
         try {
             semaforosPorTransicion[transicion].acquire();
-            permisoConsumido = true;
         } finally {
             controlColas.acquireUninterruptibly();
 
             try {
-                bloqueadosPorTransicion[transicion]--;
-
-                if (permisoConsumido) {
-                    permisosPendientesPorTransicion[transicion]--;
-
-                    if (permisosHandoffPendientesPorTransicion[transicion] > 0) {
-                        permisosHandoffPendientesPorTransicion[transicion]--;
-                        mutexTransferido = true;
-                    }
+                if (permisosHandoffPendientesPorTransicion[transicion] > 0) {
+                    permisosHandoffPendientesPorTransicion[transicion]--;
+                    mutexTransferido = true;
                 }
             } finally {
                 controlColas.release();
