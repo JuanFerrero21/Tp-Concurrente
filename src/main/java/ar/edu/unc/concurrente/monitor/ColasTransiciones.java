@@ -2,126 +2,71 @@ package ar.edu.unc.concurrente.monitor;
 
 import java.util.concurrent.Semaphore;
 
+/** Todas las operaciones salvo acquire() ocurren con el control del monitor. */
 public class ColasTransiciones {
     private final Mutex mutex;
-    private final Semaphore[] semaforosPorTransicion;
-    private final int[] esperandoPorTransicion;
-    private final int[] bloqueadosPorTransicion;
-    private final int[] permisosHandoffPendientesPorTransicion;
-    private final Semaphore controlColas;
+    private final Semaphore[] colas;
+    private final int[] esperando;
+    private volatile boolean finalizando;
 
     public ColasTransiciones(Mutex mutex, int cantidadTransiciones) {
         this.mutex = mutex;
-        this.semaforosPorTransicion = new Semaphore[cantidadTransiciones];
-        this.esperandoPorTransicion = new int[cantidadTransiciones];
-        this.bloqueadosPorTransicion = new int[cantidadTransiciones];
-        this.permisosHandoffPendientesPorTransicion = new int[cantidadTransiciones];
-        this.controlColas = new Semaphore(1, true);
-
+        this.colas = new Semaphore[cantidadTransiciones];
+        this.esperando = new int[cantidadTransiciones];
         for (int i = 0; i < cantidadTransiciones; i++) {
-            semaforosPorTransicion[i] = new Semaphore(0, true);
+            colas[i] = new Semaphore(0, true);
         }
-    }
-
-    public void empezarEspera(int transicion) {
-        esperandoPorTransicion[transicion]++;
-    }
-
-    public void terminarEspera(int transicion) {
-        esperandoPorTransicion[transicion]--;
-    }
-
-    public boolean tieneHiloEsperando(int transicion) {
-        return esperandoPorTransicion[transicion] > 0;
     }
 
     public int obtenerCantidadTransiciones() {
-        return esperandoPorTransicion.length;
+        return colas.length;
     }
 
-    public void esperar(int transicion) throws InterruptedException {
-        esperarEnSemaforo(transicion);
+    public boolean tieneHiloEsperando(int transicion) {
+        return esperando[transicion] > 0;
     }
 
-    public void esperarMillis(int transicion, long millis) throws InterruptedException {
-        if (millis <= 0) {
-            return;
-        }
-
+    /** Registra la espera ANTES de soltar el mutex; evita perder señales. */
+    public void esperar(int transicion) {
+        esperando[transicion]++;
         mutex.release();
+        colas[transicion].acquireUninterruptibly();
+        // En ejecución normal el permiso del monitor se transfirió directamente.
+        // Al finalizar no hay handoff: cada trabajador debe recuperar el mutex.
+        if (finalizando) {
+            mutex.acquire();
+        }
+    }
 
+    /** La espera temporal no recibe handoff: vuelve a adquirir el mutex. */
+    public void esperarMillis(long millis) {
+        if (millis <= 0) return;
+        mutex.release();
         try {
             Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         } finally {
             mutex.acquire();
         }
     }
 
+    /** Si devuelve true, se transfirió el control; NO liberar mutex. */
     public boolean despertar(int transicion) {
-        controlColas.acquireUninterruptibly();
-
-        try {
-            if (bloqueadosPorTransicion[transicion] > 0) {
-                bloqueadosPorTransicion[transicion]--;
-                permisosHandoffPendientesPorTransicion[transicion]++;
-                semaforosPorTransicion[transicion].release();
-                return true;
-            }
-
-            return false;
-        } finally {
-            controlColas.release();
-        }
+        if (esperando[transicion] == 0) return false;
+        esperando[transicion]--;
+        colas[transicion].release();
+        return true;
     }
 
+    /** Solo se invoca con el monitor controlado y al terminar la simulación. */
     public void despertarTodos() {
-        controlColas.acquireUninterruptibly();
-
-        try {
-            for (int transicion = 0; transicion < semaforosPorTransicion.length; transicion++) {
-
-                int permisosNecesarios = bloqueadosPorTransicion[transicion];
-
-                if (permisosNecesarios > 0) {
-                    bloqueadosPorTransicion[transicion] = 0;
-
-                    semaforosPorTransicion[transicion].release(permisosNecesarios);
-                }
-            }
-        } finally {
-            controlColas.release();
-        }
-    }
-
-    private void esperarEnSemaforo(int transicion) throws InterruptedException {
-        boolean mutexTransferido = false;
-        controlColas.acquireUninterruptibly();
-
-        try {
-            bloqueadosPorTransicion[transicion]++;
-        } finally {
-            controlColas.release();
-        }
-
-        mutex.release();
-
-        try {
-            semaforosPorTransicion[transicion].acquire();
-        } finally {
-            controlColas.acquireUninterruptibly();
-
-            try {
-                if (permisosHandoffPendientesPorTransicion[transicion] > 0) {
-                    permisosHandoffPendientesPorTransicion[transicion]--;
-                    mutexTransferido = true;
-                }
-            } finally {
-                controlColas.release();
-            }
-
-            if (!mutexTransferido) {
-                mutex.acquire();
-            }
+        if (finalizando) return;
+        finalizando = true;
+        for (int t = 0; t < colas.length; t++) {
+            int cantidad = esperando[t];
+            esperando[t] = 0;
+            if (cantidad > 0) colas[t].release(cantidad);
         }
     }
 }

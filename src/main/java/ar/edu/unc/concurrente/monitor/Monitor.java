@@ -37,12 +37,10 @@ public class Monitor implements MonitorInterface {
                 return false;
             }
 
-            colasTransiciones.empezarEspera(transicion);
             log("\n" + Thread.currentThread().getName() + " intenta T" + transicion);
 
             while (true) {
                 if (redDePetri.simulacionFinalizada() || !redDePetri.puedeDispararPorEstadoSimulacion(transicion)) {
-                    colasTransiciones.terminarEspera(transicion);
                     colasTransiciones.despertarTodos();
                     return false;
                 }
@@ -57,7 +55,6 @@ public class Monitor implements MonitorInterface {
                         + " se despierta y reintenta T" + transicion);
             }
 
-            colasTransiciones.terminarEspera(transicion);
 
             boolean disparada = redDePetri.disparar(transicion);
 
@@ -76,16 +73,6 @@ public class Monitor implements MonitorInterface {
             }
 
             return true;
-        } catch (InterruptedException excepcion) {
-            colasTransiciones.terminarEspera(transicion);
-            colasTransiciones.despertarTodos();
-
-            Thread.currentThread().interrupt();
-
-            log(Thread.currentThread().getName()
-                    + " fue interrumpido mientras esperaba T" + transicion);
-
-            return false;
         } finally {
             if (liberarMutex) {
                 mutex.release();
@@ -93,7 +80,7 @@ public class Monitor implements MonitorInterface {
         }
     }
 
-    private void esperarSegunEstadoTransicion(int transicion) throws InterruptedException {
+    private void esperarSegunEstadoTransicion(int transicion) {
         log(Thread.currentThread().getName()
                 + " espera T" + transicion
                 + ". Motivo: " + redDePetri.describirMotivoEspera(transicion)
@@ -104,7 +91,7 @@ public class Monitor implements MonitorInterface {
             long esperaMillis = redDePetri.milisegundosHastaVentanaTemporal(transicion);
 
             if (esperaMillis > 0) {
-                colasTransiciones.esperarMillis(transicion, esperaMillis);
+                colasTransiciones.esperarMillis(esperaMillis);
             }
 
             return;

@@ -22,3 +22,5 @@ Thumbs.db
 # Archivos generados de compilacion manual
 sources.txt
 out/
+logs/
+build/
