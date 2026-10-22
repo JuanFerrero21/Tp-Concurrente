@@ -26,7 +26,7 @@ actor "hilo B : Hilo" as HiloB
 participant "monitor : Monitor" as Monitor
 participant "mutex : Mutex" as Mutex
 participant "colasTransiciones : ColasTransiciones" as Colas
-participant "semaforoTi : Semaphore" as SemaforoTi
+participant "colas[Ti] : Semaphore" as SemaforoTi
 participant "redDePetri : RedDePetri" as Red
 participant "politica : Politica" as Politica
 
@@ -46,8 +46,6 @@ Red --> Monitor : false
 Monitor -> Red : puedeDispararPorEstadoSimulacion(Ti)
 Red --> Monitor : true
 
-Monitor -> Colas : empezarEspera(Ti)
-
 Monitor -> Red : puedeDisparar(Ti)
 Red --> Monitor : false
 
@@ -57,22 +55,26 @@ Red --> Monitor : false
 Monitor -> Colas : esperar(Ti)
 activate Colas
 
-Colas -> Colas : esperarEnSemaforo(Ti)
+Colas -> Colas : esperando[Ti]++
 
-Colas -> Colas : controlColas.acquire()
-Colas -> Colas : bloqueadosPorTransicion[Ti]++
-Colas -> Colas : controlColas.release()
+note right of Colas
+"esperando[]" es el unico contador.
+No hay un segundo contador aparte
+para "quiere disparar" vs "esta bloqueado":
+se incrementa recien aca, justo antes
+de bloquearse de verdad.
+end note
 
 Colas -> Mutex : release()
 activate Mutex
 Mutex --> Colas : permiso liberado
 deactivate Mutex
 
-Colas -> SemaforoTi : acquire()
+Colas -> SemaforoTi : acquireUninterruptibly()
 activate SemaforoTi
 
 note right of SemaforoTi
-El semaforo de Ti empieza con 0 permisos.
+colas[Ti] empieza con 0 permisos.
 Por eso A queda bloqueado hasta que
 alguien haga release() sobre esta cola.
 end note
@@ -104,12 +106,8 @@ Red --> Monitor : false
 Monitor -> Red : puedeDispararPorEstadoSimulacion(Tj)
 Red --> Monitor : true
 
-Monitor -> Colas : empezarEspera(Tj)
-
 Monitor -> Red : puedeDisparar(Tj)
 Red --> Monitor : true
-
-Monitor -> Colas : terminarEspera(Tj)
 
 Monitor -> Red : disparar(Tj)
 activate Red
@@ -117,6 +115,9 @@ Red --> Monitor : true
 deactivate Red
 
 == Politica selecciona Ti ==
+
+Monitor -> Red : simulacionFinalizada()
+Red --> Monitor : false
 
 Monitor -> Monitor : despertarTransicionElegidaPorPolitica()
 
@@ -129,6 +130,14 @@ Colas --> Monitor : true
 Monitor -> Red : puedeDispararPorEstadoSimulacion(Ti)
 Red --> Monitor : true
 
+note right of Monitor
+Ti entra al conjunto de candidatas solo
+si esta disparable AHORA y tiene a alguien
+dormido en su cola. Se recalcula de cero
+despues de cada disparo, bajo el mutex,
+asi que nunca queda una foto vieja.
+end note
+
 Monitor -> Politica : elegirTransicion(candidatas)
 activate Politica
 Politica --> Monitor : Ti
@@ -137,29 +146,20 @@ deactivate Politica
 Monitor -> Colas : despertar(Ti)
 activate Colas
 
-Colas -> Colas : controlColas.acquire()
-
-Colas -> Colas : comprobar\npermisosPendientes[Ti] < bloqueados[Ti]
-
-Colas -> Colas : permisosPendientesPorTransicion[Ti]++
-Colas -> Colas : permisosHandoffPendientesPorTransicion[Ti]++
-
+Colas -> Colas : esperando[Ti] > 0 ?
+Colas -> Colas : esperando[Ti]--
 Colas -> SemaforoTi : release()
-
-Colas -> Colas : controlColas.release()
 
 Colas --> Monitor : true
 deactivate Colas
 
 note right of Colas
-El permiso liberado queda marcado
-tambien como permiso de HANDOFF.
-
-No significa solamente:
-"despertate".
-
-Tambien significa:
-"recibis el control logico del monitor".
+Se libera UN solo permiso.
+No hay un contador aparte de "handoff":
+en regimen normal (finalizando == false)
+este es el unico lugar que hace
+release() sobre colas[Ti], asi que el
+unico que puede despertarse es A.
 end note
 
 Monitor -> Monitor : liberarMutex = false
@@ -172,49 +172,40 @@ end note
 Monitor --> HiloB : true
 deactivate Monitor
 
-== Hilo A consume el permiso de handoff ==
+== Hilo A hereda el monitor sin pedirlo ==
 
-SemaforoTi --> Colas : acquire() retorna
+SemaforoTi --> Colas : acquireUninterruptibly() retorna
 deactivate SemaforoTi
 
 activate Colas
 
-Colas -> Colas : controlColas.acquire()
+Colas -> Colas : finalizando ?
 
-Colas -> Colas : bloqueadosPorTransicion[Ti]--
-
-Colas -> Colas : permisosPendientesPorTransicion[Ti]--
-
-alt permisosHandoffPendientesPorTransicion[Ti] > 0
-
-    Colas -> Colas : permisosHandoffPendientesPorTransicion[Ti]--
-
-    Colas -> Colas : mutexTransferido = true
-
-else no habia promesa de handoff pendiente
-
-    note right of Colas
-    Este permiso vino de despertarTodos(),
-    que nunca incrementa el contador de handoff.
-    mutexTransferido se queda en false.
-    end note
-
-end
-
-Colas -> Colas : controlColas.release()
-
-alt mutexTransferido == true
+alt finalizando == false (caso normal)
 
     note right of Colas
     A NO ejecuta mutex.acquire().
 
-    El monitor fue transferido
-    directamente desde B hacia A.
+    B nunca solto el mutex real (quedo con
+    liberarMutex = false), asi que A lo
+    hereda gratis: nadie mas pudo haberlo
+    tomado en el medio.
     end note
 
-else no era un permiso de handoff
+else finalizando == true (se esta cerrando la simulacion)
 
     Colas -> Mutex : acquire()
+    activate Mutex
+    Mutex --> Colas : permiso adquirido
+    deactivate Mutex
+
+    note right of Colas
+    despertarTodos() pudo haber despertado
+    a varios hilos de una. Ya no hay "un"
+    sucesor al que transferirle el control,
+    asi que cada uno compite por el mutex
+    de la forma normal.
+    end note
 
 end
 
@@ -235,13 +226,11 @@ Monitor -> Red : puedeDisparar(Ti)
 Red --> Monitor : true
 
 note right of Monitor
-Despertar A NO dispara Ti automaticamente.
+Despertar a A NO dispara Ti automaticamente.
 
 A vuelve al while y reevalua
-todas las condiciones.
+todas las condiciones desde cero.
 end note
-
-Monitor -> Colas : terminarEspera(Ti)
 
 Monitor -> Red : disparar(Ti)
 activate Red
@@ -253,10 +242,10 @@ Despues del disparo de Ti vuelve
 a aplicarse la misma regla:
 
 si la politica despierta a otro hilo,
-A le transfiere el monitor;
+A le transfiere el monitor (liberarMutex = false);
 
-si no despierta a nadie,
-A libera el mutex normalmente.
+si no hay candidatas, A libera
+el mutex normalmente (liberarMutex = true).
 end note
 
 Monitor --> HiloA : true

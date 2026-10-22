@@ -8,8 +8,8 @@ skinparam dpi 120
 skinparam shadowing false
 skinparam roundcorner 8
 skinparam linetype ortho
-skinparam nodesep 26
-skinparam ranksep 32
+skinparam nodesep 40
+skinparam ranksep 45
 skinparam classAttributeIconSize 0
 skinparam defaultFontName SansSerif
 skinparam defaultFontSize 11
@@ -38,55 +38,21 @@ hide circle
 ' ================================================================
 
 class Main <<ejecutable>> {
-    {static} - NOMBRE_POLITICA : String
-    {static} - OBJETIVO_INVARIANTES_COMPLETOS : int
-    {static} - DETALLADO : boolean
-    {static} - RUTA_LOG : Path
-    --
     {static} + main(args : String[]) : void
-    {static} - obtenerNombrePolitica(args : String[]) : String
-    {static} - obtenerRutaLog(args : String[]) : Path
-    {static} - obtenerObjetivoInvariantesCompletos(args : String[]) : int
-    {static} - obtenerPerfilTemporal(args : String[]) : String
-    {static} - crearHilos(config, monitor, estado, registrador) : Hilo[]
-    {static} - crearPolitica(nombre, config) : Politica
 }
 
 class ConfiguracionSimulacion {
-    {static} - TOKENS_DATOS_INICIALES : int
-    {static} - BETA_SIN_VENCIMIENTO : long
-
     - marcadoInicial : Marcado
     - matrizIncidencia : int[][]
     - transicionesHilos : int[][]
-    - objetivoInvariantesCompletos : int
-    - transicionIngreso : int
-    - transicionFinalizacion : int
     - transicionesConflicto : int[]
     - transicionModoSimple : int
-    - transicionesTemporales : boolean[]
-    - alfaMillis : long[]
-    - betaMillis : long[]
+    - transicionesTemporales, alfaMillis, betaMillis : [...]
     --
     + ConfiguracionSimulacion(...)
-    {static} + configuracionPorDefecto() : ConfiguracionSimulacion
-    {static} + configuracionPorDefecto(objetivo : int) : ConfiguracionSimulacion
-    {static} + configuracionPorDefecto(objetivo : int, perfil : String) : ConfiguracionSimulacion
-    + obtenerMarcadoInicial() : Marcado
-    + obtenerMatrizIncidencia() : int[][]
-    + obtenerTransicionesHilos() : int[][]
-    + obtenerObjetivoInvariantesCompletos() : int
-    + obtenerTransicionIngreso() : int
-    + obtenerTransicionFinalizacion() : int
-    + obtenerCantidadHilos() : int
-    + obtenerTransicionesConflicto() : int[]
-    + obtenerTransicionModoSimple() : int
-    + obtenerTransicionesTemporales() : boolean[]
-    + obtenerAlfaMillis() : long[]
-    + obtenerBetaMillis() : long[]
-    {static} - configurarPerfilTemporal(...) : void
-    {static} - configurarTransicionTemporal(...) : void
-    {static} - copiarMatriz(matriz : int[][]) : int[][]
+    {static} + configuracionPorDefecto(objetivo, perfil) : ConfiguracionSimulacion
+    + obtenerXxx() : ...
+    .. getters 1:1 por cada campo ..
 }
 
 class Hilo {
@@ -129,27 +95,22 @@ class Mutex {
 
 class ColasTransiciones {
     - mutex : Mutex
-    - semaforosPorTransicion : Semaphore[]
-    - esperandoPorTransicion : int[]
-    - bloqueadosPorTransicion : int[]
-    - permisosPendientesPorTransicion : int[]
-    - permisosHandoffPendientesPorTransicion : int[]
-    - controlColas : Semaphore
+    - colas : Semaphore[]
+    - esperando : int[]
+    - finalizando : boolean
     --
     + ColasTransiciones(mutex, cantidadTransiciones)
-    + empezarEspera(transicion : int) : void
-    + terminarEspera(transicion : int) : void
-    + tieneHiloEsperando(transicion : int) : boolean
     + obtenerCantidadTransiciones() : int
+    + tieneHiloEsperando(transicion : int) : boolean
     + esperar(transicion : int) : void
-    + esperarMillis(transicion : int, millis : long) : void
+    + esperarMillis(millis : long) : void
     + despertar(transicion : int) : boolean
     + despertarTodos() : void
-    - esperarEnSemaforo(transicion : int) : void
 }
 
 interface Politica {
     + elegirTransicion(candidatas : Set<Integer>) : int
+    {static} + elegirAlAzar(candidatas : Set<Integer>, aleatorio : Random) : int
 }
 
 class PoliticaAleatoria {
@@ -195,15 +156,6 @@ class RedDePetri {
     + construirReporteInvariantesPlaza() : String
     + simulacionFinalizada() : boolean
     + puedeDispararPorEstadoSimulacion(transicion : int) : boolean
-    - registrarDisparo(transicion : int) : void
-    - verificarInvariantesPlaza() : void
-    - actualizarSensibilizadasTemporales() : void
-    - cumpleRestriccionTemporal(transicion : int) : boolean
-    - calcularSiguienteMarcado(transicion : int) : Marcado
-    - obtenerColumna(transicion : int) : int[]
-    - validarTransicion(transicion : int) : void
-    {static} - validarMatriz(marcado, matriz) : void
-    {static} - copiarMatriz(matriz : int[][]) : int[][]
 }
 
 class Marcado {
@@ -215,7 +167,6 @@ class Marcado {
     + tieneTokensNegativos() : boolean
     + cantidad() : int
     + copia() : Marcado
-    + obtenerTokensComoArreglo() : int[]
     + toString() : String
 }
 
@@ -236,9 +187,6 @@ class SensibilizadoConTiempo {
     + milisegundosHastaAlfa(transicion : int) : long
     + esTemporal(transicion : int) : boolean
     + describirEstado(transicion : int) : String
-    - validarVentanas() : void
-    - validarTransicion(transicion : int) : void
-    - ahora() : long
 }
 
 class EstadoSimulacion {
@@ -267,10 +215,6 @@ class VerificadorInvariantes {
     + seCumplenInvariantesPlaza(marcado : Marcado) : boolean
     + verificarInvariantesPlazaOLanzar(marcado : Marcado) : void
     + construirReporte(marcado : Marcado) : String
-    + conservaTotalTokens(inicial, final) : boolean
-    + sumarValores(marcado : Marcado) : int
-    {static} - crearInvariantesPlazaPorDefecto(...) : List<InvariantePlaza>
-    {static} - validarCantidadPlazas(marcado, cantidad) : void
 }
 
 class InvariantePlaza <<clase interna>> {
@@ -288,13 +232,10 @@ class InvariantePlaza <<clase interna>> {
 }
 
 class RegistradorTransiciones {
-    - intentosPorTransicion : int[]
-    - disparosPorTransicion : int[]
+    - intentosPorTransicion, disparosPorTransicion : int[]
     - escritor : PrintWriter
-    - p1Tokens, p3Tokens, p4Tokens, p5Tokens : Deque<Integer>
-    - p7Tokens, p8Tokens, p9Tokens, p10Tokens, p11Tokens : Deque<Integer>
+    - colas por plaza (p1..p11Tokens) : Deque<Integer>
     - modoPorIdToken : Map<Integer, String>
-    - siguienteIdToken : int
     --
     + RegistradorTransiciones(cantidad, ruta, politica, objetivo, temporales, alfa, beta)
     + registrarIntento(transicion : int, disparada : boolean) : void
@@ -304,14 +245,6 @@ class RegistradorTransiciones {
     + obtenerDisparosPorTransicion() : int[]
     + escribirResumen(...) : void
     + close() : void
-    - registrarT0() : void
-    - registrarT11() : void
-    - moverYRegistrar(...) : void
-    - quitarPrimerToken(origen, transicion) : int
-    - escribirDisparo(idToken, transicion) : void
-    - caminoPorModo(modo : String) : String
-    - crearEscritor(rutaLog : Path) : PrintWriter
-    {static} - sumarValores(valores : int[]) : int
 }
 
 class ResultadoSimulacion {
@@ -342,18 +275,9 @@ class Regex <<ejecutable independiente>> {
 }
 
 class AnalizadorRegexInvariantesTransicion {
-    {static} - PATRON_SIMPLE : Pattern
-    {static} - PATRON_MEDIO : Pattern
-    {static} - PATRON_ALTO : Pattern
-    {static} - PATRON_LINEA_DISPARO : Pattern
-    {static} - PATRON_INVARIANTE_COMPLETO : Pattern
-    {static} - PATRON_RESUMEN : Pattern
+    {static} - PATRON_* (6 regex) : Pattern
     --
     + analizar(rutaLog : Path) : ResultadoAnalisisRegex
-    - construirResultado(...) : ResultadoAnalisisRegex
-    - validarResumen(...) : boolean
-    - clasificarPorRegex(camino : String) : Modo
-    - leerLineas(rutaLog : Path) : List<String>
 }
 
 class ResultadoAnalisisRegex <<clase interna>> {
@@ -369,12 +293,6 @@ class ResultadoAnalisisRegex <<clase interna>> {
     - errores : List<String>
     --
     + esAnalisisRegexValido() : boolean
-    + obtenerTokensAnalizados() : int
-    + obtenerCantidadMedio() : int
-    + obtenerCantidadSimple() : int
-    + obtenerCantidadAlto() : int
-    + obtenerCantidadInvalidos() : int
-    + obtenerCantidadIncompletos() : int
     + construirReporte() : String
 }
 
@@ -408,8 +326,8 @@ Monitor *-- ColasTransiciones : crea y controla
 Monitor --> RedDePetri : consulta y dispara
 Monitor --> Politica : selecciona candidata
 
-ColasTransiciones --> Mutex : libera / readquiere\nsi no hay handoff
-ColasTransiciones *-- "1..*" Semaphore : colas y controlColas
+ColasTransiciones --> Mutex : libera/readquiere
+ColasTransiciones *-- "1..*" Semaphore : una cola por transicion
 Mutex *-- "1" Semaphore : exclusion mutua
 
 RedDePetri *-- Marcado : marcado actual
@@ -502,13 +420,6 @@ Coordina:
 - transferencia del monitor
 end note
 
-note right of RedDePetri
-Concentra la logica de la Red de Petri:
-marcado, matriz de incidencia,
-semantica temporal, invariantes,
-estado de simulacion y registro.
-end note
-
 note bottom of Mutex
 Usa Semaphore(1, true).
 
@@ -526,11 +437,6 @@ el hilo despertado continua sin hacer mutex.acquire().
 
 Si no hay handoff, el hilo readquiere
 el mutex normalmente.
-end note
-
-note bottom of Regex
-Regex es un ejecutable independiente
-que analiza el archivo de log al finalizar.
 end note
 
 @enduml

@@ -54,8 +54,6 @@ Red --> Monitor : false
 Monitor -> Red : puedeDispararPorEstadoSimulacion(Ti)
 Red --> Monitor : true
 
-Monitor -> Colas : empezarEspera(Ti)
-
 loop hasta que Ti pueda dispararse
 
     Monitor -> Red : simulacionFinalizada()
@@ -93,7 +91,7 @@ loop hasta que Ti pueda dispararse
             Monitor -> Red : milisegundosHastaVentanaTemporal(Ti)
             Red --> Monitor : ms restantes
 
-            Monitor -> Colas : esperarMillis(Ti, ms)
+            Monitor -> Colas : esperarMillis(ms)
             activate Colas
 
             Colas -> Mutex : release()
@@ -124,11 +122,29 @@ loop hasta que Ti pueda dispararse
             Monitor -> Colas : esperar(Ti)
             activate Colas
 
-            note right of Colas
-            El hilo queda bloqueado en el
-            semaforo asociado a Ti.
+            Colas -> Colas : esperando[Ti]++
 
-            Antes de bloquearse libera el mutex.
+            Colas -> Mutex : release()
+            activate Mutex
+            Mutex --> Colas : permiso liberado
+            deactivate Mutex
+
+            note right of Colas
+            El hilo queda bloqueado en
+            colas[Ti].acquireUninterruptibly().
+
+            Ya libero el mutex antes de bloquearse.
+            end note
+
+            Colas -> Colas : colas[Ti].acquireUninterruptibly()
+
+            note right of Colas
+            Al despertarse, solo si finalizando
+            es true el hilo hace mutex.acquire().
+
+            En caso contrario (handoff normal)
+            sigue de largo: el mutex nunca
+            se solto, lo hereda directo.
             end note
 
             Colas --> Monitor : retorna al ser despertado
@@ -137,8 +153,6 @@ loop hasta que Ti pueda dispararse
         end
     end
 end
-
-Monitor -> Colas : terminarEspera(Ti)
 
 == Disparo real ==
 
