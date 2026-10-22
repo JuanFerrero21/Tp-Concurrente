@@ -14,10 +14,6 @@ public class PoliticaPrioridadSimple implements Politica {
 
     @Override
     public int elegirTransicion(Set<Integer> transicionesSensibilizadas) {
-        if (transicionesSensibilizadas.isEmpty()) {
-            throw new IllegalArgumentException("No hay transiciones habilitadas para elegir");
-        }
-
         /*
          * Politica priorizada:
          * si la transicion del modo simple esta disponible como candidata,
@@ -32,15 +28,6 @@ public class PoliticaPrioridadSimple implements Politica {
          * entre todas las transiciones disponibles, sin distinguir si
          * pertenecen o no al conflicto.
          */
-        int indiceSeleccionado = aleatorio.nextInt(transicionesSensibilizadas.size());
-        int indice = 0;
-        for (int transicion : transicionesSensibilizadas) {
-            if (indice == indiceSeleccionado) {
-                return transicion;
-            }
-            indice++;
-        }
-
-        throw new IllegalStateException("No se pudo seleccionar una transicion");
+        return Politica.elegirAlAzar(transicionesSensibilizadas, aleatorio);
     }
 }

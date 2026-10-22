@@ -97,10 +97,6 @@ public class Monitor implements MonitorInterface {
             return;
         }
 
-        if (redDePetri.puedeDisparar(transicion)) {
-            return;
-        }
-
         colasTransiciones.esperar(transicion);
     }
 
