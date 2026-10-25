@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AnalizadorRegexInvariantesTransicion {
@@ -37,7 +38,7 @@ public class AnalizadorRegexInvariantesTransicion {
         LineaResumen lineaResumen = null;
 
         for (String linea : lineas) {
-            java.util.regex.Matcher matcherDisparo = PATRON_LINEA_DISPARO.matcher(linea);
+            Matcher matcherDisparo = PATRON_LINEA_DISPARO.matcher(linea);
 
             if (matcherDisparo.matches()) {
                 int idToken = Integer.parseInt(matcherDisparo.group(1));
@@ -50,7 +51,7 @@ public class AnalizadorRegexInvariantesTransicion {
                 continue;
             }
 
-            java.util.regex.Matcher matcherCompletado = PATRON_INVARIANTE_COMPLETO.matcher(linea);
+            Matcher matcherCompletado = PATRON_INVARIANTE_COMPLETO.matcher(linea);
 
             if (matcherCompletado.matches()) {
                 int idToken = Integer.parseInt(matcherCompletado.group(1));
@@ -61,7 +62,7 @@ public class AnalizadorRegexInvariantesTransicion {
                 continue;
             }
 
-            java.util.regex.Matcher matcherResumen = PATRON_RESUMEN.matcher(linea);
+            Matcher matcherResumen = PATRON_RESUMEN.matcher(linea);
 
             if (matcherResumen.matches()) {
                 lineaResumen = new LineaResumen(
@@ -111,23 +112,23 @@ public class AnalizadorRegexInvariantesTransicion {
                 continue;
             }
 
-            if (!lineaCompletado.camino.equals(caminoReconstruido)) {
+            if (!lineaCompletado.camino().equals(caminoReconstruido)) {
                 cantidadInvalidos++;
                 errores.add("idToken=" + idToken
                         + " no coincide entre camino reconstruido y camino registrado. reconstruido="
                         + caminoReconstruido
                         + ", registrado="
-                        + lineaCompletado.camino);
+                        + lineaCompletado.camino());
                 continue;
             }
 
-            if (!lineaCompletado.modo.equals(modoPorRegex.name())) {
+            if (!lineaCompletado.modo().equals(modoPorRegex.name())) {
                 cantidadInvalidos++;
                 errores.add("idToken=" + idToken
                         + " no coincide entre modo regex y modo registrado. regex="
                         + modoPorRegex.name()
                         + ", registrado="
-                        + lineaCompletado.modo);
+                        + lineaCompletado.modo());
                 continue;
             }
 
@@ -194,40 +195,40 @@ public class AnalizadorRegexInvariantesTransicion {
 
         boolean valido = true;
 
-        if (lineaResumen.completo != tokensAnalizados) {
+        if (lineaResumen.completo() != tokensAnalizados) {
             valido = false;
             errores.add("RESUMEN completo="
-                    + lineaResumen.completo
+                    + lineaResumen.completo()
                     + " pero regex analizo "
                     + tokensAnalizados
                     + " tokens completos");
         }
 
-        if (lineaResumen.medio != cantidadMedio) {
+        if (lineaResumen.medio() != cantidadMedio) {
             valido = false;
             errores.add("RESUMEN medio="
-                    + lineaResumen.medio
+                    + lineaResumen.medio()
                     + " pero regex conto medio="
                     + cantidadMedio);
         }
 
-        if (lineaResumen.simple != cantidadSimple) {
+        if (lineaResumen.simple() != cantidadSimple) {
             valido = false;
             errores.add("RESUMEN simple="
-                    + lineaResumen.simple
+                    + lineaResumen.simple()
                     + " pero regex conto simple="
                     + cantidadSimple);
         }
 
-        if (lineaResumen.alto != cantidadAlto) {
+        if (lineaResumen.alto() != cantidadAlto) {
             valido = false;
             errores.add("RESUMEN alto="
-                    + lineaResumen.alto
+                    + lineaResumen.alto()
                     + " pero regex conto alto="
                     + cantidadAlto);
         }
 
-        if (!lineaResumen.invariantesPlazaCumplidos) {
+        if (!lineaResumen.invariantesPlazaCumplidos()) {
             valido = false;
             errores.add("RESUMEN invariantesPlazaCumplidos=false");
         }
@@ -270,39 +271,17 @@ public class AnalizadorRegexInvariantesTransicion {
         INVALIDO
     }
 
-    private static class LineaInvarianteCompleto {
-        private final String modo;
-        private final String camino;
-
-        private LineaInvarianteCompleto(String modo, String camino) {
-            this.modo = modo;
-            this.camino = camino;
-        }
+    private record LineaInvarianteCompleto(String modo, String camino) {
     }
 
-    private static class LineaResumen {
-        private final int completo;
-        private final int medio;
-        private final int simple;
-        private final int alto;
-        private final boolean invariantesPlazaCumplidos;
-        private final long tiempoMillis;
-
-        private LineaResumen(
-                int completo,
-                int medio,
-                int simple,
-                int alto,
-                boolean invariantesPlazaCumplidos,
-                long tiempoMillis
-        ) {
-            this.completo = completo;
-            this.medio = medio;
-            this.simple = simple;
-            this.alto = alto;
-            this.invariantesPlazaCumplidos = invariantesPlazaCumplidos;
-            this.tiempoMillis = tiempoMillis;
-        }
+    private record LineaResumen(
+            int completo,
+            int medio,
+            int simple,
+            int alto,
+            boolean invariantesPlazaCumplidos,
+            long tiempoMillis
+    ) {
     }
 
     public static class ResultadoAnalisisRegex {
@@ -345,74 +324,25 @@ public class AnalizadorRegexInvariantesTransicion {
             return analisisRegexValido;
         }
 
-        public int obtenerTokensAnalizados() {
-            return tokensAnalizados;
-        }
-
-        public int obtenerCantidadMedio() {
-            return cantidadMedio;
-        }
-
-        public int obtenerCantidadSimple() {
-            return cantidadSimple;
-        }
-
-        public int obtenerCantidadAlto() {
-            return cantidadAlto;
-        }
-
-        public int obtenerCantidadInvalidos() {
-            return cantidadInvalidos;
-        }
-
-        public int obtenerCantidadIncompletos() {
-            return cantidadIncompletos;
-        }
-
         public String construirReporte() {
             StringBuilder constructor = new StringBuilder();
 
             constructor.append("Analisis regex de invariantes de transicion:")
                     .append(System.lineSeparator());
 
-            constructor.append("Tokens analizados: ")
-                    .append(tokensAnalizados)
-                    .append(System.lineSeparator());
-
-            constructor.append("Medio: ")
-                    .append(cantidadMedio)
-                    .append(System.lineSeparator());
-
-            constructor.append("Simple: ")
-                    .append(cantidadSimple)
-                    .append(System.lineSeparator());
-
-            constructor.append("Alto: ")
-                    .append(cantidadAlto)
-                    .append(System.lineSeparator());
-
-            constructor.append("Invalidos: ")
-                    .append(cantidadInvalidos)
-                    .append(System.lineSeparator());
-
-            constructor.append("Incompletos: ")
-                    .append(cantidadIncompletos)
-                    .append(System.lineSeparator());
-
-            constructor.append("Resumen valido: ")
-                    .append(resumenValido)
-                    .append(System.lineSeparator());
+            agregarLinea(constructor, "Tokens analizados", tokensAnalizados);
+            agregarLinea(constructor, "Medio", cantidadMedio);
+            agregarLinea(constructor, "Simple", cantidadSimple);
+            agregarLinea(constructor, "Alto", cantidadAlto);
+            agregarLinea(constructor, "Invalidos", cantidadInvalidos);
+            agregarLinea(constructor, "Incompletos", cantidadIncompletos);
+            agregarLinea(constructor, "Resumen valido", resumenValido);
 
             if (lineaResumen != null) {
-                constructor.append("Tiempo segun RESUMEN: ")
-                        .append(lineaResumen.tiempoMillis)
-                        .append(" ms")
-                        .append(System.lineSeparator());
+                agregarLinea(constructor, "Tiempo segun RESUMEN", lineaResumen.tiempoMillis() + " ms");
             }
 
-            constructor.append("Analisis regex valido: ")
-                    .append(analisisRegexValido)
-                    .append(System.lineSeparator());
+            agregarLinea(constructor, "Analisis regex valido", analisisRegexValido);
 
             if (!errores.isEmpty()) {
                 constructor.append("Errores detectados:")
@@ -435,6 +365,13 @@ public class AnalizadorRegexInvariantesTransicion {
             }
 
             return constructor.toString();
+        }
+
+        private static void agregarLinea(StringBuilder constructor, String etiqueta, Object valor) {
+            constructor.append(etiqueta)
+                    .append(": ")
+                    .append(valor)
+                    .append(System.lineSeparator());
         }
     }
 }

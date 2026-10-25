@@ -104,24 +104,6 @@ public class VerificadorInvariantes {
         return constructor.toString();
     }
 
-    /*
-     * Se deja este metodo como utilidad, pero ya no es la verificacion principal.
-     * La verificacion importante ahora son los invariantes de plaza reales.
-     */
-    public boolean conservaTotalTokens(Marcado marcadoInicial, Marcado marcadoFinal) {
-        return sumarValores(marcadoInicial) == sumarValores(marcadoFinal);
-    }
-
-    public int sumarValores(Marcado marcado) {
-        int total = 0;
-
-        for (int token : marcado.obtenerTokensComoArreglo()) {
-            total += token;
-        }
-
-        return total;
-    }
-
     private static void validarCantidadPlazas(Marcado marcado, int plazasEsperadas) {
         if (marcado.cantidad() != plazasEsperadas) {
             throw new IllegalArgumentException(

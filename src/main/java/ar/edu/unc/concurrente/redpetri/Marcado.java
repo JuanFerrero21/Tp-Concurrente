@@ -44,10 +44,6 @@ public class Marcado {
         return new Marcado(tokens);
     }
 
-    public int[] obtenerTokensComoArreglo() {
-        return Arrays.copyOf(tokens, tokens.length);
-    }
-
     @Override
     public String toString() {
         return Arrays.toString(tokens);
