@@ -40,8 +40,15 @@ public class Monitor implements MonitorInterface {
             log("\n" + Thread.currentThread().getName() + " intenta T" + transicion);
 
             while (true) {
-                if (redDePetri.simulacionFinalizada() || !redDePetri.puedeDispararPorEstadoSimulacion(transicion)) {
+                if (redDePetri.simulacionFinalizada()) {
+                    // Solo al terminar la simulacion se despierta a todos.
                     colasTransiciones.despertarTodos();
+                    return false;
+                }
+
+                if (!redDePetri.puedeDispararPorEstadoSimulacion(transicion)) {
+                    // Ya no se aceptan nuevos ingresos: este hilo se retira
+                    // sin afectar al resto, que sigue trabajando.
                     return false;
                 }
 
@@ -90,6 +97,9 @@ public class Monitor implements MonitorInterface {
                     + redDePetri.describirMotivoEspera(transicion));
 
             if (esperaMillis > 0) {
+                // setEsperando: la transicion queda reservada para este hilo
+                // mientras duerme; al volver "viene de un sleep" y puede dispararla.
+                redDePetri.registrarEsperaTemporal(transicion);
                 colasTransiciones.esperarMillis(esperaMillis);
             }
 
@@ -131,12 +141,14 @@ public class Monitor implements MonitorInterface {
     }
 
     private Set<Integer> obtenerTransicionesSensibilizadasConHilosEsperando() {
+        // m = Vs AND Vc (diagrama del monitor): sensibilizadas por tokens
+        // y con hilos en cola. Si una temporal todavia no llego a alfa, el
+        // hilo despertado duerme lo que falte en esperarSegunEstadoTransicion.
         Set<Integer> transicionesSensibilizadasConHilosEsperando = new LinkedHashSet<>();
-        Set<Integer> transicionesSensibilizadas = redDePetri.obtenerTransicionesDisparables();
 
-        for (int transicion : transicionesSensibilizadas) {
+        for (int transicion = 0; transicion < colasTransiciones.obtenerCantidadTransiciones(); transicion++) {
             if (colasTransiciones.tieneHiloEsperando(transicion)
-                    && redDePetri.puedeDispararPorEstadoSimulacion(transicion)) {
+                    && redDePetri.esCandidataParaDespertar(transicion)) {
                 transicionesSensibilizadasConHilosEsperando.add(transicion);
             }
         }

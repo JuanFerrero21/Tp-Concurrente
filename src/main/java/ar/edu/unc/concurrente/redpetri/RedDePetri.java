@@ -54,6 +54,12 @@ public class RedDePetri {
 
         marcado = calcularSiguienteMarcado(transicion);
         verificarInvariantesPlaza();
+
+        if (sensibilizadoConTiempo != null) {
+            // resetEsperando + nuevo timestamp para la transicion disparada.
+            sensibilizadoConTiempo.registrarDisparo(transicion);
+        }
+
         actualizarSensibilizadasTemporales();
         registrarDisparo(transicion);
         return true;
@@ -87,6 +93,36 @@ public class RedDePetri {
         }
 
         return sensibilizadoConTiempo.milisegundosHastaAlfa(transicion);
+    }
+
+    /** Registra que el hilo actual va a dormir hasta alfa (setEsperando). */
+    public void registrarEsperaTemporal(int transicion) {
+        validarTransicion(transicion);
+
+        if (sensibilizadoConTiempo != null) {
+            sensibilizadoConTiempo.setEsperando(transicion);
+        }
+    }
+
+    /**
+     * Candidata a despertar (vector Vs del diagrama del monitor):
+     * sensibilizada por tokens, permitida por el estado de la simulacion y
+     * sin otro hilo durmiendo hasta alfa por ella. No exige que alfa ya se
+     * haya cumplido: el hilo despertado duerme lo que falte.
+     */
+    public boolean esCandidataParaDespertar(int transicion) {
+        validarTransicion(transicion);
+
+        if (!puedeDispararPorEstadoSimulacion(transicion) || !estaSensibilizada(transicion)) {
+            return false;
+        }
+
+        if (sensibilizadoConTiempo == null || !sensibilizadoConTiempo.esTemporal(transicion)) {
+            return true;
+        }
+
+        return !sensibilizadoConTiempo.hayHiloEsperando(transicion)
+                && !sensibilizadoConTiempo.estaVencida(transicion);
     }
 
     public String describirMotivoEspera(int transicion) {
