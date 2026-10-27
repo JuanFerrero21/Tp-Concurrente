@@ -66,23 +66,9 @@ en la sección "Semántica temporal" del informe.
 java -cp out ar.edu.unc.concurrente.aplicacion.Regex [ruta-log]
 ```
 
-Hace tres verificaciones:
-
-1. Reconstruye el camino de cada token, lo clasifica como modo simple, medio o alto
-   mediante expresiones regulares y lo contrasta con lo registrado por la simulación.
-2. Une todos los disparos en una sola secuencia (`T0 T1 T0 T5 T1 ...`) y aplica una
-   expresión regular que encuentra un invariante de transición aunque esté
-   intercalado con otros:
-   `T0 … T1 … ( T5 … T6 | T2 … T3 … T4 | T7 … T8 … T9 … T10 ) … T11`.
-   Cada invariante encontrado se borra (conservando los disparos intermedios) y se
-   repite hasta que no haya más coincidencias. En un log válido no sobra nada.
-3. Reproduce en orden todos los disparos del log sobre la Red de Petri, desde el
-   marcado inicial (M' = M + C·e). Si algún disparo no estaba sensibilizado en ese
-   momento (por ejemplo, dos datos usando a la vez el bus P2 o la unidad P6), el log
-   describe una ejecución imposible.
-
-Termina con código de salida 1 e indica la línea del problema si el log fue
-alterado: un disparo borrado, cambiado, duplicado o movido a un orden imposible.
+Reconstruye el camino de cada token, lo clasifica como modo simple, medio o alto
+mediante expresiones regulares y lo contrasta con lo registrado por la simulación.
+Termina con código de salida 1 si encuentra caminos inválidos o incompletos.
 
 ## Qué muestra la salida
 

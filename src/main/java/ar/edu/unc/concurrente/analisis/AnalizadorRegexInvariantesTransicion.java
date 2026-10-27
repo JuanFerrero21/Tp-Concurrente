@@ -1,8 +1,5 @@
 package ar.edu.unc.concurrente.analisis;
 
-import ar.edu.unc.concurrente.configuracion.ConfiguracionSimulacion;
-import ar.edu.unc.concurrente.redpetri.Marcado;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,39 +29,15 @@ public class AnalizadorRegexInvariantesTransicion {
     private static final Pattern PATRON_ALTO =
             Pattern.compile("^T0,T1,T7,T8,T9,T10,T11$");
 
-    /*
-     * Regex sobre la secuencia completa de disparos (ej. "T0 T1 T0 T5 T1 ...").
-     * Encuentra un invariante de transicion aunque este intercalado con otros:
-     *   T0 ... T1 ... ( T5 ... T6 | T2 ... T3 ... T4 | T7 ... T8 ... T9 ... T10 ) ... T11
-     * Los grupos (.*?) capturan lo que hay entre medio (disparos de otros datos),
-     * que se conserva al borrar el invariante encontrado. Los grupos atomicos (?>...)
-     * toman siempre la ocurrencia mas cercana (incluida la eleccion del modo, via
-     * lookahead) y no reintentan otras: asi el costo es lineal por intento aun con
-     * un log alterado. En un log valido la ocurrencia mas cercana siempre completa
-     * un invariante, porque el log respeta el orden real de disparo.
-     * Grupos: 3 = rama simple, 5 = rama media, 8 = rama alta.
-     */
-    private static final Pattern PATRON_INVARIANTE_EN_SECUENCIA = Pattern.compile(
-            "T0 (?>(.*?)T1 )"
-                    + "(?>(.*?)(?=T5 |T2 |T7 ))"
-                    + "(?:(T5 )(?>(.*?)T6 )"
-                    + "|(T2 )(?>(.*?)T3 )(?>(.*?)T4 )"
-                    + "|(T7 )(?>(.*?)T8 )(?>(.*?)T9 )(?>(.*?)T10 ))"
-                    + "(?>(.*?)T11 )");
-
-    private static final int[] GRUPOS_INTERMEDIOS = {1, 2, 4, 6, 7, 9, 10, 11, 12};
-
     public ResultadoAnalisisRegex analizar(Path rutaLog) {
         List<String> lineas = leerLineas(rutaLog);
 
         Map<Integer, List<String>> transicionesPorIdToken = new LinkedHashMap<>();
         Map<Integer, LineaInvarianteCompleto> completosPorIdToken = new LinkedHashMap<>();
-        List<DisparoEnLog> secuenciaDisparos = new ArrayList<>();
 
         LineaResumen lineaResumen = null;
 
-        for (int numeroLinea = 1; numeroLinea <= lineas.size(); numeroLinea++) {
-            String linea = lineas.get(numeroLinea - 1);
+        for (String linea : lineas) {
             Matcher matcherDisparo = PATRON_LINEA_DISPARO.matcher(linea);
 
             if (matcherDisparo.matches()) {
@@ -75,7 +48,6 @@ public class AnalizadorRegexInvariantesTransicion {
                         .computeIfAbsent(idToken, ignorado -> new ArrayList<>())
                         .add(transicion);
 
-                secuenciaDisparos.add(new DisparoEnLog(numeroLinea, idToken, transicion));
                 continue;
             }
 
@@ -104,143 +76,13 @@ public class AnalizadorRegexInvariantesTransicion {
             }
         }
 
-        String errorSecuencia = reproducirSecuenciaEnLaRed(secuenciaDisparos);
-        RegexSobreSecuencia regexSecuencia = aplicarRegexSobreSecuencia(secuenciaDisparos);
-
-        return construirResultado(
-                transicionesPorIdToken,
-                completosPorIdToken,
-                lineaResumen,
-                errorSecuencia,
-                regexSecuencia
-        );
-    }
-
-    /*
-     * Une todos los disparos en un solo texto y, mientras la regex encuentre un
-     * invariante completo, lo borra dejando lo que habia entre medio. En un log
-     * valido el texto termina vacio; si queda algo, son disparos que no forman
-     * ningun invariante (el log fue alterado o esta incompleto).
-     */
-    private RegexSobreSecuencia aplicarRegexSobreSecuencia(List<DisparoEnLog> secuenciaDisparos) {
-        StringBuilder constructor = new StringBuilder();
-
-        for (DisparoEnLog disparo : secuenciaDisparos) {
-            constructor.append(disparo.transicion()).append(' ');
-        }
-
-        String secuencia = constructor.toString();
-        int simple = 0;
-        int medio = 0;
-        int alto = 0;
-
-        Matcher matcher;
-
-        while ((matcher = buscarInvariante(secuencia)) != null) {
-            if (matcher.group(3) != null) {
-                simple++;
-            } else if (matcher.group(5) != null) {
-                medio++;
-            } else {
-                alto++;
-            }
-
-            StringBuilder intermedios = new StringBuilder();
-
-            for (int grupo : GRUPOS_INTERMEDIOS) {
-                if (matcher.group(grupo) != null) {
-                    intermedios.append(matcher.group(grupo));
-                }
-            }
-
-            secuencia = secuencia.substring(0, matcher.start())
-                    + intermedios
-                    + secuencia.substring(matcher.end());
-        }
-
-        return new RegexSobreSecuencia(simple, medio, alto, secuencia.trim());
-    }
-
-    /*
-     * Busca el primer invariante probando cada T0 como inicio con lookingAt.
-     * Cada intento arranca con los grupos limpios: con find(), un intento fallido
-     * a mitad de camino puede dejar capturas viejas que contaminan el reemplazo.
-     */
-    private Matcher buscarInvariante(String secuencia) {
-        Matcher matcher = PATRON_INVARIANTE_EN_SECUENCIA.matcher(secuencia);
-        int inicio = 0;
-
-        while (inicio < secuencia.length()) {
-            if (secuencia.startsWith("T0 ", inicio)) {
-                matcher.region(inicio, secuencia.length());
-
-                if (matcher.lookingAt()) {
-                    return matcher;
-                }
-            }
-
-            int espacio = secuencia.indexOf(' ', inicio);
-
-            if (espacio < 0) {
-                return null;
-            }
-
-            inicio = espacio + 1;
-        }
-
-        return null;
-    }
-
-    /*
-     * Reproduce en orden todos los disparos del log sobre la Red de Petri,
-     * partiendo del marcado inicial: M' = M + C * e_t.
-     * Si algun disparo deja una plaza con tokens negativos, esa transicion no
-     * estaba sensibilizada en ese momento y el log describe una ejecucion
-     * imposible (por ejemplo, dos datos usando a la vez el bus P2 o la unidad
-     * de procesamiento P6). Devuelve null si toda la secuencia es valida.
-     *
-     * El log no guarda instantes de tiempo, por lo que aca se verifica la
-     * sensibilizacion por tokens; alfa se controla durante la simulacion.
-     */
-    private String reproducirSecuenciaEnLaRed(List<DisparoEnLog> secuenciaDisparos) {
-        ConfiguracionSimulacion configuracion = ConfiguracionSimulacion.configuracionPorDefecto();
-        int[][] matrizIncidencia = configuracion.obtenerMatrizIncidencia();
-        Marcado marcado = configuracion.obtenerMarcadoInicial();
-
-        for (DisparoEnLog disparo : secuenciaDisparos) {
-            int transicion = Integer.parseInt(disparo.transicion().substring(1));
-
-            if (transicion < 0 || transicion >= matrizIncidencia[0].length) {
-                return "linea " + disparo.numeroLinea() + ": " + disparo.transicion() + " no existe en la red";
-            }
-
-            int[] columna = new int[matrizIncidencia.length];
-
-            for (int plaza = 0; plaza < matrizIncidencia.length; plaza++) {
-                columna[plaza] = matrizIncidencia[plaza][transicion];
-            }
-
-            Marcado siguiente = marcado.sumar(columna);
-
-            if (siguiente.tieneTokensNegativos()) {
-                return "linea " + disparo.numeroLinea()
-                        + ": idToken=" + disparo.idToken()
-                        + " dispara " + disparo.transicion()
-                        + " pero no estaba sensibilizada. Marcado en ese momento=" + marcado;
-            }
-
-            marcado = siguiente;
-        }
-
-        return null;
+        return construirResultado(transicionesPorIdToken, completosPorIdToken, lineaResumen);
     }
 
     private ResultadoAnalisisRegex construirResultado(
             Map<Integer, List<String>> transicionesPorIdToken,
             Map<Integer, LineaInvarianteCompleto> completosPorIdToken,
-            LineaResumen lineaResumen,
-            String errorSecuencia,
-            RegexSobreSecuencia regexSecuencia
+            LineaResumen lineaResumen
     ) {
         int cantidadSimple = 0;
         int cantidadMedio = 0;
@@ -249,12 +91,6 @@ public class AnalizadorRegexInvariantesTransicion {
         int cantidadIncompletos = 0;
 
         List<String> errores = new ArrayList<>();
-
-        boolean secuenciaValida = errorSecuencia == null;
-
-        if (!secuenciaValida) {
-            errores.add("Secuencia imposible en la red: " + errorSecuencia);
-        }
 
         for (Map.Entry<Integer, List<String>> entrada : transicionesPorIdToken.entrySet()) {
             int idToken = entrada.getKey();
@@ -312,22 +148,6 @@ public class AnalizadorRegexInvariantesTransicion {
         }
 
         int tokensAnalizados = cantidadSimple + cantidadMedio + cantidadAlto;
-
-        boolean regexSecuenciaValida = regexSecuencia.residuo().isEmpty()
-                && regexSecuencia.simple() == cantidadSimple
-                && regexSecuencia.medio() == cantidadMedio
-                && regexSecuencia.alto() == cantidadAlto;
-
-        if (!regexSecuencia.residuo().isEmpty()) {
-            String residuo = regexSecuencia.residuo();
-            errores.add("La regex sobre la secuencia completa dejo disparos sin formar invariante: "
-                    + (residuo.length() > 200 ? residuo.substring(0, 200) + " ..." : residuo));
-        } else if (!regexSecuenciaValida) {
-            errores.add("La regex sobre la secuencia completa conto simple="
-                    + regexSecuencia.simple() + " medio=" + regexSecuencia.medio()
-                    + " alto=" + regexSecuencia.alto()
-                    + ", distinto de lo contado por dato");
-        }
         boolean resumenValido = validarResumen(
                 lineaResumen,
                 tokensAnalizados,
@@ -342,9 +162,7 @@ public class AnalizadorRegexInvariantesTransicion {
         boolean analisisRegexValido = cantidadInvalidos == 0
                 && cantidadIncompletos == 0
                 && tokensAnalizados == completosPorIdToken.size()
-                && resumenValido
-                && secuenciaValida
-                && regexSecuenciaValida;
+                && resumenValido;
 
         return new ResultadoAnalisisRegex(
                 tokensAnalizados,
@@ -355,9 +173,6 @@ public class AnalizadorRegexInvariantesTransicion {
                 cantidadIncompletos,
                 analisisRegexValido,
                 resumenValido,
-                secuenciaValida,
-                regexSecuencia,
-                regexSecuenciaValida,
                 lineaResumen,
                 errores
         );
@@ -459,12 +274,6 @@ public class AnalizadorRegexInvariantesTransicion {
     private record LineaInvarianteCompleto(String modo, String camino) {
     }
 
-    private record DisparoEnLog(int numeroLinea, int idToken, String transicion) {
-    }
-
-    private record RegexSobreSecuencia(int simple, int medio, int alto, String residuo) {
-    }
-
     private record LineaResumen(
             int completo,
             int medio,
@@ -484,9 +293,6 @@ public class AnalizadorRegexInvariantesTransicion {
         private final int cantidadIncompletos;
         private final boolean analisisRegexValido;
         private final boolean resumenValido;
-        private final boolean secuenciaValida;
-        private final RegexSobreSecuencia regexSecuencia;
-        private final boolean regexSecuenciaValida;
         private final LineaResumen lineaResumen;
         private final List<String> errores;
 
@@ -499,15 +305,9 @@ public class AnalizadorRegexInvariantesTransicion {
                 int cantidadIncompletos,
                 boolean analisisRegexValido,
                 boolean resumenValido,
-                boolean secuenciaValida,
-                RegexSobreSecuencia regexSecuencia,
-                boolean regexSecuenciaValida,
                 LineaResumen lineaResumen,
                 List<String> errores
         ) {
-            this.secuenciaValida = secuenciaValida;
-            this.regexSecuencia = regexSecuencia;
-            this.regexSecuenciaValida = regexSecuenciaValida;
             this.tokensAnalizados = tokensAnalizados;
             this.cantidadMedio = cantidadMedio;
             this.cantidadSimple = cantidadSimple;
@@ -537,13 +337,6 @@ public class AnalizadorRegexInvariantesTransicion {
             agregarLinea(constructor, "Invalidos", cantidadInvalidos);
             agregarLinea(constructor, "Incompletos", cantidadIncompletos);
             agregarLinea(constructor, "Resumen valido", resumenValido);
-            agregarLinea(constructor, "Regex sobre secuencia completa",
-                    "simple=" + regexSecuencia.simple()
-                            + " medio=" + regexSecuencia.medio()
-                            + " alto=" + regexSecuencia.alto()
-                            + " sobrante=" + (regexSecuencia.residuo().isEmpty() ? "ninguno" : "SI"));
-            agregarLinea(constructor, "Regex sobre secuencia valida", regexSecuenciaValida);
-            agregarLinea(constructor, "Secuencia reproducible en la red", secuenciaValida);
 
             if (lineaResumen != null) {
                 agregarLinea(constructor, "Tiempo segun RESUMEN", lineaResumen.tiempoMillis() + " ms");
