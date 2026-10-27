@@ -81,14 +81,13 @@ public class Monitor implements MonitorInterface {
     }
 
     private void esperarSegunEstadoTransicion(int transicion) {
-        log(Thread.currentThread().getName()
-                + " espera T" + transicion
-                + ". Motivo: " + redDePetri.describirMotivoEspera(transicion)
-                + ". Habilitadas con hilos esperando: "
-                + obtenerTransicionesSensibilizadasConHilosEsperando());
-
         if (redDePetri.estaAntesDeLaVentanaTemporal(transicion)) {
             long esperaMillis = redDePetri.milisegundosHastaVentanaTemporal(transicion);
+
+            log(Thread.currentThread().getName()
+                    + " espera T" + transicion
+                    + " " + esperaMillis + "ms hasta alfa. Motivo: "
+                    + redDePetri.describirMotivoEspera(transicion));
 
             if (esperaMillis > 0) {
                 colasTransiciones.esperarMillis(esperaMillis);
@@ -96,6 +95,19 @@ public class Monitor implements MonitorInterface {
 
             return;
         }
+
+        // Alfa pudo cumplirse entre el chequeo de fireTransition y este punto.
+        // No bloquear en la cola a un hilo cuya transicion ya puede dispararse:
+        // nadie lo despertaria si ningun otro hilo realiza un disparo.
+        if (redDePetri.puedeDisparar(transicion)) {
+            return;
+        }
+
+        log(Thread.currentThread().getName()
+                + " espera T" + transicion
+                + ". Motivo: " + redDePetri.describirMotivoEspera(transicion)
+                + ". Habilitadas con hilos esperando: "
+                + obtenerTransicionesSensibilizadasConHilosEsperando());
 
         colasTransiciones.esperar(transicion);
     }
