@@ -52,6 +52,16 @@ Red --> Monitor : false
 Monitor -> Red : estaAntesDeLaVentanaTemporal(Ti)
 Red --> Monitor : false
 
+Monitor -> Red : puedeDisparar(Ti)
+Red --> Monitor : false
+
+note right of Monitor
+Antes de bloquearse, A vuelve a comprobar
+si Ti ya puede dispararse (alfa pudo cumplirse
+mientras evaluaba la espera). Como sigue
+sin poder, recien ahora se encola.
+end note
+
 Monitor -> Colas : esperar(Ti)
 activate Colas
 
@@ -121,21 +131,23 @@ Red --> Monitor : false
 
 Monitor -> Monitor : despertarTransicionElegidaPorPolitica()
 
-Monitor -> Red : obtenerTransicionesDisparables()
-Red --> Monitor : candidatas disparables
-
 Monitor -> Colas : tieneHiloEsperando(Ti)
 Colas --> Monitor : true
 
-Monitor -> Red : puedeDispararPorEstadoSimulacion(Ti)
+Monitor -> Red : esCandidataParaDespertar(Ti)
 Red --> Monitor : true
 
 note right of Monitor
-Ti entra al conjunto de candidatas solo
-si esta disparable AHORA y tiene a alguien
-dormido en su cola. Se recalcula de cero
+m = Vs AND Vc: Ti entra al conjunto de
+candidatas si esta sensibilizada por tokens,
+tiene a alguien dormido en su cola, lo permite
+el estado de la simulacion y ningun otro hilo
+espera alfa por ella. Se recalcula de cero
 despues de cada disparo, bajo el mutex,
 asi que nunca queda una foto vieja.
+
+Si Ti es temporal y todavia no llego a alfa,
+A duerme lo que falte antes de dispararla.
 end note
 
 Monitor -> Politica : elegirTransicion(candidatas)

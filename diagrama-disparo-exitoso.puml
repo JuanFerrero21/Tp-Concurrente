@@ -70,6 +70,8 @@ loop hasta que Ti pueda dispararse
     - estado de simulacion permitido
     - sensibilizacion por tokens
     - restriccion temporal valida
+    - que ningun otro hilo este esperando
+      alfa por Ti (marca esperando)
     end note
 
     alt Ti puede dispararse
@@ -90,6 +92,16 @@ loop hasta que Ti pueda dispararse
 
             Monitor -> Red : milisegundosHastaVentanaTemporal(Ti)
             Red --> Monitor : ms restantes
+
+            Monitor -> Red : registrarEsperaTemporal(Ti)
+            Red --> Monitor : marca esperando = este hilo
+
+            note right of Red
+            setEsperando del diagrama de calculo de disparo:
+            mientras este hilo duerme, otro hilo que llegue
+            con la ventana abierta no puede disparar Ti.
+            Al volver, este hilo "viene de un sleep" y si puede.
+            end note
 
             Monitor -> Colas : esperarMillis(ms)
             activate Colas
@@ -118,6 +130,23 @@ loop hasta que Ti pueda dispararse
             end note
 
         else no esta antes de alfa
+
+            Monitor -> Red : puedeDisparar(Ti)
+            Red --> Monitor : true / false
+
+            note right of Monitor
+            Alfa pudo cumplirse mientras se evaluaba
+            la espera: se vuelve a comprobar antes
+            de bloquearse en la cola.
+            end note
+
+            alt Ti ya puede dispararse
+
+                note right of Monitor
+                Retorna al while sin encolarse.
+                end note
+
+            else Ti sigue sin poder dispararse
 
             Monitor -> Colas : esperar(Ti)
             activate Colas
@@ -150,6 +179,7 @@ loop hasta que Ti pueda dispararse
             Colas --> Monitor : retorna al ser despertado
             deactivate Colas
 
+            end
         end
     end
 end
@@ -171,6 +201,13 @@ Red -> Verificador : verificarInvariantesPlazaOLanzar(marcado)
 activate Verificador
 Verificador --> Red : invariantes OK
 deactivate Verificador
+
+Red -> Red : registrarDisparo(Ti) en SensibilizadoConTiempo
+
+note right of Red
+resetEsperando(Ti) y nuevo timestamp
+para Ti si sigue sensibilizada.
+end note
 
 Red -> Red : actualizarSensibilizadasTemporales()
 
@@ -207,18 +244,26 @@ else simulacion continua
 
     Monitor -> Monitor : despertarTransicionElegidaPorPolitica()
 
-    Monitor -> Red : obtenerTransicionesDisparables()
-    Red --> Monitor : transiciones disparables
-
-    loop por cada transicion disparable Tj
+    loop por cada transicion Tj
 
         Monitor -> Colas : tieneHiloEsperando(Tj)
         Colas --> Monitor : true / false
 
-        Monitor -> Red : puedeDispararPorEstadoSimulacion(Tj)
+        Monitor -> Red : esCandidataParaDespertar(Tj)
         Red --> Monitor : true / false
 
     end
+
+    note right of Monitor
+    m = Vs AND Vc (diagrama del monitor):
+    candidatas = sensibilizadas por tokens,
+    con hilos en cola, permitidas por el estado
+    y sin otro hilo esperando alfa por ellas.
+
+    No se exige haber llegado a alfa: si la
+    elegida todavia no llego, el hilo despertado
+    duerme lo que falte antes de dispararla.
+    end note
 
     alt hay candidatas
 

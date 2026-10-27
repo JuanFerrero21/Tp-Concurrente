@@ -146,6 +146,8 @@ class RedDePetri {
     + disparar(transicion : int) : boolean
     + estaAntesDeLaVentanaTemporal(transicion : int) : boolean
     + milisegundosHastaVentanaTemporal(transicion : int) : long
+    + registrarEsperaTemporal(transicion : int) : void
+    + esCandidataParaDespertar(transicion : int) : boolean
     + describirMotivoEspera(transicion : int) : String
     + obtenerTransicionesSensibilizadas() : Set<Integer>
     + obtenerTransicionesDisparables() : Set<Integer>
@@ -178,10 +180,16 @@ class SensibilizadoConTiempo {
     - timestampMillis : long[]
     - estabaSensibilizada : boolean[]
     - ventanaVencida : boolean[]
+    - hiloEsperando : Thread[]
     --
     + SensibilizadoConTiempo(temporales, alfaMillis, betaMillis)
     + actualizarSensibilizadas(sensibilizadas : Set<Integer>) : void
     + puedeDispararAhora(transicion : int) : boolean
+    + setEsperando(transicion : int) : void
+    + resetEsperando(transicion : int) : void
+    + hayHiloEsperando(transicion : int) : boolean
+    + estaEsperandoOtroHilo(transicion : int) : boolean
+    + registrarDisparo(transicion : int) : void
     + estaAntesDeLaVentana(transicion : int) : boolean
     + estaVencida(transicion : int) : boolean
     + milisegundosHastaAlfa(transicion : int) : long
@@ -427,6 +435,15 @@ Al no tener ownership estricto,
 permite que un hilo haga acquire()
 y otro hilo libere posteriormente
 el permiso luego de un handoff.
+end note
+
+note bottom of SensibilizadoConTiempo
+Marca esperando (hiloEsperando[]):
+el hilo que duerme hasta alfa reserva
+la transicion; otro hilo que llegue con
+la ventana abierta no puede dispararla.
+Se limpia al disparar o si la transicion
+pierde la sensibilizacion.
 end note
 
 note bottom of ColasTransiciones
