@@ -30,7 +30,7 @@ participant "colas[Ti] : Semaphore" as SemaforoTi
 participant "redDePetri : RedDePetri" as Red
 participant "politica : Politica" as Politica
 
-== Hilo A intenta Ti y debe esperar ==
+== Hilo A entra al while de fireTransition(Ti) y debe esperar ==
 
 HiloA -> Monitor : fireTransition(Ti)
 activate Monitor

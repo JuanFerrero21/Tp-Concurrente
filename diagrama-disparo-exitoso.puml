@@ -48,12 +48,6 @@ Mientras su permiso esta tomado,
 solo un hilo controla el monitor.
 end note
 
-Monitor -> Red : simulacionFinalizada()
-Red --> Monitor : false
-
-Monitor -> Red : puedeDispararPorEstadoSimulacion(Ti)
-Red --> Monitor : true
-
 loop hasta que Ti pueda dispararse
 
     Monitor -> Red : simulacionFinalizada()

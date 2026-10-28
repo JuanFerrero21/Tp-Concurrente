@@ -33,21 +33,18 @@ public class Monitor implements MonitorInterface {
         try {
             validarTransicion(transicion);
 
-            if (redDePetri.simulacionFinalizada() || !redDePetri.puedeDispararPorEstadoSimulacion(transicion)) {
-                return false;
-            }
-
-            log("\n" + Thread.currentThread().getName() + " intenta T" + transicion);
+            log("\n" + Thread.currentThread().getName()
+                    + " intenta T" + transicion);
 
             while (true) {
                 if (redDePetri.simulacionFinalizada()) {
-                    // Solo al terminar la simulacion se despierta a todos.
+                    // Se completaron los 200 invariantes: finalizar los trabajadores.
                     colasTransiciones.despertarTodos();
                     return false;
                 }
 
                 if (!redDePetri.puedeDispararPorEstadoSimulacion(transicion)) {
-                    // Ya no se aceptan nuevos ingresos: este hilo se retira
+                    // No iniciar nuevos recorridos; los pendientes deben completarse.
                     return false;
                 }
 
@@ -55,6 +52,7 @@ public class Monitor implements MonitorInterface {
                     break;
                 }
 
+                // Esperar por sensibilización o por alfa.
                 esperarSegunEstadoTransicion(transicion);
 
                 log(Thread.currentThread().getName()
