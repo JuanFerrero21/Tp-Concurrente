@@ -146,7 +146,6 @@ class RedDePetri {
     + disparar(transicion : int) : boolean
     + estaAntesDeLaVentanaTemporal(transicion : int) : boolean
     + milisegundosHastaVentanaTemporal(transicion : int) : long
-    + esCandidataParaDespertar(transicion : int) : boolean
     + describirMotivoEspera(transicion : int) : String
     + obtenerTransicionesSensibilizadas() : Set<Integer>
     + obtenerTransicionesDisparables() : Set<Integer>

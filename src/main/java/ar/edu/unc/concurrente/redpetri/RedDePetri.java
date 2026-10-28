@@ -89,26 +89,6 @@ public class RedDePetri {
         return sensibilizadoConTiempo.milisegundosHastaAlfa(transicion);
     }
 
-    /**
-     * Candidata a despertar (vector Vs del diagrama del monitor):
-     * sensibilizada por tokens y permitida por el estado de la simulacion.
-     * No exige que alfa ya se haya cumplido: el hilo despertado duerme lo
-     * que falte.
-     */
-    public boolean esCandidataParaDespertar(int transicion) {
-        validarTransicion(transicion);
-
-        if (!puedeDispararPorEstadoSimulacion(transicion) || !estaSensibilizada(transicion)) {
-            return false;
-        }
-
-        if (sensibilizadoConTiempo == null || !sensibilizadoConTiempo.esTemporal(transicion)) {
-            return true;
-        }
-
-        return !sensibilizadoConTiempo.estaVencida(transicion);
-    }
-
     public String describirMotivoEspera(int transicion) {
         validarTransicion(transicion);
 

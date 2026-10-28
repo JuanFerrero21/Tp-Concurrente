@@ -225,25 +225,18 @@ else simulacion continua
 
     Monitor -> Monitor : despertarTransicionElegidaPorPolitica()
 
-    loop por cada transicion Tj
+    Monitor -> Red : obtenerTransicionesDisparables()
+    Red --> Monitor : transiciones disparables
+
+    loop por cada transicion disparable Tj
 
         Monitor -> Colas : tieneHiloEsperando(Tj)
         Colas --> Monitor : true / false
 
-        Monitor -> Red : esCandidataParaDespertar(Tj)
+        Monitor -> Red : puedeDispararPorEstadoSimulacion(Tj)
         Red --> Monitor : true / false
 
     end
-
-    note right of Monitor
-    m = Vs AND Vc (diagrama del monitor):
-    candidatas = sensibilizadas por tokens,
-    con hilos en cola y permitidas por el estado.
-
-    No se exige haber llegado a alfa: si la
-    elegida todavia no llego, el hilo despertado
-    duerme lo que falte antes de dispararla.
-    end note
 
     alt hay candidatas
 

@@ -40,15 +40,8 @@ public class Monitor implements MonitorInterface {
             log("\n" + Thread.currentThread().getName() + " intenta T" + transicion);
 
             while (true) {
-                if (redDePetri.simulacionFinalizada()) {
-                    // Solo al terminar la simulacion se despierta a todos.
+                if (redDePetri.simulacionFinalizada() || !redDePetri.puedeDispararPorEstadoSimulacion(transicion)) {
                     colasTransiciones.despertarTodos();
-                    return false;
-                }
-
-                if (!redDePetri.puedeDispararPorEstadoSimulacion(transicion)) {
-                    // Ya no se aceptan nuevos ingresos: este hilo se retira
-                    // sin afectar al resto, que sigue trabajando.
                     return false;
                 }
 
@@ -138,14 +131,12 @@ public class Monitor implements MonitorInterface {
     }
 
     private Set<Integer> obtenerTransicionesSensibilizadasConHilosEsperando() {
-        // m = Vs AND Vc (diagrama del monitor): sensibilizadas por tokens
-        // y con hilos en cola. Si una temporal todavia no llego a alfa, el
-        // hilo despertado duerme lo que falte en esperarSegunEstadoTransicion.
         Set<Integer> transicionesSensibilizadasConHilosEsperando = new LinkedHashSet<>();
+        Set<Integer> transicionesSensibilizadas = redDePetri.obtenerTransicionesDisparables();
 
-        for (int transicion = 0; transicion < colasTransiciones.obtenerCantidadTransiciones(); transicion++) {
+        for (int transicion : transicionesSensibilizadas) {
             if (colasTransiciones.tieneHiloEsperando(transicion)
-                    && redDePetri.esCandidataParaDespertar(transicion)) {
+                    && redDePetri.puedeDispararPorEstadoSimulacion(transicion)) {
                 transicionesSensibilizadasConHilosEsperando.add(transicion);
             }
         }
