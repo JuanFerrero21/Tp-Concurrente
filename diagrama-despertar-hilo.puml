@@ -141,8 +141,7 @@ note right of Monitor
 m = Vs AND Vc: Ti entra al conjunto de
 candidatas si esta sensibilizada por tokens,
 tiene a alguien dormido en su cola, lo permite
-el estado de la simulacion y ningun otro hilo
-espera alfa por ella. Se recalcula de cero
+el estado de la simulacion. Se recalcula de cero
 despues de cada disparo, bajo el mutex,
 asi que nunca queda una foto vieja.
 

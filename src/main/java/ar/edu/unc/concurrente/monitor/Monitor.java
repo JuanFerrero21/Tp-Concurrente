@@ -97,9 +97,6 @@ public class Monitor implements MonitorInterface {
                     + redDePetri.describirMotivoEspera(transicion));
 
             if (esperaMillis > 0) {
-                // setEsperando: la transicion queda reservada para este hilo
-                // mientras duerme; al volver "viene de un sleep" y puede dispararla.
-                redDePetri.registrarEsperaTemporal(transicion);
                 colasTransiciones.esperarMillis(esperaMillis);
             }
 
