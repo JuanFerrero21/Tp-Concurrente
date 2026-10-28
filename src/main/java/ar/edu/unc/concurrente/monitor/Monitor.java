@@ -40,8 +40,14 @@ public class Monitor implements MonitorInterface {
             log("\n" + Thread.currentThread().getName() + " intenta T" + transicion);
 
             while (true) {
-                if (redDePetri.simulacionFinalizada() || !redDePetri.puedeDispararPorEstadoSimulacion(transicion)) {
+                if (redDePetri.simulacionFinalizada()) {
+                    // Solo al terminar la simulacion se despierta a todos.
                     colasTransiciones.despertarTodos();
+                    return false;
+                }
+
+                if (!redDePetri.puedeDispararPorEstadoSimulacion(transicion)) {
+                    // Ya no se aceptan nuevos ingresos: este hilo se retira
                     return false;
                 }
 
