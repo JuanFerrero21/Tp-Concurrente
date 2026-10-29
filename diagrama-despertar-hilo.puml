@@ -67,14 +67,6 @@ activate Colas
 
 Colas -> Colas : esperando[Ti]++
 
-note right of Colas
-"esperando[]" es el unico contador.
-No hay un segundo contador aparte
-para "quiere disparar" vs "esta bloqueado":
-se incrementa recien aca, justo antes
-de bloquearse de verdad.
-end note
-
 Colas -> Mutex : release()
 activate Mutex
 Mutex --> Colas : permiso liberado
@@ -143,9 +135,7 @@ Red --> Monitor : true
 note right of Monitor
 Ti entra al conjunto de candidatas solo
 si esta disparable AHORA y tiene a alguien
-dormido en su cola. Se recalcula de cero
-despues de cada disparo, bajo el mutex,
-asi que nunca queda una foto vieja.
+dormido en su cola.
 end note
 
 Monitor -> Politica : elegirTransicion(candidatas)
@@ -162,15 +152,6 @@ Colas -> SemaforoTi : release()
 
 Colas --> Monitor : true
 deactivate Colas
-
-note right of Colas
-Se libera UN solo permiso.
-No hay un contador aparte de "handoff":
-en regimen normal (finalizando == false)
-este es el unico lugar que hace
-release() sobre colas[Ti], asi que el
-unico que puede despertarse es A.
-end note
 
 Monitor -> Monitor : liberarMutex = false
 
@@ -246,17 +227,6 @@ Monitor -> Red : disparar(Ti)
 activate Red
 Red --> Monitor : true
 deactivate Red
-
-note right of Monitor
-Despues del disparo de Ti vuelve
-a aplicarse la misma regla:
-
-si la politica despierta a otro hilo,
-A le transfiere el monitor (liberarMutex = false);
-
-si no hay candidatas, A libera
-el mutex normalmente (liberarMutex = true).
-end note
 
 Monitor --> HiloA : true
 deactivate Monitor
