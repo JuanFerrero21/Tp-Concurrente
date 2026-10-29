@@ -4,274 +4,121 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/** Analiza la traza global, sin ID de tokens, extrayendo T-invariantes. */
 public class AnalizadorRegexInvariantesTransicion {
-    private static final Pattern PATRON_LINEA_DISPARO =
-            Pattern.compile("^idToken=(\\d+) disparada=(T\\d+)$");
+    private static final Pattern DISPARO = Pattern.compile("^disparada=(T(?:[0-9]|10|11))$");
+    private static final Pattern RESUMEN = Pattern.compile(
+            "^RESUMEN completo=(\\d+) medio=(\\d+) simple=(\\d+) alto=(\\d+) "
+            + "invariantesPlazaCumplidos=(true|false) tiempoMillis=(\\d+)$");
 
-    private static final Pattern PATRON_INVARIANTE_COMPLETO =
-            Pattern.compile("^idToken=(\\d+) INVARIANTE modo=([A-Z]+) camino=([T0-9,]+) completo=true$");
-
-    private static final Pattern PATRON_RESUMEN =
-            Pattern.compile("^RESUMEN completo=(\\d+) medio=(\\d+) simple=(\\d+) alto=(\\d+) invariantesPlazaCumplidos=(true|false) tiempoMillis=(\\d+)$");
-
-    private static final Pattern PATRON_SIMPLE =
-            Pattern.compile("^T0,T1,T5,T6,T11$");
-
-    private static final Pattern PATRON_MEDIO =
-            Pattern.compile("^T0,T1,T2,T3,T4,T11$");
-
-    private static final Pattern PATRON_ALTO =
-            Pattern.compile("^T0,T1,T7,T8,T9,T10,T11$");
+    /*
+     * UNA sola expresion para los tres caminos, permitiendo intercalaciones.
+     * Cada grupo 'gN' preserva las transiciones intercaladas cuando se elimina
+     * el recorrido reconocido. Las comas delimitan tokens (T1 != T10).
+     */
+    private static final Pattern INVARIANTES = Pattern.compile(
+            "T0,(?<g1>.*?)T1,(?<g2>.*?)"
+            + "(?:"
+            + "(?<medio>T2,)(?<g3>.*?)T3,(?<g4>.*?)T4,(?<g5>.*?)"
+            + "|(?<simple>T5,)(?<g6>.*?)T6,(?<g7>.*?)"
+            + "|(?<alto>T7,)(?<g8>.*?)T8,(?<g9>.*?)T9,(?<g10>.*?)T10,(?<g11>.*?)"
+            + ")T11,");
+    private static final String[] HUECOS = {
+            "g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g9", "g10", "g11"
+    };
 
     public ResultadoAnalisisRegex analizar(Path rutaLog) {
-        List<String> lineas = leerLineas(rutaLog);
-
-        Map<Integer, List<String>> transicionesPorIdToken = new LinkedHashMap<>();
-        Map<Integer, LineaInvarianteCompleto> completosPorIdToken = new LinkedHashMap<>();
-
-        LineaResumen lineaResumen = null;
-
-        for (String linea : lineas) {
-            Matcher matcherDisparo = PATRON_LINEA_DISPARO.matcher(linea);
-
-            if (matcherDisparo.matches()) {
-                int idToken = Integer.parseInt(matcherDisparo.group(1));
-                String transicion = matcherDisparo.group(2);
-
-                transicionesPorIdToken
-                        .computeIfAbsent(idToken, ignorado -> new ArrayList<>())
-                        .add(transicion);
-
-                continue;
-            }
-
-            Matcher matcherCompletado = PATRON_INVARIANTE_COMPLETO.matcher(linea);
-
-            if (matcherCompletado.matches()) {
-                int idToken = Integer.parseInt(matcherCompletado.group(1));
-                String modo = matcherCompletado.group(2);
-                String camino = matcherCompletado.group(3);
-
-                completosPorIdToken.put(idToken, new LineaInvarianteCompleto(modo, camino));
-                continue;
-            }
-
-            Matcher matcherResumen = PATRON_RESUMEN.matcher(linea);
-
-            if (matcherResumen.matches()) {
-                lineaResumen = new LineaResumen(
-                        Integer.parseInt(matcherResumen.group(1)),
-                        Integer.parseInt(matcherResumen.group(2)),
-                        Integer.parseInt(matcherResumen.group(3)),
-                        Integer.parseInt(matcherResumen.group(4)),
-                        Boolean.parseBoolean(matcherResumen.group(5)),
-                        Long.parseLong(matcherResumen.group(6))
-                );
-            }
-        }
-
-        return construirResultado(transicionesPorIdToken, completosPorIdToken, lineaResumen);
-    }
-
-    private ResultadoAnalisisRegex construirResultado(
-            Map<Integer, List<String>> transicionesPorIdToken,
-            Map<Integer, LineaInvarianteCompleto> completosPorIdToken,
-            LineaResumen lineaResumen
-    ) {
-        int cantidadSimple = 0;
-        int cantidadMedio = 0;
-        int cantidadAlto = 0;
-        int cantidadInvalidos = 0;
-        int cantidadIncompletos = 0;
-
+        StringBuilder traza = new StringBuilder();
         List<String> errores = new ArrayList<>();
+        LineaResumen resumen = null;
+        int cantidadResumen = 0;
+        int numeroLinea = 0;
+        boolean terminoResumen = false;
 
-        for (Map.Entry<Integer, List<String>> entrada : transicionesPorIdToken.entrySet()) {
-            int idToken = entrada.getKey();
-            String caminoReconstruido = String.join(",", entrada.getValue());
-
-            LineaInvarianteCompleto lineaCompletado = completosPorIdToken.get(idToken);
-
-            if (lineaCompletado == null) {
-                cantidadIncompletos++;
-                errores.add("idToken=" + idToken + " no completo invariante. camino=" + caminoReconstruido);
-                continue;
-            }
-
-            Modo modoPorRegex = clasificarPorRegex(caminoReconstruido);
-
-            if (modoPorRegex == Modo.INVALIDO) {
-                cantidadInvalidos++;
-                errores.add("idToken=" + idToken + " tiene camino invalido por regex. camino=" + caminoReconstruido);
-                continue;
-            }
-
-            if (!lineaCompletado.camino().equals(caminoReconstruido)) {
-                cantidadInvalidos++;
-                errores.add("idToken=" + idToken
-                        + " no coincide entre camino reconstruido y camino registrado. reconstruido="
-                        + caminoReconstruido
-                        + ", registrado="
-                        + lineaCompletado.camino());
-                continue;
-            }
-
-            if (!lineaCompletado.modo().equals(modoPorRegex.name())) {
-                cantidadInvalidos++;
-                errores.add("idToken=" + idToken
-                        + " no coincide entre modo regex y modo registrado. regex="
-                        + modoPorRegex.name()
-                        + ", registrado="
-                        + lineaCompletado.modo());
-                continue;
-            }
-
-            switch (modoPorRegex) {
-                case SIMPLE -> cantidadSimple++;
-                case MEDIO -> cantidadMedio++;
-                case ALTO -> cantidadAlto++;
-                default -> cantidadInvalidos++;
-            }
-        }
-
-        for (Integer idToken : completosPorIdToken.keySet()) {
-            if (!transicionesPorIdToken.containsKey(idToken)) {
-                cantidadInvalidos++;
-                errores.add("idToken=" + idToken + " tiene linea INVARIANTE pero no tiene disparos disparada asociados");
-            }
-        }
-
-        int tokensAnalizados = cantidadSimple + cantidadMedio + cantidadAlto;
-        boolean resumenValido = validarResumen(
-                lineaResumen,
-                tokensAnalizados,
-                cantidadMedio,
-                cantidadSimple,
-                cantidadAlto,
-                cantidadInvalidos,
-                cantidadIncompletos,
-                errores
-        );
-
-        boolean analisisRegexValido = cantidadInvalidos == 0
-                && cantidadIncompletos == 0
-                && tokensAnalizados == completosPorIdToken.size()
-                && resumenValido;
-
-        return new ResultadoAnalisisRegex(
-                tokensAnalizados,
-                cantidadMedio,
-                cantidadSimple,
-                cantidadAlto,
-                cantidadInvalidos,
-                cantidadIncompletos,
-                analisisRegexValido,
-                resumenValido,
-                lineaResumen,
-                errores
-        );
-    }
-
-    private boolean validarResumen(
-            LineaResumen lineaResumen,
-            int tokensAnalizados,
-            int cantidadMedio,
-            int cantidadSimple,
-            int cantidadAlto,
-            int cantidadInvalidos,
-            int cantidadIncompletos,
-            List<String> errores
-    ) {
-        if (lineaResumen == null) {
-            errores.add("No se encontro la linea RESUMEN en el log");
-            return false;
-        }
-
-        boolean valido = true;
-
-        if (lineaResumen.completo() != tokensAnalizados) {
-            valido = false;
-            errores.add("RESUMEN completo="
-                    + lineaResumen.completo()
-                    + " pero regex analizo "
-                    + tokensAnalizados
-                    + " tokens completos");
-        }
-
-        if (lineaResumen.medio() != cantidadMedio) {
-            valido = false;
-            errores.add("RESUMEN medio="
-                    + lineaResumen.medio()
-                    + " pero regex conto medio="
-                    + cantidadMedio);
-        }
-
-        if (lineaResumen.simple() != cantidadSimple) {
-            valido = false;
-            errores.add("RESUMEN simple="
-                    + lineaResumen.simple()
-                    + " pero regex conto simple="
-                    + cantidadSimple);
-        }
-
-        if (lineaResumen.alto() != cantidadAlto) {
-            valido = false;
-            errores.add("RESUMEN alto="
-                    + lineaResumen.alto()
-                    + " pero regex conto alto="
-                    + cantidadAlto);
-        }
-
-        if (!lineaResumen.invariantesPlazaCumplidos()) {
-            valido = false;
-            errores.add("RESUMEN invariantesPlazaCumplidos=false");
-        }
-
-        if (cantidadInvalidos > 0 || cantidadIncompletos > 0) {
-            valido = false;
-        }
-
-        return valido;
-    }
-
-    private Modo clasificarPorRegex(String camino) {
-        if (PATRON_SIMPLE.matcher(camino).matches()) {
-            return Modo.SIMPLE;
-        }
-
-        if (PATRON_MEDIO.matcher(camino).matches()) {
-            return Modo.MEDIO;
-        }
-
-        if (PATRON_ALTO.matcher(camino).matches()) {
-            return Modo.ALTO;
-        }
-
-        return Modo.INVALIDO;
-    }
-
-    private List<String> leerLineas(Path rutaLog) {
         try {
-            return Files.readAllLines(rutaLog);
+            for (String linea : Files.readAllLines(rutaLog)) {
+                numeroLinea++;
+                Matcher disparo = DISPARO.matcher(linea);
+                if (disparo.matches()) {
+                    if (terminoResumen) errores.add("Disparo luego del RESUMEN en linea " + numeroLinea);
+                    traza.append(disparo.group(1)).append(',');
+                } else if (linea.startsWith("disparada=")) {
+                    errores.add("Disparo mal formado en linea " + numeroLinea);
+                } else if (linea.startsWith("RESUMEN")) {
+                    terminoResumen = true;
+                    cantidadResumen++;
+                    Matcher datos = RESUMEN.matcher(linea);
+                    if (!datos.matches()) {
+                        errores.add("RESUMEN mal formado en linea " + numeroLinea);
+                    } else {
+                        try {
+                            resumen = new LineaResumen(
+                                    Integer.parseInt(datos.group(1)),
+                                    Integer.parseInt(datos.group(2)),
+                                    Integer.parseInt(datos.group(3)),
+                                    Integer.parseInt(datos.group(4)),
+                                    Boolean.parseBoolean(datos.group(5)),
+                                    Long.parseLong(datos.group(6)));
+                        } catch (NumberFormatException excepcion) {
+                            errores.add("Numero fuera de rango en RESUMEN");
+                        }
+                    }
+                }
+            }
         } catch (IOException excepcion) {
-            throw new IllegalStateException("No se pudo leer el archivo de log: " + rutaLog, excepcion);
+            throw new IllegalStateException("No se pudo leer el log: " + rutaLog, excepcion);
         }
-    }
+        if (cantidadResumen != 1) errores.add("El log debe tener exactamente un RESUMEN");
+        if (traza.length() == 0) errores.add("El log no contiene disparos");
 
-    private enum Modo {
-        SIMPLE,
-        MEDIO,
-        ALTO,
-        INVALIDO
-    }
+        int medio = 0, simple = 0, alto = 0;
+        String restante = traza.toString();
+        // Equivalente al re.subn del ejemplo en Python: extraer y conservar huecos.
+        while (true) {
+            Matcher encontrados = INVARIANTES.matcher(restante);
+            StringBuffer nueva = new StringBuffer();
+            int coincidencias = 0;
+            while (encontrados.find()) {
+                coincidencias++;
+                if (encontrados.group("medio") != null) medio++;
+                else if (encontrados.group("simple") != null) simple++;
+                else alto++;
+                StringBuilder huecos = new StringBuilder();
+                for (String nombre : HUECOS) {
+                    String grupo = encontrados.group(nombre);
+                    if (grupo != null) huecos.append(grupo);
+                }
+                encontrados.appendReplacement(nueva, Matcher.quoteReplacement(huecos.toString()));
+            }
+            encontrados.appendTail(nueva);
+            if (coincidencias == 0) break;
+            restante = nueva.toString();
+        }
 
-    private record LineaInvarianteCompleto(String modo, String camino) {
+        int completos = medio + simple + alto;
+        int incompletos = restante.isEmpty() ? 0 : 1;
+        if (incompletos > 0) errores.add("Quedaron disparos sin asociar a un invariante: "
+                + (restante.length() > 160 ? restante.substring(0, 160) + "..." : restante));
+        boolean resumenValido = resumen != null;
+        if (resumen != null) {
+            if (resumen.completo() != completos || resumen.medio() != medio
+                    || resumen.simple() != simple || resumen.alto() != alto) {
+                errores.add("Los conteos de regex no coinciden con RESUMEN");
+                resumenValido = false;
+            }
+            if (!resumen.invariantesPlazaCumplidos()) {
+                errores.add("El RESUMEN indica invariantes de plaza incumplidos");
+                resumenValido = false;
+            }
+        }
+        int invalidos = Math.max(0, errores.size() - incompletos);
+        boolean valido = errores.isEmpty() && resumenValido;
+        return new ResultadoAnalisisRegex(completos, medio, simple, alto,
+                invalidos, incompletos, valido, resumenValido, resumen, errores);
     }
 
     private record LineaResumen(
