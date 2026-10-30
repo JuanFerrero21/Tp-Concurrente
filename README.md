@@ -60,15 +60,47 @@ Para ver por consola cada intento, espera y disparo, cambiar `DETALLADO` a `true
 En todos los perfiles beta es `Long.MAX_VALUE` (sin vencimiento); la justificación está
 en la sección "Semántica temporal" del informe.
 
+
 ## Verificar el log con expresiones regulares
+
+Al finalizar la simulación, el archivo de log contiene los disparos exitosos
+en su orden global de ejecución, utilizando el formato `disparada=Ti`.
+
+La clase `Regex` realiza un análisis independiente del log:
 
 ```bash
 java -cp out ar.edu.unc.concurrente.aplicacion.Regex [ruta-log]
 ```
 
-Reconstruye el camino de cada token, lo clasifica como modo simple, medio o alto
-mediante expresiones regulares y lo contrasta con lo registrado por la simulación.
-Termina con código de salida 1 si encuentra caminos inválidos o incompletos.
+Ejemplo:
+
+```bash
+java -cp out ar.edu.unc.concurrente.aplicacion.Regex logs/simulacion.log
+```
+
+El analizador construye una cadena con las transiciones registradas y utiliza
+una única expresión regular que agrupa los tres invariantes de transición:
+
+- Medio: T0, T1, T2, T3, T4, T11.
+- Simple: T0, T1, T5, T6, T11.
+- Alto: T0, T1, T7, T8, T9, T10, T11.
+
+La expresión contiene alternativas (`|`) para los tres caminos y grupos
+lazy (`.*?`) que permiten reconocer transiciones intercaladas durante la
+ejecución concurrente.
+
+Cada coincidencia identifica un invariante completo. Sus transiciones se
+eliminan de la cadena, conservando los disparos intercalados, y el análisis
+se repite hasta que no se encuentran nuevas coincidencias.
+
+La validación es correcta cuando todos los disparos quedan asociados a
+invariantes completos y los conteos coinciden con el resumen de la ejecución.
+
+Si existen transiciones sobrantes, errores de formato o inconsistencias,
+el programa informa los errores y finaliza con código de salida 1.
+
+El análisis utiliza la clase `AnalizadorRegexInvariantesTransicion`
+y no requiere identificar individualmente los datos procesados.
 
 ## Qué muestra la salida
 

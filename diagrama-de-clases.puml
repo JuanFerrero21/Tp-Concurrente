@@ -234,8 +234,6 @@ class InvariantePlaza <<clase interna>> {
 class RegistradorTransiciones {
     - intentosPorTransicion, disparosPorTransicion : int[]
     - escritor : PrintWriter
-    - colas por plaza (p1..p11Tokens) : Deque<Integer>
-    - modoPorIdToken : Map<Integer, String>
     --
     + RegistradorTransiciones(cantidad, ruta, politica, objetivo, temporales, alfa, beta)
     + registrarIntento(transicion : int, disparada : boolean) : void
@@ -275,22 +273,22 @@ class Regex <<ejecutable independiente>> {
 }
 
 class AnalizadorRegexInvariantesTransicion {
-    {static} - PATRON_* (6 regex) : Pattern
+    {static} - DISPARO : Pattern
+    {static} - RESUMEN : Pattern
+    {static} - INVARIANTES : Pattern
+    {static} - GRUPO_T2 : int
+    {static} - GRUPO_T5 : int
+    {static} - HUECOS : int[]
     --
     + analizar(rutaLog : Path) : ResultadoAnalisisRegex
 }
 
-class ResultadoAnalisisRegex <<clase interna>> {
-    - tokensAnalizados : int
-    - cantidadMedio : int
-    - cantidadSimple : int
-    - cantidadAlto : int
-    - cantidadInvalidos : int
-    - cantidadIncompletos : int
-    - analisisRegexValido : boolean
-    - resumenValido : boolean
-    - lineaResumen : LineaResumen
-    - errores : List<String>
+class ResultadoAnalisisRegex <<record interno>> {
+    + medio : int
+    + simple : int
+    + alto : int
+    + tiempoMillis : long
+    + errores : List<String>
     --
     + esAnalisisRegexValido() : boolean
     + construirReporte() : String
@@ -366,7 +364,7 @@ Main ..> ResultadoSimulacion : crea
 
 Regex ..> AnalizadorRegexInvariantesTransicion : crea y ejecuta
 Regex ..> ResultadoAnalisisRegex : consulta
-AnalizadorRegexInvariantesTransicion ..> ResultadoAnalisisRegex : crea
+AnalizadorRegexInvariantesTransicion +-- ResultadoAnalisisRegex : record interno
 
 ' ================================================================
 ' ORDEN VISUAL
@@ -427,6 +425,13 @@ Al no tener ownership estricto,
 permite que un hilo haga acquire()
 y otro hilo libere posteriormente
 el permiso luego de un handoff.
+end note
+
+note right of AnalizadorRegexInvariantesTransicion
+Lee los disparos en orden global.
+La regex INVARIANTES reconoce los tres caminos.
+Los grupos lazy conservan intercalaciones.
+Repite el analisis y detecta disparos sobrantes.
 end note
 
 note bottom of ColasTransiciones
