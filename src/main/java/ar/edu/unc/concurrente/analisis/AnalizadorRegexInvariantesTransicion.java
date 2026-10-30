@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** Analiza la traza global, sin ID de tokens, extrayendo T-invariantes. */
+/** Analiza la traza global de disparos con UNA sola regex, como en la filmina de expresiones regulares. */
 public class AnalizadorRegexInvariantesTransicion {
     private static final Pattern DISPARO = Pattern.compile("^disparada=(T(?:[0-9]|10|11))$");
     private static final Pattern RESUMEN = Pattern.compile(
@@ -16,57 +16,42 @@ public class AnalizadorRegexInvariantesTransicion {
             + "invariantesPlazaCumplidos=(true|false) tiempoMillis=(\\d+)$");
 
     /*
-     * UNA sola expresion para los tres caminos, permitiendo intercalaciones.
-     * Cada grupo 'gN' preserva las transiciones intercaladas cuando se elimina
-     * el recorrido reconocido. Las comas delimitan tokens (T1 != T10).
+     * UNA sola expresion para los tres caminos, con grupos numerados como en
+     * las filminas: (T0)(.*?)(T1)(.*?)(...). Los grupos pares son los huecos
+     * donde pueden aparecer transiciones de otros invariantes intercaladas.
+     * Las comas delimitan tokens (T1 != T10).
+     *   medio : grupos 5 a 10    simple: grupos 11 a 14    alto: grupos 15 a 22
      */
     private static final Pattern INVARIANTES = Pattern.compile(
-            "T0,(?<g1>.*?)T1,(?<g2>.*?)"
+            "(T0,)(.*?)(T1,)(.*?)"
             + "(?:"
-            + "(?<medio>T2,)(?<g3>.*?)T3,(?<g4>.*?)T4,(?<g5>.*?)"
-            + "|(?<simple>T5,)(?<g6>.*?)T6,(?<g7>.*?)"
-            + "|(?<alto>T7,)(?<g8>.*?)T8,(?<g9>.*?)T9,(?<g10>.*?)T10,(?<g11>.*?)"
-            + ")T11,");
-    private static final String[] HUECOS = {
-            "g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g9", "g10", "g11"
-    };
+            + "(T2,)(.*?)(T3,)(.*?)(T4,)(.*?)"
+            + "|(T5,)(.*?)(T6,)(.*?)"
+            + "|(T7,)(.*?)(T8,)(.*?)(T9,)(.*?)(T10,)(.*?)"
+            + ")(T11,)");
+    private static final int GRUPO_T2 = 5;
+    private static final int GRUPO_T5 = 11;
+    private static final int[] HUECOS = {2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22};
 
     public ResultadoAnalisisRegex analizar(Path rutaLog) {
-        StringBuilder traza = new StringBuilder();
         List<String> errores = new ArrayList<>();
-        LineaResumen resumen = null;
+        StringBuilder traza = new StringBuilder();
+        Matcher resumen = null;
         int cantidadResumen = 0;
-        int numeroLinea = 0;
-        boolean terminoResumen = false;
 
+        // 1) Leer el log: cada disparo se agrega a la traza, el RESUMEN se guarda aparte.
         try {
             for (String linea : Files.readAllLines(rutaLog)) {
-                numeroLinea++;
                 Matcher disparo = DISPARO.matcher(linea);
                 if (disparo.matches()) {
-                    if (terminoResumen) errores.add("Disparo luego del RESUMEN en linea " + numeroLinea);
                     traza.append(disparo.group(1)).append(',');
                 } else if (linea.startsWith("disparada=")) {
-                    errores.add("Disparo mal formado en linea " + numeroLinea);
+                    errores.add("Disparo mal formado: " + linea);
                 } else if (linea.startsWith("RESUMEN")) {
-                    terminoResumen = true;
                     cantidadResumen++;
                     Matcher datos = RESUMEN.matcher(linea);
-                    if (!datos.matches()) {
-                        errores.add("RESUMEN mal formado en linea " + numeroLinea);
-                    } else {
-                        try {
-                            resumen = new LineaResumen(
-                                    Integer.parseInt(datos.group(1)),
-                                    Integer.parseInt(datos.group(2)),
-                                    Integer.parseInt(datos.group(3)),
-                                    Integer.parseInt(datos.group(4)),
-                                    Boolean.parseBoolean(datos.group(5)),
-                                    Long.parseLong(datos.group(6)));
-                        } catch (NumberFormatException excepcion) {
-                            errores.add("Numero fuera de rango en RESUMEN");
-                        }
-                    }
+                    if (datos.matches()) resumen = datos;
+                    else errores.add("RESUMEN mal formado: " + linea);
                 }
             }
         } catch (IOException excepcion) {
@@ -75,22 +60,23 @@ public class AnalizadorRegexInvariantesTransicion {
         if (cantidadResumen != 1) errores.add("El log debe tener exactamente un RESUMEN");
         if (traza.length() == 0) errores.add("El log no contiene disparos");
 
+        // 2) Equivalente al re.subn del ejemplo en Python: reemplazar cada coincidencia
+        //    por sus huecos y repetir hasta que no haya mas coincidencias.
         int medio = 0, simple = 0, alto = 0;
         String restante = traza.toString();
-        // Equivalente al re.subn del ejemplo en Python: extraer y conservar huecos.
         while (true) {
             Matcher encontrados = INVARIANTES.matcher(restante);
             StringBuffer nueva = new StringBuffer();
             int coincidencias = 0;
             while (encontrados.find()) {
                 coincidencias++;
-                if (encontrados.group("medio") != null) medio++;
-                else if (encontrados.group("simple") != null) simple++;
+                if (encontrados.group(GRUPO_T2) != null) medio++;
+                else if (encontrados.group(GRUPO_T5) != null) simple++;
                 else alto++;
                 StringBuilder huecos = new StringBuilder();
-                for (String nombre : HUECOS) {
-                    String grupo = encontrados.group(nombre);
-                    if (grupo != null) huecos.append(grupo);
+                for (int numero : HUECOS) {
+                    String hueco = encontrados.group(numero);
+                    if (hueco != null) huecos.append(hueco);
                 }
                 encontrados.appendReplacement(nueva, Matcher.quoteReplacement(huecos.toString()));
             }
@@ -99,126 +85,45 @@ public class AnalizadorRegexInvariantesTransicion {
             restante = nueva.toString();
         }
 
-        int completos = medio + simple + alto;
-        int incompletos = restante.isEmpty() ? 0 : 1;
-        if (incompletos > 0) errores.add("Quedaron disparos sin asociar a un invariante: "
-                + (restante.length() > 160 ? restante.substring(0, 160) + "..." : restante));
-        boolean resumenValido = resumen != null;
+        // 3) Lo que no coincidio con ningun invariante es un error; despues se contrasta con el RESUMEN.
+        if (!restante.isEmpty()) errores.add("Disparos sin asociar a un invariante: " + restante);
+        long tiempoMillis = -1;
         if (resumen != null) {
-            if (resumen.completo() != completos || resumen.medio() != medio
-                    || resumen.simple() != simple || resumen.alto() != alto) {
+            tiempoMillis = Long.parseLong(resumen.group(6));
+            if (!resumen.group(1).equals(String.valueOf(medio + simple + alto))
+                    || !resumen.group(2).equals(String.valueOf(medio))
+                    || !resumen.group(3).equals(String.valueOf(simple))
+                    || !resumen.group(4).equals(String.valueOf(alto))) {
                 errores.add("Los conteos de regex no coinciden con RESUMEN");
-                resumenValido = false;
             }
-            if (!resumen.invariantesPlazaCumplidos()) {
+            if (resumen.group(5).equals("false")) {
                 errores.add("El RESUMEN indica invariantes de plaza incumplidos");
-                resumenValido = false;
             }
         }
-        int invalidos = Math.max(0, errores.size() - incompletos);
-        boolean valido = errores.isEmpty() && resumenValido;
-        return new ResultadoAnalisisRegex(completos, medio, simple, alto,
-                invalidos, incompletos, valido, resumenValido, resumen, errores);
+        return new ResultadoAnalisisRegex(medio, simple, alto, tiempoMillis, errores);
     }
 
-    private record LineaResumen(
-            int completo,
-            int medio,
-            int simple,
-            int alto,
-            boolean invariantesPlazaCumplidos,
-            long tiempoMillis
-    ) {
-    }
-
-    public static class ResultadoAnalisisRegex {
-        private final int tokensAnalizados;
-        private final int cantidadMedio;
-        private final int cantidadSimple;
-        private final int cantidadAlto;
-        private final int cantidadInvalidos;
-        private final int cantidadIncompletos;
-        private final boolean analisisRegexValido;
-        private final boolean resumenValido;
-        private final LineaResumen lineaResumen;
-        private final List<String> errores;
-
-        private ResultadoAnalisisRegex(
-                int tokensAnalizados,
-                int cantidadMedio,
-                int cantidadSimple,
-                int cantidadAlto,
-                int cantidadInvalidos,
-                int cantidadIncompletos,
-                boolean analisisRegexValido,
-                boolean resumenValido,
-                LineaResumen lineaResumen,
-                List<String> errores
-        ) {
-            this.tokensAnalizados = tokensAnalizados;
-            this.cantidadMedio = cantidadMedio;
-            this.cantidadSimple = cantidadSimple;
-            this.cantidadAlto = cantidadAlto;
-            this.cantidadInvalidos = cantidadInvalidos;
-            this.cantidadIncompletos = cantidadIncompletos;
-            this.analisisRegexValido = analisisRegexValido;
-            this.resumenValido = resumenValido;
-            this.lineaResumen = lineaResumen;
-            this.errores = new ArrayList<>(errores);
-        }
-
+    public record ResultadoAnalisisRegex(int medio, int simple, int alto, long tiempoMillis, List<String> errores) {
         public boolean esAnalisisRegexValido() {
-            return analisisRegexValido;
+            return errores.isEmpty();
         }
 
         public String construirReporte() {
-            StringBuilder constructor = new StringBuilder();
-
-            constructor.append("Analisis regex de invariantes de transicion:")
-                    .append(System.lineSeparator());
-
-            agregarLinea(constructor, "Tokens analizados", tokensAnalizados);
-            agregarLinea(constructor, "Medio", cantidadMedio);
-            agregarLinea(constructor, "Simple", cantidadSimple);
-            agregarLinea(constructor, "Alto", cantidadAlto);
-            agregarLinea(constructor, "Invalidos", cantidadInvalidos);
-            agregarLinea(constructor, "Incompletos", cantidadIncompletos);
-            agregarLinea(constructor, "Resumen valido", resumenValido);
-
-            if (lineaResumen != null) {
-                agregarLinea(constructor, "Tiempo segun RESUMEN", lineaResumen.tiempoMillis() + " ms");
-            }
-
-            agregarLinea(constructor, "Analisis regex valido", analisisRegexValido);
-
+            StringBuilder reporte = new StringBuilder(String.format(
+                    "Analisis regex de invariantes de transicion:%n"
+                    + "Invariantes completos: %d%n"
+                    + "Medio: %d%nSimple: %d%nAlto: %d%n",
+                    medio + simple + alto, medio, simple, alto));
+            if (tiempoMillis >= 0) reporte.append(String.format("Tiempo segun RESUMEN: %d ms%n", tiempoMillis));
+            reporte.append(String.format("Analisis regex valido: %b%n", esAnalisisRegexValido()));
             if (!errores.isEmpty()) {
-                constructor.append("Errores detectados:")
-                        .append(System.lineSeparator());
-
-                int limite = Math.min(errores.size(), 20);
-
-                for (int i = 0; i < limite; i++) {
-                    constructor.append("- ")
-                            .append(errores.get(i))
-                            .append(System.lineSeparator());
-                }
-
-                if (errores.size() > limite) {
-                    constructor.append("- ... ")
-                            .append(errores.size() - limite)
-                            .append(" errores mas")
-                            .append(System.lineSeparator());
+                reporte.append(String.format("Errores detectados:%n"));
+                for (String error : errores) {
+                    String corto = error.length() > 200 ? error.substring(0, 200) + "..." : error;
+                    reporte.append(String.format("- %s%n", corto));
                 }
             }
-
-            return constructor.toString();
-        }
-
-        private static void agregarLinea(StringBuilder constructor, String etiqueta, Object valor) {
-            constructor.append(etiqueta)
-                    .append(": ")
-                    .append(valor)
-                    .append(System.lineSeparator());
+            return reporte.toString();
         }
     }
 }
